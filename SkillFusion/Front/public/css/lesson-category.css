@@ -1,0 +1,90 @@
+
+/* Background */
+.lesson-box__title:before{
+	position: relative;
+}
+  .lesson-box__title:before {
+	content: "";
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	inset: 0;
+  z-index: -2;
+	background-image: url('../Images/Photos/Perceuse à bois.jpg');
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	opacity: 0.53;
+	pointer-events: none;
+}
+/* ---- */
+
+main{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center
+}
+
+.head-banner{
+	display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center
+}
+
+.list-lesson{
+	display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+}
+
+.lesson-box{
+	height: 8rem;
+	margin:1rem 0;
+	margin-inline: 30rem;
+
+	display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+}
+
+.lesson-box__desc{
+	height: 100%;
+	min-width: 50vw;
+	background-color: rgb(219, 203, 182);
+	border: 1px solid rgb(201,166,94);
+	margin: 0 1rem;
+	display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center
+	
+		
+}
+
+.lesson-box__desc p{
+ margin-top: 1rem;
+}
+
+.lesson-box__title{
+	position: relative;
+	display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	width: 10rem;
+	height: 100%;
+	overflow: hidden;
+	border: 1px solid black;
+	margin: 1rem 0;
+}
+
+
+@media (max-width: 680px) {
+	.new-topic-button.main-button {
+	  position: inherit;
+	 background-color: black;
+	}
+  }

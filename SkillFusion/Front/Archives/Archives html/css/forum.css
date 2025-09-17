@@ -1,0 +1,21 @@
+
+.forum-post__datas{
+ font-size: 1rem;
+ font-weight: 500;
+ margin: .2rem;
+}
+
+.forum-post__form{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+    align-items: center;
+}
+
+.forum-post__form textarea{
+  margin-right: 1rem;
+  width: 80vw;
+  display: flex;
+  justify-content: center;
+    align-items: center;
+}

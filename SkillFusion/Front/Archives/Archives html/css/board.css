@@ -1,0 +1,40 @@
+.board-box__button{
+width: 20%;
+}
+
+.board-close-button{
+    margin-left: 30rem; 
+}
+
+.button-board{
+    width: 8rem; 
+    height: 2.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 23rem; 
+}
+
+@media (max-width: 1024px){
+.board-new-topic{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4rem;
+    width: 10rem;
+    margin-right: 45rem;
+    top: 16rem;
+}  
+}
+
+@media (max-width: 768px){
+    .board-new-topic{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 4rem;
+        width: 10rem;
+        margin-right: 30rem;
+        top: 16rem;
+    }  
+}

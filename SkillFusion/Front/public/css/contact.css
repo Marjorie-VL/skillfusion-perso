@@ -1,0 +1,18 @@
+.presentation {
+    max-width: 30rem;
+    height: 150px;
+    background:rgb(186,210,225);
+    display: flex;
+        align-items: center;
+        justify-content: center;
+    padding: 1rem;
+    text-align: center;
+}
+
+.contact-list p {
+    margin: 1rem 0;
+}
+
+.contact-list  {
+    margin: 2rem;
+}

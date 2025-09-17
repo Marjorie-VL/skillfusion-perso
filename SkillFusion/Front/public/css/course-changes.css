@@ -1,0 +1,51 @@
+.carre1 {
+  width: 180px;          
+  height: 180px;            
+  background-color: red;
+  border: 1px solid black; 
+  margin-left: 66px;
+
+  
+  }
+
+  .carre2 {
+    width: 180px;          
+    height: 180px;      
+    background-color: red;
+    border: 1px solid black;
+    margin-left: 66px; 
+
+  }
+  .carre3 {
+    width: 180px;          
+    height: 180px;             
+    background-color: red;
+    border: 1px solid black; 
+    margin-left: 66px;
+  }
+
+.conteneur-carrés1{
+  position: relative;
+	display: flex;
+		flex-direction: row;
+
+		align-items: stretch;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+}
+
+.conteneur-carrés2{  position: relative;
+	display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+}
+
+.conteneur-carrés3{  position: relative;
+	display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+
+}
