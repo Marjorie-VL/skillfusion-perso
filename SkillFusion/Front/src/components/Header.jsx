@@ -41,7 +41,7 @@ export default function Header() {
         <li><a className="normal-link" href="/forum">Forum</a></li>
         <li><a className="normal-link" href="/board">Tableau de bord</a></li>
         <li><button onClick={logout} className="normal-button">Déconnexion</button></li>
-        <li><span><strong>{user.pseudo.replace(/^./, (match) => match.toUpperCase())}</strong></span></li>
+        <li><span><strong>{user.user_name.replace(/^./, (match) => match.toUpperCase())}</strong></span></li>
       </>
     ) : (
         <li><a className="normal-link" href="/login">Connexion</a></li> // Sinon, afficher le lien de connexion

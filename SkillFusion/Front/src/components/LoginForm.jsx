@@ -4,7 +4,7 @@ import { useAuth } from "../services/api";
 import { toast } from "react-toastify";
 
 export default function LoginForm() {
-  const [mail, setMail] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setUser } = useAuth(); // 👈
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function LoginForm() {
     fetch(`${import.meta.env.VITE_API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mail, password }),
+      body: JSON.stringify({ email, password }),
     })
     .then((res) => {
       if (!res.ok) throw new Error("Identifiants invalides");
@@ -44,13 +44,13 @@ export default function LoginForm() {
       <section className="lessons">
         <form onSubmit={handleSubmit} action="#" method="post">
           <div className="form">
-            <label htmlFor="mail">E-mail :</label>
+            <label htmlFor="email">E-mail :</label>
             <input
               className="search-bar input-bar"
               placeholder="E-mail"
               type="email"
-              value={mail}
-              onChange={(e) => setMail(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>

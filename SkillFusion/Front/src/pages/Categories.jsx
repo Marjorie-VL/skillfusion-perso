@@ -8,6 +8,7 @@ export default function Categories() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Récupère la liste de toutes les catégories
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/categories`)
       .then((response) => {

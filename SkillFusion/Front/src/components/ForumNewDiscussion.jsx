@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 export default function ForumNewDiscussion() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
+  const [content, setContent] = useState("");
   const [errors, setErrors] = useState({});
 
 
@@ -23,7 +23,7 @@ export default function ForumNewDiscussion() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ title, text: message }),
+        body: JSON.stringify({ title, content: content }),
       });
 
       const data = await response.json();
@@ -76,8 +76,8 @@ export default function ForumNewDiscussion() {
               <textarea
                 id="new-discussion"
                 placeholder="Message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
                 required
               ></textarea>
               {errors.text && <p style={{ color: "red" }} className="text-red-500">{errors.text}</p>}

@@ -12,7 +12,7 @@ export default function NewLesson() {
   // États pour le formulaire
   const [selectedCategory, setSelectedCategory] = useState("");
   const [name, setName] = useState("");
-  const [media, setMedia] = useState("");
+  const [media_url, setMedia] = useState("");
   const [text,setText] = useState("");
   const [materials, setMaterials] = useState([""]);
   const [steps, setSteps] = useState([{ title: "", description: "", media: "" }]);

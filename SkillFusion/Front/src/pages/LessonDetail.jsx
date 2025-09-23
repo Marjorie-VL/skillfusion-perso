@@ -14,12 +14,10 @@ export default function LessonDetail() {
   const [showModal, setShowModal] = useState(false);
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setError(null);
         // Fetch lesson details
-    fetch(`${import.meta.env.VITE_API_URL}/lesson/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/lessons/${id}`)
       .then((response) => response.json())
       .then((data) => setLesson(data))
       
@@ -33,10 +31,6 @@ export default function LessonDetail() {
   useEffect(() => {
     console.log(lessons);
   }, [lessons]);
-
-  if (error) {
-    return <p>{error}</p>;
-  }
 
 
 
@@ -64,6 +58,11 @@ export default function LessonDetail() {
     fetchData();
   }, []);
 
+  // Remonter en haut de la page à chaque changement de cours
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [id]);
+
     if (!lesson) {
     return <p>Chargement...</p>;
   }
@@ -71,7 +70,7 @@ export default function LessonDetail() {
   const suggestions = lessons
     .filter(
       (l) =>
-        l.category?.name === lesson.category?.name && l.name !== lesson.name
+        l.category?.name === lesson.category?.name && l.name !== lesson.title
     )
     .slice(0, 2);
 

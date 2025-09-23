@@ -84,7 +84,7 @@ export default function LessonContainer({ lessons, categoryName}) {
   const handleClickDeleteLesson = async (lessonId) => {
     if (!window.confirm("Etes-vous sûr(e) ?")) return;
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/lesson/${lessonId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/lessons/${lessonId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -138,14 +138,14 @@ export default function LessonContainer({ lessons, categoryName}) {
           </div>
           
           <div className="box-lesson__title">
-            <h4>{lesson.name}</h4>
+            <h4>{lesson.title}</h4>
           </div>
           <Link to={`/lesson/${lesson.id}`} style={{ textDecoration: "none", color: "inherit" }}>
             <div className="box-lesson__img">
-              <img className="image-lesson" src={`/Images/Photos/${lesson.media}`} alt={lesson.name} />
+              <img className="image-lesson" src={`/Images/Photos/${lesson.media_url}`} alt={lesson.media_alt} />
             </div>
           </Link>
-          <p>{lesson.text}</p>
+          <p>{lesson.description}</p>
         </div>
       ))}
     </section>

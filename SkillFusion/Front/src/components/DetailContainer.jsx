@@ -4,15 +4,15 @@ export default function DetailContainer({ lesson }) {
   return (
     <>
       <section className="lesson">
-        <h2> {lesson.name}</h2>
+        <h2> {lesson.title}</h2>
         <div className="lesson-introduction__img">
           <img
             className="image-lesson"
-            src={`/Images/Photos/${lesson.media}`}
+            src={`/Images/Photos/${lesson.media_url}`}
             alt="Image du résultat final du cours"
           />
         </div>
-        <p className="lesson__description">{lesson.text}</p>
+        <p className="lesson__description">{lesson.description}</p>
       </section>
       <section className="lesson">
         <h3>Matériaux nécessaires :</h3>
@@ -38,7 +38,7 @@ export default function DetailContainer({ lesson }) {
             <div className="steps__img">
                 <img
                     className="image-lesson"
-                    src={`/Images/Photos/${step.media}`}
+                    src={`/Images/Photos/${step.media_url}`}
                     alt="Image du résultat final de l'étape"
                   />
             </div>

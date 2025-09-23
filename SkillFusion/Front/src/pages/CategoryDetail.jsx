@@ -10,6 +10,7 @@ export default function CategoryPage() {
   const [categoryName, setCategoryName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
   useEffect(() => {
     const fetchCategoryLessons = async () => {
       setLoading(true);

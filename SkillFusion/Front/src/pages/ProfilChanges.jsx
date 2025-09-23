@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/api.jsx";
 
 export default function ProfilChange() {
-  const [pseudo, setPseudo] = useState("");
-  const [mail, setMail] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setMail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -22,19 +22,19 @@ export default function ProfilChange() {
     setErrors({});
 
     // ✅ Vérification des champs vides
-    if (!pseudo || !mail || !password) {
+    if (!username || !email || !password) {
       toast.error("Tous les champs sont obligatoires");
       return;
     }
 
-    fetch(`${import.meta.env.VITE_API_URL}/user/${user.id}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/users/${user.id}`, {
 
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`
       },
-      body: JSON.stringify({ pseudo, mail, password }),
+      body: JSON.stringify({ username, email, password }),
     })
     .then(async (res) => {
       const data = await res.json();
@@ -72,17 +72,17 @@ export default function ProfilChange() {
         <section className="lessons">
           <form method="post" onSubmit={(e) => handleSubmit(e)}>
             <div className="form">
-              <label htmlFor="pseudo">Pseudo :</label>
+              <label htmlFor="username">User Name :</label>
               <input
                 className="search-bar input-bar"
                 type="text"
-                placeholder="Pseudo"
-                name="pseudo"
-                id="pseudo"
-                value={pseudo}
-                onChange={(e) => setPseudo(e.target.value)}
+                placeholder="Username"
+                name="username"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
-              {errors.pseudo && <p style={{ color: "red" }}>{errors.pseudo}</p>}            
+              {errors.username && <p style={{ color: "red" }}>{errors.username}</p>}            
               </div>
             <div className="form">
               <label htmlFor="mail">E-mail :</label>
@@ -90,12 +90,12 @@ export default function ProfilChange() {
                 className="search-bar input-bar"
                 type="email"
                 placeholder="E-mail"
-                name="mail"
-                id="mail"
-                value={mail}
+                name="email"
+                id="email"
+                value={email}
                 onChange={(e) => setMail(e.target.value)}
               />
-            {errors.mail && <p style={{ color: "red" }}>{errors.mail}</p>}            
+            {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}            
               </div>
             <div className="form">
               <label htmlFor="password">Mot de passe :</label>

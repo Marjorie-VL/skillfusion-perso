@@ -45,7 +45,7 @@ export default function Board() {
   const fetchAllUsers = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/user`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
@@ -66,7 +66,7 @@ export default function Board() {
       <Header />      
       <main>
       <section className="head-button">
-      {userData?.role_id === 1 ? (
+      {userData?.role.name === "administrateur" ? (
         <Link to="/erreurMaintenance">
           <button className="main-button">Créer un nouveau cours</button>
         </Link>
@@ -80,7 +80,7 @@ export default function Board() {
         </Link>
       </section>
 
-        {userData?.role_id === 1 ? (
+        {userData?.role.name === "administrateur" ? (
           <AdminDashboard usersData={usersData} />
         ) : (
           <UserDashboard favoriteLessons={userData.favorite_lessons} user={userData}/>

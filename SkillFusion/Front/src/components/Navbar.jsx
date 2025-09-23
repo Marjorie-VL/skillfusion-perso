@@ -67,7 +67,7 @@ export default function MobileNavbar({ user, logout }) {
                 </button>
               </li>
               <li>
-                <span>{user.pseudo}</span>
+                <span>{user.user_name}</span>
               </li>
             </>
           ) : (

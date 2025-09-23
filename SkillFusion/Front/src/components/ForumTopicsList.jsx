@@ -7,13 +7,10 @@ import { toast } from "react-toastify";
 
 export default function ForumTopicsList({topics}) {
 
-  const [topicsList, setTopicsList] = useState(
-    topics?.topics || topics || []
-  );
+  const [topicsList, setTopicsList] = useState(Array.isArray(topics) ? topics : []);
 
   // Récupération des données utilisateur
   const {user} = useAuth();
-  const [error, setError] = useState(null);
 
 useEffect(() => {
   const fetchTopics = async () => {
@@ -30,10 +27,9 @@ useEffect(() => {
       }
 
       const data = await response.json();
-      setTopicsList(data.forums);
+      setTopicsList(Array.isArray(data.discussions) ? data.discussions : []);
     } catch (err) {
       console.error(" Erreur de récupération :", err);
-      setError(err.message);
     }
   };
   
@@ -86,17 +82,19 @@ useEffect(() => {
         </section>
 
         <section className="list-category">       
-          {topicsList.map((topic) => (
+          {topicsList.length === 0 ? (
+            <p>Aucun sujet pour le moment.</p>
+          ) : topicsList.map((topic) => (
             <section className="forum-box category-box" key={topic.id}>
               <div className="topic-box__desc">
-                <h4>{topic.title.replace(/^./, (match) => match.toUpperCase())}</h4>
+                <h4>{(topic.title || "").replace(/^./, (match) => match.toUpperCase())}</h4>
                 <div className="topic-box__center">
                   <p></p>
                   <Link
                   to={`/forum/${topic.id}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                   >
-                  <p>{topic.text.replace(/^./, (match) => match.toUpperCase())}</p>
+                  <p>{(topic.content || "").replace(/^./, (match) => match.toUpperCase())}</p>
                   </Link>
                   {/* Affiche les boutons de CRD si l'utilisateur a les droits d'admin*/}
                   {user ? (

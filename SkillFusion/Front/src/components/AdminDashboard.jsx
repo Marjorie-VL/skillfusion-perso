@@ -9,7 +9,7 @@ export default function AdminDashboard({ usersData }) {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/${userId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -26,8 +26,8 @@ export default function AdminDashboard({ usersData }) {
   const handleChangeRole = async (userId, newRoleId) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/user/${userId}/role`, {
-        method: "PUT",
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}/role`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -54,8 +54,8 @@ export default function AdminDashboard({ usersData }) {
             {users.map((user) => (
               <tr key={user.id} style={{ borderBottom: "1px solid #ccc" }}>
                 <div className="accountList__detail">
-                  <td>{user.pseudo.replace(/^./, (match) => match.toUpperCase())}</td>
-                  <td className="accountList__detail__name">{user.mail}</td>
+                  <td>{user.user_name.replace(/^./, (match) => match.toUpperCase())}</td>
+                  <td className="accountList__detail__name">{user.email}</td>
                   <td>
                     <select
                       value={user.role_id}

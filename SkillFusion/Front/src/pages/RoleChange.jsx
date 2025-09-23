@@ -36,7 +36,7 @@ export default function ProfilChange() {
       return;
     }
 
-    fetch(`${import.meta.env.VITE_API_URL}/user/${user.id}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/users/${user.id}`, {
 
       method: "PATCH",
       headers: {
@@ -76,14 +76,14 @@ export default function ProfilChange() {
       <Header />
       <main>
         <section className="head-banner">
-          <h2>Modifier le rôle de {user.pseudo.replace(/^./, (match) => match.toUpperCase())}</h2>
+          <h2>Modifier le rôle de {user.user_name.replace(/^./, (match) => match.toUpperCase())}</h2>
         </section>
 
         <section className="lessons">
           <form method="post" onSubmit={(e) => handleSubmit(e)}>
           <div className="form">
             <label htmlFor="role">
-              Rôle (actuel : {user.role.description})
+              Rôle (actuel : {user.role.name})
             </label>
             <select
               id="role"
@@ -94,7 +94,7 @@ export default function ProfilChange() {
             >
               <option value="">Sélectionnez un rôle</option>
               {roles.map((role) =>
-              <option value={role.id}>{role.description}</option>
+              <option value={role.id}>{role.name}</option>
               )}
             </select>
             {errors.role && <p style={{ color: "red" }}>{errors.role}</p>}

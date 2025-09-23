@@ -8,16 +8,16 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function ForumDiscussionDetail() {
-  const { id } = useParams(); // récupère l'ID de la question depuis l'URL
+  const { id } = useParams(); // récupère l'ID du sujet de la discussion depuis l'URL
   const {user} = useAuth();
-  const [question, setQuestion] = useState(null);
-  const [response, setResponse] = useState("");
+  const [topic, setTopic] = useState(null);
+  const [reply, setReply] = useState("");
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchQuestion = async () => {
+    const fetchTopic = async () => {
       const token = localStorage.getItem("token");
 
       try {
@@ -32,7 +32,7 @@ export default function ForumDiscussionDetail() {
         }
 
         const data = await response.json();
-        setQuestion(data.forums);
+        setTopic(data.forums);
       } catch (err) {
         toast.error("Impossible de charger la question !" + err.message);
       } finally {
@@ -40,11 +40,11 @@ export default function ForumDiscussionDetail() {
       }
     };
 
-    fetchQuestion();
+    fetchTopic();
   }, [id, user]);
 
   if (loading) return <p>Chargement...</p>;
-  if (!question) return <p>Aucune donnée trouvée.</p>;
+  if (!topic) return <p>Aucune donnée trouvée.</p>;
 
   // Fonction pour envoyer une réponse
   const handleSubmit = async (e) => {
@@ -52,16 +52,16 @@ export default function ForumDiscussionDetail() {
     setErrors({}); // Reset erreurs
     const token = localStorage.getItem("token");
 
-    if (!response.trim()) return; // évite les messages vides
+    if (!reply.trim()) return; // évite les messages vides
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/forum/${id}/responses`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/forum/${id}/reply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ text: response }),
+        body: JSON.stringify({ content: reply }),
       });
 
       const data = await res.json();
@@ -78,7 +78,7 @@ export default function ForumDiscussionDetail() {
       }
 
     // Message de succès
-    setResponse(""); // reset le champ
+    setReply(""); // reset le champ
     toast.success("Réponse envoyée !");
 
      // Re-fetch de la discussion complète avec toutes les réponses à jour
@@ -91,7 +91,7 @@ export default function ForumDiscussionDetail() {
     if (!updatedRes.ok) throw new Error("Erreur lors du rechargement");
 
     const updatedData = await updatedRes.json();
-    setQuestion(updatedData.forums); // on remplace les données par celles à jour
+    setTopic(updatedData.discussions); // on remplace les données par celles à jour
 
     } catch (error) {
       console.error(error);
@@ -100,12 +100,12 @@ export default function ForumDiscussionDetail() {
   }
     // Supprimer une réponse
     
-    const handleClickDelete = async (questionId,responseId) => { 
+    const handleClickDelete = async (id,replyId) => { 
       let isSure = confirm("Etes-vous sûr(e) ?");
       if(!isSure) return;
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${questionId}/${responseId}`,{
+        const reply = await fetch(`${import.meta.env.VITE_API_URL}/forum/${id}/${replyId}`,{
   
           method: "DELETE",
           headers: {
@@ -114,7 +114,7 @@ export default function ForumDiscussionDetail() {
           }
          // body: JSON.stringify({user }),
         });
-          if (!response.ok) {
+          if (!reply.ok) {
        //     throw new Error("Erreur lors de la suppression du message");
           }
           toast.success("Suppression du message réussie !");
@@ -141,40 +141,40 @@ export default function ForumDiscussionDetail() {
         </section>
         {/* Sujet */}
         <section className="head-banner">
-          <h3>{question.title.replace(/^./, (match) => match.toUpperCase())}</h3>
+          <h3>{topic.title.replace(/^./, (match) => match.toUpperCase())}</h3>
           <section className="category-box">
             <div className="category-box__title">
               <p className="forum-post__datas">
-                Créé par : {question.users?.pseudo || "Utilisateur inconnu"}
+                Créé par : {topic.users?.user_name || "Utilisateur inconnu"}
               </p>
               <p className="forum-post__datas">
-                Le : {new Date(question.created_at).toLocaleDateString()}
+                Le : {new Date(topic.created_at).toLocaleDateString()}
               </p>
             </div>
             <div className="category-box__desc">
-              <h4>{question.text.replace(/^./, (match) => match.toUpperCase())}</h4>
+              <h4>{topic.content.replace(/^./, (match) => match.toUpperCase())}</h4>
               
             </div>
           </section>
         </section>
         {/* Réponses */}
         <section className="list-category">
-          {question.responses.map((response) => (
-            <section className="category-box" key={response.id}>
+          {topic.replies.map((reply) => (
+            <section className="category-box" key={reply.id}>
               <div className="category-box__title">
                 <p className="forum-post__datas">
-                  Posté par : {response.users?.pseudo || "Utilisateur inconnu"}
+                  Posté par : {reply.users?.user_name || "Utilisateur inconnu"}
                 </p>
                 <p className="forum-post__datas">
-                  Le : {new Date(response.created_at).toLocaleDateString()}
+                  Le : {new Date(reply.created_at).toLocaleDateString()}
                 </p>
               </div>
               <div className="category-box__desc">
-                <p>{response.text.replace(/^./, (match) => match.toUpperCase())}</p>
+                <p>{reply.content.replace(/^./, (match) => match.toUpperCase())}</p>
 
                 {/* Affiche les boutons de CRD si l'utilisateur a les droits d'admin*/}
                 {user ? (
-                  <a onClick={() => handleClickDelete(question.id,response.id)} style={{ cursor: 'pointer' }}>
+                  <a onClick={() => handleClickDelete(topic.id,reply.id)} style={{ cursor: 'pointer' }}>
                     <div className="crud">
                       <p></p>
                       <h4>{((user.role_id === 1)) ?("\ud83d\uddd1"):(" ")}</h4>
@@ -193,14 +193,14 @@ export default function ForumDiscussionDetail() {
             <form onSubmit={handleSubmit}>
               <div className="forum-post__textarea">
                 <textarea
-                  id="response"
+                  id="reply"
                   placeholder="Votre message"
-                  value={response}
-                  onChange={(e) => setResponse(e.target.value)}
+                  value={reply}
+                  onChange={(e) => setReply(e.target.value)}
                   required
                 />
-              {errors.text && (
-                <p style={{ color: "red" }}> {typeof errors.text === "string" ? errors.text : JSON.stringify(errors.text)}</p>)}
+              {errors.content && (
+                <p style={{ color: "red" }}> {typeof errors.content === "string" ? errors.content : JSON.stringify(errors.content)}</p>)}
               </div>
               <div className="forum-post__button">
                 <button className="main-button" type="submit">
