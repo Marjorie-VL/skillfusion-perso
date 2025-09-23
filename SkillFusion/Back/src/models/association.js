@@ -2,10 +2,10 @@ import { sequelize } from "./connection.js";
 import { Lesson } from "./Lesson.js";
 import { Category } from "./Category.js";
 import { Material } from "./Material.js";
-import { Users } from "./Users.js";
+import { User } from "./User.js";
 import { Role } from "./Role.js";
-import { Question } from "./Question.js";
-import { Response } from "./Response.js";
+import { Topic } from "./Topic.js";
+import { Reply } from "./Reply.js";
 import { Step } from "./Step.js";
 
 // CATEGORY <--> LESSON
@@ -34,77 +34,77 @@ Step.belongsTo(Lesson, {
 });
 
 // USERS <--> LESSON
-Users.hasMany(Lesson, {
+User.hasMany(Lesson, {
     as: 'lessons',
-    foreignKey: 'users_id',
+    foreignKey: 'user_id',
     onDelete: 'CASCADE'
 });
-Lesson.belongsTo(Users, {
-    foreignKey: 'users_id',
+Lesson.belongsTo(User, {
+    foreignKey: 'user_id',
     as: 'user'
 });
 
 // USERS <--> LESSON
-Users.belongsToMany(Lesson, {
-    through: 'users_has_favorites',
+User.belongsToMany(Lesson, {
+    through: 'favorite',
     as: 'favorite_lessons',
-    foreignKey: 'users_id',
+    foreignKey: 'user_id',
     otherKey: 'lesson_id',
     onDelete: 'CASCADE',
     timestamps: false
 });
-Lesson.belongsToMany(Users, {
-    through: 'users_has_favorites',
+Lesson.belongsToMany(User, {
+    through: 'favorite',
     as: 'users_who_favorited',
     foreignKey: 'lesson_id',
-    otherKey: 'users_id',
+    otherKey: 'user_id',
     onDelete: 'CASCADE',
     timestamps: false
 });
 
-// USERS <--> QUESTION
-Users.hasMany(Question, {
-    as: "questions",
-    foreignKey: { name: "users_id", allowNull: false },
+// USERS <--> TOPIC
+User.hasMany(Topic, {
+    as: "topics",
+    foreignKey: { name: "user_id", allowNull: false },
     onDelete: "CASCADE"
 });
-Question.belongsTo(Users, {
+Topic.belongsTo(User, {
     as: "users",
-    foreignKey: { name: "users_id", allowNull: false },
+    foreignKey: { name: "user_id", allowNull: false },
     onDelete: "CASCADE"
 });
 
-// QUESTION <--> RESPONSE
-Question.hasMany(Response, {
-    as: "responses",
-    foreignKey: { name: "question_id", allowNull: false },
+// TOPIC <--> REPLY
+Topic.hasMany(Reply, {
+    as: "replies",
+    foreignKey: { name: "topic_id", allowNull: false },
     onDelete: "CASCADE"
 });
-Response.belongsTo(Question, {
-    as: "question",
-    foreignKey: { name: "question_id",allowNull: false },
-    onDelete: "CASCADE"
-});
-
-// USERS <--> RESPONSE
-Users.hasMany(Response, {
-    as: "responses",
-    foreignKey: { name: "users_id", allowNull: false },
-    onDelete: "CASCADE"
-});
-Response.belongsTo(Users, {
-    as: "users",
-    foreignKey: { name: "users_id", allowNull: false },
+Reply.belongsTo(Topic, {
+    as: "topic",
+    foreignKey: { name: "topic_id",allowNull: false },
     onDelete: "CASCADE"
 });
 
-// ROLE <--> USERS
-Role.hasMany(Users, {
+// USERS <--> REPLY
+User.hasMany(Reply, {
+    as: "replies",
+    foreignKey: { name: "user_id", allowNull: false },
+    onDelete: "CASCADE"
+});
+Reply.belongsTo(User, {
+    as: "user",
+    foreignKey: { name: "user_id", allowNull: false },
+    onDelete: "CASCADE"
+});
+
+// ROLE <--> USER
+Role.hasMany(User, {
     as: "users",
     foreignKey: { name: "role_id",allowNull: false },
     onDelete: "CASCADE"
 });
-Users.belongsTo(Role, {
+User.belongsTo(Role, {
     as: "role",
     foreignKey: { name: "role_id", allowNull: false },
     onDelete: "CASCADE"
@@ -123,5 +123,5 @@ Material.belongsTo(Lesson,{
 })
 
 
-export { Lesson, Category, Material, Users, Role, Question, Step, Response, sequelize };
+export { Lesson, Category, Material, User, Role, Topic, Step, Reply, sequelize };
 

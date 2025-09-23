@@ -13,6 +13,9 @@ Material.init(
         name: {
             type: DataTypes.STRING,
         },
+        quantity: {
+            type: DataTypes.INTEGER,
+        },
         lesson_id: {
             type: DataTypes.INTEGER,
             allowNull: false,

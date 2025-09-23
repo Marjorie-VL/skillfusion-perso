@@ -1,7 +1,7 @@
 import PasswordValidator from "password-validator";
 import argon2 from "argon2";
 import jwt from 'jsonwebtoken';
-import { Users, Role, Lesson, Question, Response, Category } from "../models/association.js";
+import { User, Role, Lesson, Topic, Reply, Category } from "../models/association.js";
 import { userSchema } from "../middleware/validation.js";
 
 const authentication = {
@@ -9,15 +9,15 @@ const authentication = {
   // Inscription d'un utilisateur
   async registerUser(req, res) {
     // Récupérer les données du body
-    const { pseudo, password, mail, role_id } = req.body;
+    const { user_name, password, email, role_id } = req.body;
 
     // Vérifier que tous les champs sont présents
-    if (!pseudo || !password || !mail ) {
-      return res.status(400).json({ error: 'Tous les champs (pseudo, password, mail) sont obligatoires.' });
+    if (!user_name || !password || !email ) {
+      return res.status(400).json({ error: 'Tous les champs (pseudo, password, email) sont obligatoires.' });
     }
     
     // Valider avec Joi, avec abortEarly: false pour récupérer toutes les erreurs
-    const { error } = userSchema.validate({ pseudo, mail, password }, { abortEarly: false });
+    const { error } = userSchema.validate({ user_name, email, password }, { abortEarly: false });
     if (error) {
       // Transformer les erreurs Joi en objet simple { champ: message }
       const errors = {};
@@ -43,7 +43,7 @@ const authentication = {
     }
 
     // Vérifier si un utilisateur avec le même email n'existe pas déjà en BDD => faire une requête pour récupérer un utilisateur par son email
-    const existing = await Users.findOne({ where: { mail: mail }});
+    const existing = await Users.findOne({ where: { email: email }});
     if (existing) {
       return res.status(409).json({ error: "L'email renseigné est déjà utilisé." });
     }
@@ -53,7 +53,7 @@ const authentication = {
 
     try {
       // Enregistrer la nouvelle liste en DB
-      const result = await Users.create({ pseudo, password: hash, mail, role_id: 3 });
+      const result = await User.create({ user_name, password: hash, email, role_id: 3 });
 
       // Retourner en JSON la nouvelle liste créée, avec toutes ses valeurs (id, title, position, etc.)
       res.status(201).json(result);
@@ -67,20 +67,20 @@ const authentication = {
   async login(req, res) {
     try {
       // Récupérer l'email et le mot de passe fourni depuis req.body
-      const { password, mail } = req.body;
+      const { password, email } = req.body;
 
       // Valider la présence des champs
-      if (! password || ! mail) {
+      if (! password || ! email) {
         return res.status(400).json({ error: "Tous les champs sont obligatoires." });
       }
 
       // Récupérer en BDD l'utilisateur par son email, si pas d'utilisateur
-      const user = await Users.findOne({ 
-        where: { mail : mail },
+      const user = await User.findOne({ 
+        where: { email : email },
         include: {
           model: Role,
           as: 'role',
-          attributes: ['description']  // On veut le nom du rôle
+          attributes: ['name']  // On veut le nom du rôle
         }
       });
       if (!user) {
@@ -98,7 +98,7 @@ const authentication = {
       const tokenExpiry = process.env.ACCESS_TOKEN_EXPIRES_IN;
       const token = jwt.sign({ 
         id: user.id, 
-        mail: user.mail,
+        mail: user.email,
         role_id: user.role_id,
       }, accessTokenSecret, { expiresIn: tokenExpiry }  // Expiration 
       );
@@ -113,17 +113,17 @@ const authentication = {
     try {
       const id = req.user.id;
  
-      const user = await Users.findByPk(id, {
+      const user = await User.findByPk(id, {
         attributes: { exclude: ['password'] },include: [
           {
             model: Role,
             as: 'role',
-            attributes: ['description']
+            attributes: ['name']
           },
           {
             model: Lesson,
             as: 'favorite_lessons',
-            attributes: ['id', 'name', 'media'],
+            attributes: ['id', 'title', 'media_url'],
             include: [
               {
                 model: Category,
@@ -134,14 +134,14 @@ const authentication = {
           },
           
           {
-            model: Question,
-            as: 'questions',
-            attributes: ['id', 'text']
+            model: Topic,
+            as: 'topics',
+            attributes: ['id', 'content']
           },
           {
-            model: Response,
-            as: 'responses',
-            attributes: ['id', 'text']
+            model: Reply,
+            as: 'replies',
+            attributes: ['id', 'content']
           }
         ]
       });

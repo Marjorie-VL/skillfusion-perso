@@ -10,7 +10,7 @@ Role.init(
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		description: {
+		name: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},

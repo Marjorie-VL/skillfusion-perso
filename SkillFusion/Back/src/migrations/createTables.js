@@ -2,6 +2,13 @@
 import { sequelize } from "../models/association.js";
 
 try {
+  // Supprimer d'anciens artefacts de schéma non gérés par les models actuels
+  await sequelize.query('DROP TABLE IF EXISTS "users_has_favorites" CASCADE;');
+  await sequelize.query('DROP TABLE IF EXISTS "users" CASCADE;');
+  await sequelize.query('DROP TABLE IF EXISTS "roles" CASCADE;');
+  await sequelize.query('DROP TABLE IF EXISTS "questions" CASCADE;');
+  await sequelize.query('DROP TABLE IF EXISTS "responses" CASCADE;');
+
   // Nettoie la DB en supprimant les tables 
   await sequelize.drop();
   

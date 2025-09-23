@@ -3,39 +3,18 @@ import { lessonSchema, updateLessonSchema } from "../middleware/validation.js";
 
 const lessonController = {
 
-//Recupère tous les cours
+//Recupère tous les cours avec leur catégorie (filtre optionnel par category_id)
   async getAllLessons(req, res) {
-    console.log('🔍 getAllLessons called');
-    console.log('📝 Request query:', req.query);
-    
-    const categoryId = req.query.category_id; // Utilise category_id pour correspondre à la query string
-
-  try {
-    if (categoryId) {
-      console.log('🎯 Filtering by category_id:', categoryId);
-      const lessons = await Lesson.findAll({
-        where: { category_id: categoryId }, // Assurez-vous d'utiliser 'category_id' comme clé
-        include: ['category'],
-      });
-
-      const category = await Category.findByPk(categoryId);
-      console.log('✅ Found lessons for category:', lessons.length);
-      return res.json({
-        lessons,
-        categoryName: category?.name || 'Non spécifié', // Renvoie le nom de la catégorie
-      });
-    }
-     
-    console.log('📚 Fetching all lessons');
-    const lessons = await Lesson.findAll({
-      include: ['category'],
-    });
-
-    console.log('✅ Found lessons:', lessons.length);
-    res.status(200).json(lessons);
+    try {
+      const where = {};
+      if (req.query?.category_id) {
+        where.category_id = req.query.category_id;
+      }
+      const lessons = await Lesson.findAll({ where, include: ['category'] });
+      return res.status(200).json(lessons);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -61,15 +40,15 @@ const lessonController = {
 //Ajoute un cours
   async addLesson(req, res) {
     try {
-      const { name, text, category_id, users_id, materials, steps, media } = req.body;
+      const { title, description, category_id, user_id, materials, steps, media } = req.body;
 
       // Validation simple
-      if (!name || !text || !category_id || !users_id) {
-        return res.status(400).json({ error: 'Nom, texte, catégorie_id et users_id sont requis.' });
+      if (!title || !description || !category_id || !user_id) {
+        return res.status(400).json({ error: 'Nom, description, catégorie_id et users_id sont requis.' });
       }
 
       //  Valider avec Joi
-      const { error } = lessonSchema.validate({ name, text, materials, steps }, { abortEarly: false });
+      const { error } = lessonSchema.validate({ title, description, materials, steps }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }
         const errors = {};
@@ -82,17 +61,19 @@ const lessonController = {
 
       // Création de la leçon principale
       const lesson = await Lesson.create({
-        name,
-        text,
-        media,
+        title,
+        description,
+        is_published,
+        media_url,
+        media_alt,
         category_id,
-        users_id
+        user_id
       });
 
       //Ajout des materials s'ils existent
       if (Array.isArray(materials) && materials.length > 0) {
         await Promise.all(materials.map(material =>
-          lesson.createMaterial({name : material}) // ou lesson.addMaterial selon tes associations
+          lesson.createMaterial({title : material}) // ou lesson.addMaterial selon tes associations
         ));
       }
 
@@ -102,7 +83,7 @@ const lessonController = {
         lesson.createStep({
           title: step.title,
           description: step.description,
-          media: step.media
+          media_url: step.media_url
         }) // ou lesson.addStep selon tes associations
       ));
     }
@@ -118,43 +99,78 @@ const lessonController = {
       res.status(500).json({ error: 'Erreur lors de la création de la leçon.' });
     }
   },
-
-//Met à jour un cours
-  async updateLesson(req, res, next) {
-
+// Met à jour un cours
+async updateLesson(req, res) {
+  const t = await sequelize.transaction();
+  try {
     const lesson = await Lesson.findByPk(req.params.id, {
-      include: ["category", "materials", "steps"]
+      include: ["category", "materials", "steps", "user"],
+      transaction: t,
     });
-    console.log("ID reçu :", req.params.id);
 
     if (!lesson) {
-      return res.status(404).json({ error: "Leçon non trouvée." });
-    }
-    
-    //  Valider avec Joi uniquement les champs présents dans req.body
-    const { error } = updateLessonSchema.validate( req.body , { abortEarly: false });
-    if (error) {
-      // Transformer les erreurs Joi en objet simple { champ: message }
-      const errors = {};
-      error.details.forEach(detail => {
-        const key = detail.path[0];
-        errors[key] = detail.message;
-      });
-      return res.status(400).json({ errors });
+      await t.rollback();
+      return res.status(404).json({ success: false, message: "Leçon non trouvée." });
     }
 
-    for (const key in req.body) {
-      // On vérifie que la clé existe avant de mettre à jour => permet de ne pas utilser d'éventuelles
-      // clés inconnues dans le Model
-      if (lesson[key] !== undefined) {
-        lesson[key] = req.body[key];
+    // Validation Joi (permet mises à jour partielles)
+    const { error } = updateLessonSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const errors = {};
+      error.details.forEach(d => (errors[d.path[0]] = d.message));
+      await t.rollback();
+      return res.status(400).json({ success: false, message: "Erreur de validation.", errors });
+    }
+
+    const { title, description, category_id, user_id, media_url, materials, steps } = req.body;
+
+    // Mise à jour des champs basiques
+    if (title !== undefined) lesson.title = title;
+    if (description !== undefined) lesson.description = description;
+    if (category_id !== undefined) lesson.category_id = category_id;
+    if (user_id !== undefined) lesson.user_id = user_id;
+    if (media_url !== undefined) lesson.media_url = media_url;
+
+    await lesson.save({ transaction: t });
+
+    // Materials
+    if (materials !== undefined) {
+      await lesson.setMaterials([], { transaction: t });
+      if (Array.isArray(materials) && materials.length > 0) {
+        await Promise.all(materials.map(m => lesson.createMaterial({ name: m }, { transaction: t })));
       }
     }
 
-    await lesson.save();
+    // Steps
+    if (steps !== undefined) {
+      await lesson.setSteps([], { transaction: t });
+      if (Array.isArray(steps) && steps.length > 0) {
+        await Promise.all(
+          steps.map(s =>
+            lesson.createStep({
+              title: s.title,
+              description: s.description,
+              media_url: s.media_url,
+            }, { transaction: t })
+          )
+        );
+      }
+    }
 
-    res.status(200).json(lesson);
-  },
+    await t.commit();
+
+    const updatedLesson = await Lesson.findByPk(lesson.id, {
+      include: ["category", "materials", "steps", "user"],
+    });
+
+    res.status(200).json({ success: true, lesson: updatedLesson });
+
+  } catch (error) {
+    await t.rollback();
+    console.error("Erreur Sequelize →", error);
+    res.status(500).json({ success: false, message: "Erreur lors de la mise à jour de la leçon.", details: error.message });
+  }
+},
 
   //Supprime un cours
   async deleteLesson(req, res, next) {

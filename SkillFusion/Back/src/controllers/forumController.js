@@ -1,16 +1,16 @@
-import { Question, Users } from "../models/association.js";
-import { Response } from "../models/association.js";
+import { Topic, User } from "../models/association.js";
+import { Reply } from "../models/association.js";
 import { messageSchema, responseSchema } from "../middleware/validation.js";
 
 
 const forumController = {
-	// Récupérer toutes les discussions
-	async getAllMessages(req, res) {
+	// Récupérer tous les sujets de discussion
+	async getAllTopics(req, res) {
 		try {
-			const forums = await Question.findAll({
+			const discussions = await Topic.findAll({
 			});
 
-			res.status(200).json({forums});
+			res.status(200).json({discussions});
 		} catch (error) {
 			console.error(error);
 			res.status(500).json({ error: 'Erreur lors de la récupération des sujets' });
@@ -18,33 +18,33 @@ const forumController = {
 	},
 
 	// Récupérer une discussion et ses réponses associées
-	async getOneMessage(req, res) {
+	async getOneDiscussion(req, res) {
 		try {
 			const id = req.params.id
-			const forums = await Question.findByPk(id, {
+			const discussion = await Topic.findByPk(id, {
 				include: [
 					{
-					model: Response,
-					as: 'responses', // Inclure les réponses associées  
+					model: Reply,
+					as: 'replies', // Inclure les réponses associées  
 					include: [
 						{
-						model: Users,
-						as: 'users', // Inclure l'auteur           
+						model: User,
+						as: 'user', // Inclure l'auteur           
 						}
 					]// Inclure l'auteur de la réponse                        
 					},  
 					{
-					model: Users,
-					as: 'users', // Inclure l'auteur           
+					model: User,
+					as: 'user', // Inclure l'auteur           
 					},  
 				],
 				});
 
-			if (!forums) {
+			if (!discussion) {
 				res.status(404).json({ error: 'Erreur lors de la récupération du sujet' });
 			}
 
-			res.status(200).json({forums});
+			res.status(200).json({discussion});
 
 		} catch (error) {
 			console.error(error);
@@ -53,18 +53,18 @@ const forumController = {
 	},
 
 	// Ajouter une discussion
-	async addMessage(req, res) {
+	async addTopic(req, res) {
 		try {
-			const { title, text} = req.body;
+			const { title, content} = req.body;
 			const userId = req.user.id;
 			
 			// Vérifier que tous les champs sont présents
-			if (!title ||!text) {
-				return res.status(400).json({ error: "Les champs titre et texte sont obligatoires !" });
+			if (!title ||!content) {
+				return res.status(400).json({ error: "Les champs titre et content sont obligatoires !" });
 			}
 		
 			//  Valider avec Joi
-			const { error } = messageSchema.validate({ title, text }, { abortEarly: false });
+			const { error } = messageSchema.validate({ title, content }, { abortEarly: false });
 			if (error) {
 				// Transformer les erreurs Joi en objet simple { champ: message }
 				const errors = {};
@@ -75,15 +75,15 @@ const forumController = {
 				return res.status(400).json({ errors });
 			  }
 			
-			// Vérifie que la question n'existe pas déjà
-			const existingQuestion = await Question.findOne({ where: { text } });
-			if (existingQuestion) {
+			// Vérifie que le sujet n'existe pas déjà
+			const existingTopic = await Topic.findOne({ where: { content } });
+			if (existingTopic) {
 				return res.status(409).json({ error: "Ce sujet existe déjà" });
 			}
 
-			const forum = await Question.create({ title, text, users_id: userId });
+			const topic = await Topic.create({ title, content, user_id: userId });
 	
-			res.status(201).json(forum);
+			res.status(201).json(topic);
 
 		} catch (error) {
 			console.error(error); 
@@ -92,18 +92,18 @@ const forumController = {
 	},
 
 	// Ajouter une réponse à une discussion
-	async addMessageToResponse(req, res) {
+	async addReply(req, res) {
 		try {
-			const { text } = req.body;
-			const questionId = req.params.id;
+			const { content } = req.body;
+			const topicId = req.params.id;
 			const userId = req.user.id; // récupéré grâce à ton middleware d'auth
 
 			// Vérifier que tous les champs sont présents
-			if (!text ) {
-				return res.status(400).json({ error: "Le champ 'text' est obligatoire !" });
+			if (!content ) {
+				return res.status(400).json({ error: "Le champ 'content' est obligatoire !" });
 			}
 			  //  Valider avec Joi
-			const { error } = responseSchema.validate({ text }, { abortEarly: false });
+			const { error } = responseSchema.validate({ content }, { abortEarly: false });
 			if (error) {
 				// Transformer les erreurs Joi en objet simple { champ: message }
 				const errors = {};
@@ -113,19 +113,19 @@ const forumController = {
 				});
 				return res.status(400).json({ errors });
 			  }
-			// Vérifie que la question existe
-			const question = await Question.findByPk(questionId)
-			if (!question) {
+			// Vérifie que le sujet existe
+			const topic = await Topic.findByPk(topicId)
+			if (!topic) {
 				return res.status(404).json({ error: "Sujet introuvable" });
 			}
 
 			 // Crée la réponse avec les bonnes données
-			 const response = await Response.create({
-				text,
-				question_id: questionId,
-				users_id: userId,
+			 const reply = await Reply.create({
+				content,
+				topic_id: topicId,
+				user_id: userId,
 			  });
-			res.status(201).json(response);
+			res.status(201).json(reply);
 
 		} catch (error) {
 			console.error(error); // Ajoute ça pour voir le vrai problème s'il y en a un
@@ -133,20 +133,20 @@ const forumController = {
 		}
 	},
 
-	// Effacer une discussion
-	async deleteMessage(req, res) {
+	// Effacer une discussion (sujet + réponses associées)
+	async deleteDiscussion(req, res) {
 		try {
 				
-			const message = await Question.findByPk(req.params.id);
+			const message = await Topic.findByPk(req.params.id);
 			if (!message) {
-				return res.status(404).json({ error: "Question introuvable" });
+				return res.status(404).json({ error: "Discussion introuvable" });
 			}
 					
 				// Suppression de la discussion
 			await message.destroy();
 									
 			res.status(200).json({ 
-				message: "Question supprimée avec succès",
+				message: "Discussion supprimée avec succès",
 			});
 
 		} catch (error) {
@@ -155,33 +155,33 @@ const forumController = {
 		}
 	},
 
-	// Effacer un message
-	async deleteResponse(req, res) {
+	// Effacer une réponse
+	async deleteReply(req, res) {
 		try {
-			const { answer_id } = req.params; // ID de la réponse à supprimer
-			const { id } = req.params; // ID de la question
+			const { reply_id } = req.params; // ID de la réponse à supprimer
+			const { id } = req.params; // ID de la discussion
 
 			// Vérifications des paramètres
-			if (!answer_id || !id) {
-				res.status(400).json({ error: "Le champ 'answer_id' et 'id' est obligatoire !" });
+			if (!reply_id || !id) {
+				res.status(400).json({ error: "Le champ 'reply_id' et 'id' est obligatoire !" });
 			}
 			
 			// Chercher la réponse spécifique
-			const response = await Response.findOne({
+			const reply = await Reply.findOne({
 				where: {
-					id: answer_id,
-					question_id: id
+					id: reply_id,
+					topic_id: id
 				}
 			});
 
-			if (!response) {
+			if (!reply) {
 				res.status(404).json({ error: "Réponse introuvable pour cette discussion" });
 			}
 
 			// Suppression de la réponse
-			await response.destroy();;
+			await reply.destroy();;
 	
-			res.status(201).json(response);
+			res.status(201).json(reply);
 
 		} catch (error) {
 			console.error(error);

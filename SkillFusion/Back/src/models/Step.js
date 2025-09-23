@@ -22,8 +22,12 @@ Step.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    media:{
+    media_url:{
       type: DataTypes.STRING,
+    },
+    media_alt: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     lesson_id: {
       type: DataTypes.INTEGER,

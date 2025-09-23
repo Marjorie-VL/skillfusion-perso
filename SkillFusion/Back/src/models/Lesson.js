@@ -11,29 +11,33 @@ Lesson.init (
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
+    title: {
       type: DataTypes.STRING,
       validate: {
-        len: [3, 250]
+        len: [3, 255]
       },
       allowNull: false,
       unique: true,
     },
-    text: {
+    description: {
       type: DataTypes.TEXT,
       validate: {
-        len: [3, 250]
+        len: [3, 255]
       },
       allowNull: false
     },
-    media:{
+    media_url:{
       type: DataTypes.STRING,
+    },
+    media_alt: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     category_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    users_id: {
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

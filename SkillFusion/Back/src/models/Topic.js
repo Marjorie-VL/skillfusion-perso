@@ -1,9 +1,9 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "./connection.js";
 
-export class Question extends Model {}
+export class Topic extends Model {}
 
-Question.init(
+Topic.init(
     {
         id: {
         type: DataTypes.INTEGER,
@@ -13,20 +13,18 @@ Question.init(
         title: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-       
-        
-        text: {
+        },       
+        content: {
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        users_id: {
+        user_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
         }
     },
     {
         sequelize,
-        tableName: 'question',
+        tableName: 'topic',
     }
 );

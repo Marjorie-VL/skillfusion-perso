@@ -1,35 +1,30 @@
 import { Model, DataTypes } from "sequelize";
 import { sequelize } from "./connection.js";
 
-export class Users extends Model {}
+export class Reply extends Model {}
 
-Users.init(
-
+Reply.init(
 	{
 		id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
 			autoIncrement: true,
 		},
-		pseudo: {
-			type: DataTypes.STRING,
+		content: {
+			type: DataTypes.TEXT,
 			allowNull: false,
 		},
-		password: {
-			type: DataTypes.STRING,
+		topic_id: {
+			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
-		mail: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		role_id: {
+		user_id: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
 	},
 	{
 		sequelize,
-		tableName: "users",
+		tableName: "reply",
 	},
 );

@@ -1,29 +1,29 @@
 BEGIN;
 
 DROP TABLE IF EXISTS
-"response",
-"question",
-"users_has_favorites",
+"topic",
+"reply",
+"favorite",
 "material",
 "step",
 "lesson",
 "category",
-"users",
+"user",
 "role"
 CASCADE;
 
 -- Table: Role
 CREATE TABLE role (
   "id" SERIAL PRIMARY KEY,
-  "description" VARCHAR(50) NOT NULL
+  "name" VARCHAR(100) NOT NULL
 );
 
--- Table: Users
-CREATE TABLE "users" (
+-- Table: User
+CREATE TABLE "user" (
   "id" SERIAL PRIMARY KEY,
-  "pseudo" VARCHAR(100) NOT NULL,
-  "password" VARCHAR(100) NOT NULL, 
-  "mail" VARCHAR(100) NOT NULL,
+  "user_name" VARCHAR(100) NOT NULL,
+  "email" VARCHAR(100) NOT NULL,
+  "password" VARCHAR(255) NOT NULL, 
   "role_id" INTEGER NOT NULL,
   FOREIGN KEY ("role_id") REFERENCES "role"("id") ON DELETE CASCADE
 );
@@ -31,28 +31,31 @@ CREATE TABLE "users" (
 -- Table: Category
 CREATE TABLE "category" (
   "id" SERIAL PRIMARY KEY,
-  "name" VARCHAR(110) UNIQUE NOT NULL
+  "name" VARCHAR(100) UNIQUE NOT NULL
 );
 
 -- Table: Lesson
 CREATE TABLE "lesson" (
   "id" SERIAL PRIMARY KEY,
-  "name" VARCHAR(100) UNIQUE,
-  "text" TEXT,
-  "media" TEXT,
+  "title" VARCHAR(255) UNIQUE,
+  "description" TEXT,
+  "is_published" BOOLEAN DEFAULT FALSE,
+  "media_url" TEXT,
+  "media_alt" TEXT NOT NULL,
   "category_id" INTEGER NOT NULL,
-  "users_id" INTEGER NOT NULL,
+  "user_id" INTEGER NOT NULL,
   FOREIGN KEY ("category_id") REFERENCES "category"("id") ON DELETE CASCADE,
-  FOREIGN KEY ("users_id") REFERENCES "users"("id") ON DELETE CASCADE
+  FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE
 );
 
 -- Table: Step
 CREATE TABLE "step" (
   "id" SERIAL PRIMARY KEY,
   "step_order" INTEGER NOT NULL,
-  "title" VARCHAR(256),
+  "title" VARCHAR(255),
   "description" TEXT,
-  "media" TEXT,
+  "media_url" TEXT,
+  "media_alt" TEXT NOT NULL,
   "lesson_id" INTEGER NOT NULL,
   FOREIGN KEY ("lesson_id") REFERENCES "lesson"("id") ON DELETE CASCADE
 );
@@ -60,37 +63,38 @@ CREATE TABLE "step" (
 -- Table: Material
 CREATE TABLE "material" (
   "id" SERIAL PRIMARY KEY,
-  "name" VARCHAR(256),
+  "name" VARCHAR(255),
+  "quantity" INTEGER,
   "lesson_id" INTEGER NOT NULL,
   FOREIGN KEY ("lesson_id") REFERENCES "lesson"("id") ON DELETE CASCADE
 );
 
--- Table: User_has_favorites
-CREATE TABLE "users_has_favorites" (
+-- Table: favorite
+CREATE TABLE "favorite" (
   "id" SERIAL PRIMARY KEY,
-  "users_id" INTEGER NOT NULL,
+  "user_id" INTEGER NOT NULL,
   "lesson_id" INTEGER NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW(),
-  FOREIGN KEY ("users_id") REFERENCES "users"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE,
   FOREIGN KEY ("lesson_id") REFERENCES "lesson"("id") ON DELETE CASCADE
   );
 
--- Table: Question
-CREATE TABLE "question" (
+-- Table: topic
+CREATE TABLE "topic" (
   "id" SERIAL PRIMARY KEY,
-  "text" TEXT NOT NULL,
-  "users_id" INTEGER NOT NULL,
-  FOREIGN KEY ("users_id") REFERENCES "users"("id") ON DELETE CASCADE
+  "title" VARCHAR(255) NOT NULL,
+  "content" TEXT NOT NULL,
+  "user_id" INTEGER NOT NULL,
+  FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE
 );
 
--- Table: Response
-CREATE TABLE "response" (
+-- Table: Reply
+CREATE TABLE "reply" (
   "id" SERIAL PRIMARY KEY,
-  "text" TEXT NOT NULL,
-  "question_id" INTEGER NOT NULL,
-  "users_id" INTEGER NOT NULL,
-  FOREIGN KEY ("question_id") REFERENCES "question"("id") ON DELETE CASCADE,
-  FOREIGN KEY ("users_id") REFERENCES "users"("id") ON DELETE CASCADE
+  "content" TEXT NOT NULL,
+  "topic_id" INTEGER NOT NULL,
+  "user_id" INTEGER NOT NULL,
+  FOREIGN KEY ("topic_id") REFERENCES "topic"("id") ON DELETE CASCADE,
+  FOREIGN KEY ("user_id") REFERENCES "user"("id") ON DELETE CASCADE
 );
 
 COMMIT;

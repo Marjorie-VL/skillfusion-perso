@@ -1,4 +1,4 @@
-import { Users, Lesson, Role } from "../models/association.js";
+import { User, Lesson, Role } from "../models/association.js";
 
 const boardController = {
   // Ajoute une leçon aux favoris de l'utilisateur connecté
@@ -14,7 +14,7 @@ const boardController = {
       }
 
       // Récupère l'utilisateur
-      const user = await Users.findByPk(userId);
+      const user = await User.findByPk(userId);
       if (!user) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
@@ -42,7 +42,7 @@ const boardController = {
       }
 
       // Vérifie si l'utilisateur existe
-      const user = await Users.findByPk(userId);
+      const user = await User.findByPk(userId);
       if (!user) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }

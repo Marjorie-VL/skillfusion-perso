@@ -10,7 +10,7 @@ const categoryController = {
         {
           model: Lesson,
           as: 'lessons',
-          attributes: ['name'],                              
+          attributes: ['title'],                              
         },    
         ],
       });

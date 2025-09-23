@@ -1,11 +1,11 @@
-import { Users, Role, Lesson } from "../models/association.js";
+import { User, Role, Lesson } from "../models/association.js";
 import { updateUserSchema } from "../middleware/validation.js";
 
 const accountController = {
   //Récupere les données de tous les utilisateurs
-  async getAllUsers(req, res) {
+  async getAllUser(req, res) {
     try {
-      const allUsers = await Users.findAll({
+      const allUser = await User.findAll({
         include: [
           {
             model: Role,
@@ -13,7 +13,7 @@ const accountController = {
           }   
         ],
       });
-      res.status(200).json({allUsers});
+      res.status(200).json({allUser});
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Erreur lors de la récupération des données' });
@@ -24,7 +24,7 @@ const accountController = {
   async getOneUser(req, res) {
     try {
       const id = req.params.id;
-      const oneUser = await Users.findByPk(id,{include: [
+      const oneUser = await User.findByPk(id,{include: [
         {
           model: Role,
           as: 'role',
@@ -48,7 +48,7 @@ const accountController = {
   async deleteUser(req, res) {
     try {
       // Vérifie que le compte existe
-      const user = await Users.findByPk(req.params.id);
+      const user = await User.findByPk(req.params.id);
       if (!user) {
         return res.status(404).json({ error: "Compte introuvable" });
       }
@@ -71,10 +71,10 @@ const accountController = {
     try {
       // Vérifie que le compte existe
       const id = req.params.id;
-      const { pseudo, password, mail, role_id } = req.body;
+      const { user_name, password, email, role_id } = req.body;
 
       // Valider avec Joi
-      const { error } = updateUserSchema.validate({ pseudo, mail, password }, { abortEarly: false });
+      const { error } = updateUserchema.validate({ user_name, email, password }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }
         const errors = {};
@@ -85,7 +85,7 @@ const accountController = {
         return res.status(400).json({ errors });
       }
 
-      const user = await Users.findByPk(id);
+      const user = await User.findByPk(id);
       if (!user){
         return res.status(409).json({error: "utilisateur introuvable"});
       }
@@ -97,7 +97,7 @@ const accountController = {
      
       // Vérifie que l'e-mail ne soit pas déjà utilisé
       //if (mail && mail !== user.mail) {
-        const existingUser = await Users.findOne({ where: { mail } });
+        const existingUser = await User.findOne({ where: { mail } });
         if (existingUser && existingUser.id !== user.id) {
           return res.status(409).json({ error: "Un compte avec ce mail existe déjà" });
         }
@@ -138,7 +138,7 @@ const accountController = {
       const { role_id } = req.body;
 
       // Valider avec Joi
-      const { error } = updateUserSchema.validate({ pseudo }, { abortEarly: false });
+      const { error } = updateUserchema.validate({ pseudo }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }
         const errors = {};
@@ -149,7 +149,7 @@ const accountController = {
         return res.status(400).json({ errors });
       }
 
-      const user = await Users.findByPk(id);
+      const user = await User.findByPk(id);
       if (!user){
         return res.status(409).json({error: "utilisateur introuvable"});
       }
