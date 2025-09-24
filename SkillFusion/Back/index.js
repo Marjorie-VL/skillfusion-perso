@@ -1,34 +1,32 @@
 import "dotenv/config";
 import express from "express";
 import { router } from "./src/router.js";
-import cors from "cors";
 import { xss } from "express-xss-sanitizer";
+
+// Middlewares custom
+import { corsConfig } from "./src/middlewares/corsConfig.js";
+import { errorHandler } from "./src/middlewares/errorHandler.js";
 
 // Création de l'app Express
 const app = express();
-// Body parser
-app.use(express.urlencoded({ extended : true })); // Body applications/www-x-urlencoded
-// Pour pouvoir utiliser le req.body et récupérer le JSON envoyé par le client
-app.use(express.json());
 
-app.use(cors({
-  // On définit certains noms de domaines qu'on veut autoriser (certaines origines de notre appel)
-  origin: (origin, callback) => {
-    // Autoriser toutes les origines "localhost" ou "127.0.0.1", peu importe le port
-    if (!origin || /^(http:\/\/localhost:\d+|http:\/\/127\.0\.0\.1:\d+)$/.test(origin)) {
-      callback(null, true); // Autoriser l'origine
-    } else {
-      callback(new Error("Not allowed by CORS")); // Bloquer l'origine
-    }
-  },
-}));
-
+// --- Middlewares globaux ---
+// Sécurité : XSS sanitizer (avant la lecture du corps)
 app.use(xss());
+app.use(express.urlencoded({ extended: true })); 
+app.use(express.json());
+app.use(corsConfig);
 
-// Configuration du router
+// --- Router principal ---
 app.use(router);
 
-// Lancement du serveur
+// --- Gestion des erreurs ---
+app.use(errorHandler);
+
+// --- Router principal ---
+app.use(router);
+
+// --- Lancement du serveur ---
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`🚀 Server started at http://localhost:${port}`);

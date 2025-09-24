@@ -1,5 +1,5 @@
 import { Category, Lesson } from "../models/association.js";
-import { lessonSchema, updateLessonSchema } from "../middleware/validation.js";
+import { lessonSchema, updateLessonSchema } from "../middlewares/validation.js";
 
 const lessonController = {
 

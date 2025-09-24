@@ -69,7 +69,7 @@ User.hasMany(Topic, {
     onDelete: "CASCADE"
 });
 Topic.belongsTo(User, {
-    as: "users",
+    as: "user",
     foreignKey: { name: "user_id", allowNull: false },
     onDelete: "CASCADE"
 });

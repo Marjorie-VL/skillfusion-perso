@@ -5,9 +5,8 @@ import { forumController } from "../src/controllers/forumController.js";
 import { accountController } from "../src/controllers/accountController.js";
 import { authentication } from "../src/controllers/authenticationController.js";
 import { boardController } from "../src/controllers/boardController.js";
-import { authenticateToken } from './middleware/authenticateToken.js';
-import { isAdmin } from './middleware/authorizeRole.js';
-import { isAdminOrInstructor } from './middleware/authorizeRole.js';
+import { authenticateToken } from './middlewares/authenticateToken.js';
+import { isAdmin, isAdminOrInstructor, isSelfOrAdmin } from './middlewares/authorizeRole.js';
 
 export const router = Router();
 
@@ -41,10 +40,10 @@ router.delete("/categories/:id", authenticateToken, isAdminOrInstructor, categor
 
 
 // Routes ACCOUNT
-router.get("/users",  accountController.getAllUser);// affiche la liste des utilisateurs avec leur rôle
+router.get("/users",  accountController.getAllUsers);// affiche la liste des utilisateurs avec leur rôle
 router.get("/users/:id", authenticateToken, isAdmin,accountController.getOneUser);// affiche le compte d'un utilisateur
 // router.get("/users/:id/favorites", authenticateToken, accountController.getAllFavorites); // affiche la liste des leçons favorites d'un utilisateur
-router.patch("/users/:id", authenticateToken, accountController.updateUser);// modifie un compte
+router.patch("/users/:id", authenticateToken, isSelfOrAdmin, accountController.updateUser);// modifie un compte (soi-même ou admin)
 router.delete("/users/:id", authenticateToken, isAdmin, accountController.deleteUser);// supprime le compte d'un utilisateur
 
 
@@ -57,11 +56,11 @@ router.get("/roles", boardController.getAllRoles);// affiche la liste des rôles
 // Route FORUM
 router.get("/forum", authenticateToken, forumController.getAllTopics);// affiche la liste des sujets
 router.post("/forum", authenticateToken, forumController.addTopic);// ajoute un sujet
-router.delete("/forum/:topicId", authenticateToken, isAdmin,forumController.deleteDiscussion);// supprimer un sujet et ses réponses
-router.get("/forum/:topicId", authenticateToken, forumController.getOneDiscussion);// Affiche un sujet et ses réponses
+router.delete("/forum/:id", authenticateToken, isAdmin,forumController.deleteDiscussion);// supprimer un sujet et ses réponses
+router.get("/forum/:id", authenticateToken, forumController.getOneDiscussion);// Affiche un sujet et ses réponses
 router.post("/forum/:topicId/reply", authenticateToken, forumController.addReply);// ajoute une réponse à un sujet
 /*TODO Rajouter la route PATCH*/
 // router.patch("/forum/:topicId/reply/:replyId", authenticateToken, forumController.updateReply);// modifier une réponse 
-router.delete("/forum/:topicId/reply/:replyId", authenticateToken, isAdmin,forumController.deleteReply);// supprimer une réponse 
+router.delete("/forum/:id/reply/:replyId", authenticateToken, isAdmin,forumController.deleteReply);// supprimer une réponse 
 
 

@@ -1,6 +1,6 @@
 import { Category } from "../models/association.js";
 import { Lesson } from "../models/association.js";
-import { categorySchema, updateCategorySchema } from "../middleware/validation.js";
+import { categorySchema, updateCategorySchema } from "../middlewares/validation.js";
 
 const categoryController = {
   async getAllCategories(req, res) {

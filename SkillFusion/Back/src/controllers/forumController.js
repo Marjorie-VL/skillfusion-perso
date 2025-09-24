@@ -1,6 +1,6 @@
 import { Topic, User } from "../models/association.js";
 import { Reply } from "../models/association.js";
-import { messageSchema, responseSchema } from "../middleware/validation.js";
+import { messageSchema, responseSchema } from "../middlewares/validation.js";
 
 
 const forumController = {
@@ -32,11 +32,7 @@ const forumController = {
 						as: 'user', // Inclure l'auteur           
 						}
 					]// Inclure l'auteur de la réponse                        
-					},  
-					{
-					model: User,
-					as: 'user', // Inclure l'auteur           
-					},  
+					},    
 				],
 				});
 

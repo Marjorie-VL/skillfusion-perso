@@ -2,14 +2,14 @@ import PasswordValidator from "password-validator";
 import argon2 from "argon2";
 import jwt from 'jsonwebtoken';
 import { User, Role, Lesson, Topic, Reply, Category } from "../models/association.js";
-import { userSchema } from "../middleware/validation.js";
+import { userSchema } from "../middlewares/validation.js";
 
 const authentication = {
 
   // Inscription d'un utilisateur
   async registerUser(req, res) {
     // Récupérer les données du body
-    const { user_name, password, email, role_id } = req.body;
+    const { user_name, password, email } = req.body;
 
     // Vérifier que tous les champs sont présents
     if (!user_name || !password || !email ) {
@@ -43,7 +43,7 @@ const authentication = {
     }
 
     // Vérifier si un utilisateur avec le même email n'existe pas déjà en BDD => faire une requête pour récupérer un utilisateur par son email
-    const existing = await Users.findOne({ where: { email: email }});
+    const existing = await User.findOne({ where: { email: email }});
     if (existing) {
       return res.status(409).json({ error: "L'email renseigné est déjà utilisé." });
     }
@@ -98,7 +98,7 @@ const authentication = {
       const tokenExpiry = process.env.ACCESS_TOKEN_EXPIRES_IN;
       const token = jwt.sign({ 
         id: user.id, 
-        mail: user.email,
+        email: user.email,
         role_id: user.role_id,
       }, accessTokenSecret, { expiresIn: tokenExpiry }  // Expiration 
       );
@@ -118,7 +118,7 @@ const authentication = {
           {
             model: Role,
             as: 'role',
-            attributes: ['name']
+            attributes: ['id', 'name']
           },
           {
             model: Lesson,
@@ -128,7 +128,7 @@ const authentication = {
               {
                 model: Category,
                 as: 'category',
-                attributes: ['name']
+                attributes: ['id', 'name']
               }
             ]
           },
@@ -136,7 +136,7 @@ const authentication = {
           {
             model: Topic,
             as: 'topics',
-            attributes: ['id', 'content']
+            attributes: ['id', 'title', 'content']
           },
           {
             model: Reply,

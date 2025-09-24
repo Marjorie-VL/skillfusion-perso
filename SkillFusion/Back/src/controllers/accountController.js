@@ -1,11 +1,11 @@
 import { User, Role, Lesson } from "../models/association.js";
-import { updateUserSchema } from "../middleware/validation.js";
+import { updateUserSchema } from "../middlewares/validation.js";
 
 const accountController = {
   //Récupere les données de tous les utilisateurs
-  async getAllUser(req, res) {
+  async getAllUsers(req, res) {
     try {
-      const allUser = await User.findAll({
+      const users = await User.findAll({
         include: [
           {
             model: Role,
@@ -13,7 +13,7 @@ const accountController = {
           }   
         ],
       });
-      res.status(200).json({allUser});
+      res.status(200).json({users});
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Erreur lors de la récupération des données' });
