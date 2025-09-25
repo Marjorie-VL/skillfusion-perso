@@ -29,10 +29,16 @@ export default function LoginForm() {
         },
       });
     })
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) {
+        localStorage.removeItem("token");
+        throw new Error("Impossible de récupérer le profil");
+      }
+      return res.json();
+    })
     .then(userData => {
-      setUser(userData); // 👈 mise à jour du contexte global
-      toast.success("Inscription réussie !");
+      setUser(userData);
+      toast.success("Connexion réussie !");
       navigate("/");
     })
     .catch((err) => {

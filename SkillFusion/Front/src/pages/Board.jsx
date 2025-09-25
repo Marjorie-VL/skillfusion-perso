@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,42 @@ export default function Board() {
   const [usersData, setUsersData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const ADMIN_ROLE_ID = 1;
+
+  const fetchAccount = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.status === 401 || response.status === 404) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        throw new Error("Non authentifié");
+      }
+      if (!response.ok) throw new Error("Erreur réseau ou autorisation");
+      setUserData(await response.json());
+    } catch (err) {
+      setError(err.message);
+    }
+  }, [navigate]);
+
+  const fetchAllUsers = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
+      const payload = await response.json();
+      setUsersData(Array.isArray(payload) ? payload : (payload.users || []));
+    } catch (err) {
+      if (err.message.includes("401")) {
+        navigate("/login");
+      }      
+      setError(err.message);
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,39 +60,7 @@ export default function Board() {
       }
     };
     fetchData();
-  }, []);
-
-  const fetchAccount = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!response.ok) throw new Error("Erreur réseau ou autorisation");
-      setUserData(await response.json());
-    } catch (err) {
-      if (err.message.includes("401")) {
-        navigate("/login");
-      }      
-      setError(err.message);
-    }
-  };
-
-  const fetchAllUsers = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
-      setUsersData((await response.json()).allUsers || []);
-    } catch (err) {
-      if (err.message.includes("401")) {
-        navigate("/login");
-      }      
-      setError(err.message);
-    }
-  };
+  }, [fetchAccount, fetchAllUsers]);
 
   if (isLoading) return <div>Chargement...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
@@ -66,7 +70,7 @@ export default function Board() {
       <Header />      
       <main>
       <section className="head-button">
-      {userData?.role.name === "administrateur" ? (
+      {userData?.role_id === ADMIN_ROLE_ID ? (
         <Link to="/erreurMaintenance">
           <button className="main-button">Créer un nouveau cours</button>
         </Link>
@@ -80,7 +84,7 @@ export default function Board() {
         </Link>
       </section>
 
-        {userData?.role.name === "administrateur" ? (
+        {userData?.role_id === ADMIN_ROLE_ID ? (
           <AdminDashboard usersData={usersData} />
         ) : (
           <UserDashboard favoriteLessons={userData.favorite_lessons} user={userData}/>
