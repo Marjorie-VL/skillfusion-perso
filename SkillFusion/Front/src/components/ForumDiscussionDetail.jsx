@@ -5,7 +5,7 @@ import { useAuth } from "../services/api";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom"; // Non utilisé pour le moment
 
 export default function ForumDiscussionDetail() {
   const { topicId } = useParams(); // récupère l'ID du sujet de la discussion depuis l'URL
@@ -14,25 +14,46 @@ export default function ForumDiscussionDetail() {
   const [reply, setReply] = useState("");
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Non utilisé pour le moment
   
   useEffect(() => {
     const fetchTopic = async () => {
       const token = localStorage.getItem("token");
+      const apiUrl = `${import.meta.env.VITE_API_URL}/forum/${topicId}`;
+      
+      console.log("🌐 URL de l'API:", apiUrl);
+      console.log("🔑 Token présent:", !!token);
+      console.log("🔑 Token value:", token ? token.substring(0, 20) + "..." : "null");
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}`, {
+        const response = await fetch(apiUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        
+        console.log("📡 Statut de la réponse:", response.status);
 
         if (!response.ok) {
+          if (response.status === 401) {
+            // Token expiré, redirection vers la page de connexion
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+            return;
+          }
           throw new Error("Erreur réseau ou autorisation");
         }
 
         const data = await response.json();
-        console.log(data);
+        console.log("📊 Données reçues du backend:", data);
+        console.log("📊 Structure des données:", {
+          id: data.id,
+          title: data.title,
+          content: data.content,
+          user: data.user,
+          replies: data.replies,
+          repliesCount: data.replies?.length || 0
+        });
         
         setTopic(data);
       } catch (err) {
@@ -47,6 +68,10 @@ export default function ForumDiscussionDetail() {
 
   if (loading) return <p>Chargement...</p>;
   if (!topic) return <p>Aucune donnée trouvée.</p>;
+  
+  // Debug: Vérifier la structure du topic
+  console.log("🔍 Topic actuel:", topic);
+  console.log("🔍 Topic.replies:", topic.replies);
 
   // Fonction pour envoyer une réponse
   const handleSubmit = async (e) => {
@@ -93,7 +118,8 @@ export default function ForumDiscussionDetail() {
     if (!updatedRes.ok) throw new Error("Erreur lors du rechargement");
 
     const updatedData = await updatedRes.json();
-    setTopic(updatedData.topics); // on remplace les données par celles à jour
+    console.log("🔄 Données mises à jour après ajout de réponse:", updatedData);
+    setTopic(updatedData);
 
     } catch (error) {
       console.error(error);
@@ -101,32 +127,32 @@ export default function ForumDiscussionDetail() {
     }
   }
     // Supprimer une réponse
-    
     const handleClickDelete = async (topicId, replyId) => { 
-      let isSure = confirm("Etes-vous sûr(e) ?");
-      if(!isSure) return;
+      const isSure = confirm("Êtes-vous sûr(e) de vouloir supprimer cette réponse ?");
+      if (!isSure) return;
 
       try {
-        const reply = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}/${replyId}`,{
-  
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}/reply/${replyId}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`
           }
-         // body: JSON.stringify({user }),
         });
-          if (!reply.ok) {
-       //     throw new Error("Erreur lors de la suppression du message");
-          }
-          toast.success("Suppression du message réussie !");
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Erreur lors de la suppression de la réponse");
+        }
+        
+        toast.success("Réponse supprimée avec succès !");
 
-          // Redirection vers la liste des réponses
-          navigate(0);
+        // Recharger la page pour mettre à jour la liste des réponses
+        window.location.reload();
 
-
-        } catch (err) {
-        (err.message);
+      } catch (err) {
+        console.error("❌ Erreur suppression →", err.message);
+        toast.error("Erreur lors de la suppression : " + err.message);
       }
     }
 
@@ -147,7 +173,7 @@ export default function ForumDiscussionDetail() {
           <section className="category-box">
             <div className="category-box__title">
               <p className="forum-post__datas">
-                Créé par : {topic.users?.user_name || "Utilisateur inconnu"}
+                Créé par : {topic.user?.user_name || "Utilisateur inconnu"}
               </p>
               <p className="forum-post__datas">
                 Le : {new Date(topic.created_at).toLocaleDateString()}
@@ -161,11 +187,12 @@ export default function ForumDiscussionDetail() {
         </section>
         {/* Réponses */}
         <section className="list-category">
-          {topic.replies.map((reply) => (
+          {topic.replies && topic.replies.length > 0 ? (
+            topic.replies.map((reply) => (
             <section className="category-box" key={reply.id}>
               <div className="category-box__title">
                 <p className="forum-post__datas">
-                  Posté par : {reply.users?.user_name || "Utilisateur inconnu"}
+                  Posté par : {reply.user?.user_name || "Utilisateur inconnu"}
                 </p>
                 <p className="forum-post__datas">
                   Le : {new Date(reply.created_at).toLocaleDateString()}
@@ -174,21 +201,32 @@ export default function ForumDiscussionDetail() {
               <div className="category-box__desc">
                 <p>{reply.content.replace(/^./, (match) => match.toUpperCase())}</p>
 
-                {/* Affiche les boutons de CRD si l'utilisateur a les droits d'admin*/}
-                {user ? (
-                  <a onClick={() => handleClickDelete(topic.id,reply.id)} style={{ cursor: 'pointer' }}>
-                    <div className="crud">
-                      <p></p>
-                      <h4>{((user.role_id === 1)) ?("\ud83d\uddd1"):(" ")}</h4>
-                    </div>
-                  </a>
-                  ):(
-                  <p></p>
-                  )
-                }
+                {/* Affiche les boutons de suppression si l'utilisateur est admin ou instructeur */}
+                {user && (user.role_id === 1 || user.role_id === 2) && (
+                  <button 
+                    onClick={() => handleClickDelete(topic.id, reply.id)} 
+                    className="delete-button"
+                    title="Supprimer cette réponse"
+                    style={{ 
+                      cursor: 'pointer', 
+                      background: 'none', 
+                      border: 'none', 
+                      fontSize: '1.2em',
+                      color: '#e74c3c',
+                      marginLeft: '10px'
+                    }}
+                  >
+                    🗑️
+                  </button>
+                )}
               </div>
             </section>
-          ))}
+            ))
+          ) : (
+            <p style={{ textAlign: 'center', color: '#666', fontStyle: 'italic' }}>
+              Aucune réponse pour le moment. Soyez le premier à répondre !
+            </p>
+          )}
 
           {/* Formulaire pour envoyer une réponse */}
           <section className="forum-post__form">
