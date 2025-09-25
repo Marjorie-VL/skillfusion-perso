@@ -1,4 +1,3 @@
-import PasswordValidator from "password-validator";
 import argon2 from "argon2";
 import jwt from 'jsonwebtoken';
 import { User, Role, Lesson, Topic, Reply, Category } from "../models/association.js";
@@ -17,7 +16,7 @@ const authentication = {
     }
     
     // Valider avec Joi, avec abortEarly: false pour récupérer toutes les erreurs
-    const { error } = userSchema.validate({ user_name, email, password }, { abortEarly: false });
+    const { error } = userSchema.validate({ pseudo: user_name, email, password }, { abortEarly: false });
     if (error) {
       // Transformer les erreurs Joi en objet simple { champ: message }
       const errors = {};
@@ -28,19 +27,7 @@ const authentication = {
       return res.status(400).json({ errors });
     }
 
-    // Vérifier que le mot de passe est suffisamment complexe
-    const schema = new PasswordValidator()
-      .is().min(12)                  // 12 caractères mini
-      .is().max(100)                 // Maximum 100
-      .has().uppercase()             // 1 majuscule
-      .has().lowercase()             // 1 minuscule
-      .has().digits(1)               // 1 chiffre
-      .has().symbols(1)              // 1 symbole
-      .has().not().spaces();         // Pas d'espace
-      
-    if (! schema.validate(password)) {
-      return res.status(400).json({ error: "Le mot de passe n'est pas suffisamment complexe. Veuillez utiliser au moins 12 caractères, une majuscule, une minuscule, un chiffre et un symbole." });
-    }
+    // La validation du mot de passe est déjà gérée par Joi dans userSchema
 
     // Vérifier si un utilisateur avec le même email n'existe pas déjà en BDD => faire une requête pour récupérer un utilisateur par son email
     const existing = await User.findOne({ where: { email: email }});
@@ -56,10 +43,11 @@ const authentication = {
       const result = await User.create({ user_name, password: hash, email, role_id: 3 });
 
       // Retourner en JSON la nouvelle liste créée, avec toutes ses valeurs (id, title, position, etc.)
-      res.status(201).json(result);
+      return res.status(201).json(result);
     } catch (error) {
       // On pourrait probablement fouiller un peu la variable error pour avoir un message d'erreur plus clair, mais c'est pas le sujet du cours
-      res.status(400).json({ error: "Erreur lors de l'enregistrement en BDD"});
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -84,13 +72,13 @@ const authentication = {
         }
       });
       if (!user) {
-        return res.status(400).json({ error: "L'email et le mot de passe fournis ne correspondent pas." });
+        return res.status(401).json({ error: "L'email et le mot de passe fournis ne correspondent pas." });
       }
 
-      // Vérifier si le mot de passe est valide, si les mots de passe ne match pas --> 400
+      // Vérifier si le mot de passe est valide, si les mots de passe ne match pas --> 401
       const passwordValid = await argon2.verify(user.password, password);
       if (! passwordValid) {
-        return res.status(400).json({ error: "L'email et le mot de passe fournis ne correspondent pas." });
+        return res.status(401).json({ error: "L'email et le mot de passe fournis ne correspondent pas." });
       }
 
       // Générer un token JWT pour l'utilisateur
@@ -104,8 +92,8 @@ const authentication = {
       );
       return res.status(200).json({ token, message: "Connexion réussie",});
     } catch (err) {
-      console.error('loginUser error →', err);
-      return res.status(500).json({ error: 'Erreur serveur, veuillez réessayer plus tard.' });
+      console.error('❌ Erreur Sequelize →', err.message);
+      return res.status(500).json({ error: err.message });
     }
   },
 
@@ -114,7 +102,8 @@ const authentication = {
       const id = req.user.id;
  
       const user = await User.findByPk(id, {
-        attributes: { exclude: ['password'] },include: [
+        attributes: { exclude: ['password'] },
+        include: [
           {
             model: Role,
             as: 'role',
@@ -150,10 +139,10 @@ const authentication = {
         return res.status(404).json({ error: "Utilisateur non trouvé" });
       }
  
-      res.json(user);
+      return res.status(200).json(user);
     } catch (err) {
-      console.error("Erreur getCurrentUser :", err);
-      res.status(500).json({ error: "Erreur serveur" });
+      console.error('❌ Erreur Sequelize →', err.message);
+      return res.status(500).json({ error: err.message });
     }
   }
  
