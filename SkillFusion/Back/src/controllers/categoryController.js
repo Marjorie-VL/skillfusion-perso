@@ -1,6 +1,7 @@
 import { Category } from "../models/association.js";
 import { Lesson } from "../models/association.js";
 import { categorySchema, updateCategorySchema } from "../middlewares/validation.js";
+import { Op } from "sequelize";
 
 const categoryController = {
   async getAllCategories(req, res) {
@@ -14,10 +15,10 @@ const categoryController = {
         },    
         ],
       });
-      res.status(200).json({categories});
+      return res.status(200).json(categories);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Erreur lors de la récupération des catégories' });
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -34,12 +35,12 @@ const categoryController = {
       });
 
       if (!category) {
-        res.status(400).json({ error: 'Erreur lors de la récupération de la catégorie' });
+        return res.status(404).json({ error: 'Catégorie non trouvée' });
       }
-      res.status(200).json({category});
+      return res.status(200).json(category);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Erreur lors de la récupération des catégories' });
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -50,7 +51,7 @@ const categoryController = {
       const category = await Category.findByPk(categoryId, {
         include: [{
           model: Lesson,
-          as: 'lessons', // ou le nom que tu as utilisé dans l'association
+          as: 'lessons',
           order: [['createdAt', 'DESC']]
         }]
       });
@@ -59,13 +60,13 @@ const categoryController = {
         return res.status(404).json({ error: "Catégorie non trouvée." });
       }
   
-      return res.json({
+      return res.status(200).json({
         lessons: category.lessons,
         categoryName: category.name,
       });
     } catch (error) {
-      console.error("Erreur →", error.message);
-      return res.status(500).json({ error: "Erreur serveur." });
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
  
@@ -73,11 +74,6 @@ const categoryController = {
     try {
       const { name } = req.body;
     
-      // Vérification des champs
-      if (!name) {
-        return res.status(400).json({ error: "Le champ 'name' est obligatoire !" });
-      }
-
       //  Valider avec Joi
       const { error } = categorySchema.validate({ name }, { abortEarly: false });
       if (error) {
@@ -99,33 +95,13 @@ const categoryController = {
       // Puis insertion si OK
       const category = await Category.create({ name });
 
-      res.status(201).json(category);
+      return res.status(201).json(category);
     } catch (error) {
-      console.error(error); // Ajoute ça pour voir le vrai problème s'il y en a un
-      res.status(500).json({ error: "Erreur lors de l'enregistrement en BDD !" });
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
     
-  async deleteCategory(req, res) {
-    try {
-      // Vérifie que la catégorie existe
-      const category = await Category.findByPk(req.params.id);
-      if (!category) {
-        return res.status(404).json({ error: "Catégorie introuvable" });
-      }
-    
-      // Suppression de la catégorie
-      await category.destroy();
-            
-      res.status(200).json({ 
-        message: "Catégorie supprimée avec succès",
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Erreur lors de la suppression de la catégorie"});
-    }
-  },
-
   async updateCategory(req, res) {
     try {
       // Vérifie que la catégorie existe
@@ -133,12 +109,7 @@ const categoryController = {
       const { name } = req.body;
       const category = await Category.findByPk(id);
       if (!category) {
-        return res.sttus(404).json({ error: "Catégorie introuvable" });
-      }
-
-      // Vérification des champs
-      if (!name) {
-        return res.status(400).json({ error: "Le champ 'name' est obligatoire !" });
+        return res.status(404).json({ error: "Catégorie non trouvée" });
       }
 
       //  Valider avec Joi
@@ -153,24 +124,49 @@ const categoryController = {
         return res.status(400).json({ errors });
       }
 
-      // Vérifie que le nom ne soit pas déjà utilisé
-      const existingCategory = await Category.findOne({ where: { name } });
+      // Vérifie que le nom ne soit pas déjà utilisé par une AUTRE catégorie
+      const existingCategory = await Category.findOne({ 
+        where: { 
+          name,
+          id: { [Op.ne]: id } // Exclut la catégorie actuelle
+        } 
+      });
       if (existingCategory) {
         return res.status(409).json({ error: "Une catégorie avec ce nom existe déjà" });
       }
 
-
       // Modification de la catégorie
       await category.update({ name });
             
-      res.status(200).json({ 
+      return res.status(200).json({ 
         message: "Catégorie modifiée avec succès",
+        category: category
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ 
-        error: "Erreur lors de la modification de la catégorie",
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ 
+        error: error.message
       });
+    }
+  },
+
+  async deleteCategory(req, res) {
+    try {
+      // Vérifie que la catégorie existe
+      const category = await Category.findByPk(req.params.id);
+      if (!category) {
+        return res.status(404).json({ error: "Catégorie introuvable" });
+      }
+    
+      // Suppression de la catégorie
+      await category.destroy();
+            
+      return res.status(200).json({ 
+        message: "Catégorie supprimée avec succès",
+      });
+    } catch (error) {
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   }
 };

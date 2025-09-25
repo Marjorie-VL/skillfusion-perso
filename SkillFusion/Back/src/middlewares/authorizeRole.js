@@ -7,9 +7,17 @@ export function isAdmin(req, res, next) {
   next();  // L'utilisateur est admin, on continue
 }
 
+//Vérifier si l'utilisateur est instructeur
+export function isInstructor(req, res, next) {
+  const user = req.user;
+  if (user.role_id !== 2) {
+    return res.status(403).json({ error: "Accès interdit. Vous devez être instructeur." });
+  }
+  next();
+}
+
 //Vérifier si l'utilisateur est soit "Administrateur" ou "Instructeur"
 export function isAdminOrInstructor(req, res, next) {
-
   const user = req.user;
   if (user.role_id > 2) {
     return res.status(403).json({ error: "Accès interdit. Vous devez être administrateur ou instructeur." });
@@ -27,8 +35,22 @@ export function isSelfOrAdmin(req, res, next) {
   }
 
   if (user.id === targetUserId || user.role_id === 1) {
-    return next();
+    next();
+    return;
   }
 
   return res.status(403).json({ error: "Accès interdit. Vous ne pouvez modifier que votre propre profil." });
+}
+
+// Vérifier que l'utilisateur est propriétaire du contenu ou admin
+export function isOwnerOrAdmin(req, res, next) {
+  const user = req.user;
+  
+  // Si c'est un admin, on laisse passer
+  if (user.role_id === 1) {
+    return next();
+  }
+  
+  // Pour les autres cas, on laisse le contrôleur vérifier la propriété
+  next();
 }

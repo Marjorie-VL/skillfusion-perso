@@ -3,10 +3,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export function authenticateToken(req, res, next) {
-  const token = req.headers['authorization']?.split(' ')[1];  // On prend le token après le mot "Bearer"
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];  // On prend le token après le mot "Bearer"
 
   if (!token) {
-    return res.status(401).json({ error: "Le token est manquant ou n'est pas correctement formaté." });
+    return res.status(401).json({ error: "Token d'accès manquant." });
   }
 
   try {
@@ -15,8 +16,11 @@ export function authenticateToken(req, res, next) {
     next();
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
-      return res.status(401).json({ error: "Le token a expiré." });
+      return res.status(401).json({ error: "Token d'accès expiré." });
     }
-    return res.status(403).json({ error: "Token invalide." });
+    if (err.name === 'JsonWebTokenError') {
+      return res.status(403).json({ error: "Token d'accès invalide." });
+    }
+    return res.status(403).json({ error: "Erreur d'authentification." });
   }
 }

@@ -13,10 +13,10 @@ const accountController = {
           }   
         ],
       });
-      res.status(200).json({users});
+      return res.status(200).json(users);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Erreur lors de la récupération des données' });
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -35,12 +35,12 @@ const accountController = {
         }
       ]});
       if (!oneUser) {
-        res.status(400).json({ error: 'Erreur lors de la récupération des données' });
+        return res.status(404).json({ error: 'Utilisateur non trouvé' });
       }
-      res.status(200).json({oneUser});
+      return res.status(200).json(oneUser);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Erreur lors de la récupération des données' });
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
 
@@ -56,25 +56,29 @@ const accountController = {
       // Suppression du compte
       await user.destroy();
 
-      res.status(200).json({ 
+      return res.status(200).json({ 
         message: "Compte supprimé avec succès",
       });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Erreur lors de la suppression du compte"});
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
  
   //Met à jour les données d'un utilisateur
   async updateUser(req, res) {
-
     try {
       // Vérifie que le compte existe
       const id = req.params.id;
       const { user_name, password, email, role_id } = req.body;
 
+      const user = await User.findByPk(id);
+      if (!user){
+        return res.status(404).json({error: "Utilisateur introuvable"});
+      }
+
       // Valider avec Joi
-      const { error } = updateUserchema.validate({ user_name, email, password }, { abortEarly: false });
+      const { error } = updateUserSchema.validate({ user_name, email, password }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }
         const errors = {};
@@ -84,30 +88,20 @@ const accountController = {
         });
         return res.status(400).json({ errors });
       }
-
-      const user = await User.findByPk(id);
-      if (!user){
-        return res.status(409).json({error: "utilisateur introuvable"});
-      }
-      
-      // Vérification des champs
-      if (!pseudo || !password || !mail ) {
-        return res.status(400).json({ error: "ces champs sont obligatoires" });
-      }
      
-      // Vérifie que l'e-mail ne soit pas déjà utilisé
-      //if (mail && mail !== user.mail) {
-        const existingUser = await User.findOne({ where: { mail } });
+      // Vérifie que l'e-mail ne soit pas déjà utilisé par un autre utilisateur
+      if (email && email !== user.email) {
+        const existingUser = await User.findOne({ where: { email } });
         if (existingUser && existingUser.id !== user.id) {
-          return res.status(409).json({ error: "Un compte avec ce mail existe déjà" });
+          return res.status(409).json({ error: "Un compte avec cet email existe déjà" });
         }
-      //}
+      }
 
-      const updateData = { pseudo, mail, password }; 
+      const updateData = { user_name, email, password }; 
 
       // Vérifie si on essaie de modifier le rôle
       if (role_id !== undefined) {
-        // Verifier que l'utlisateur loggé soit bien admin
+        // Verifier que l'utilisateur loggé soit bien admin
         if (req.user.role_id === 1) {
           updateData.role_id = role_id;
         } else {
@@ -120,67 +114,49 @@ const accountController = {
             
       return res.status(200).json({ 
         message: "Compte modifié avec succès",
+        user: user
       });
     } catch (error) {
-      console.error(error);
+      console.error('❌ Erreur Sequelize →', error.message);
       return res.status(500).json({ 
-        error: "Erreur lors de la modification du compte",
+        error: error.message
       });
     }
   },
 
   //Met à jour le rôle d'un utilisateur
   async updateRole(req, res) {
-
     try {
       // Vérifie que le compte existe
       const id = req.params.id;
       const { role_id } = req.body;
 
-      // Valider avec Joi
-      const { error } = updateUserchema.validate({ pseudo }, { abortEarly: false });
-      if (error) {
-        // Transformer les erreurs Joi en objet simple { champ: message }
-        const errors = {};
-        error.details.forEach(detail => {
-          const key = detail.path[0];
-          errors[key] = detail.message;
-        });
-        return res.status(400).json({ errors });
-      }
-
       const user = await User.findByPk(id);
       if (!user){
-        return res.status(409).json({error: "utilisateur introuvable"});
+        return res.status(404).json({error: "Utilisateur introuvable"});
       }
       
       // Vérification des champs
-      if (!role_id ) {
-        return res.status(400).json({ error: "ces champs sont obligatoires" });
+      if (!role_id) {
+        return res.status(400).json({ error: "Le rôle est obligatoire" });
       }
 
-      const updateData = { role_id }; 
-
-      // Vérifie si on essaie de modifier le rôle
-      if (role_id !== undefined) {
-        // Verifier que l'utlisateur loggé soit bien admin
-        if (req.user.role_id === 1) {
-          updateData.role_id = role_id;
-        } else {
-          return res.status(403).json({ error: "Seul un administrateur peut modifier le rôle d'un utilisateur." });
-        }
+      // Vérifier que l'utilisateur loggé soit bien admin
+      if (req.user.role_id !== 1) {
+        return res.status(403).json({ error: "Seul un administrateur peut modifier le rôle d'un utilisateur." });
       }
 
-      // Mise à jour de l'utilisateur
-      await user.update(updateData);
+      // Mise à jour du rôle
+      await user.update({ role_id });
             
       return res.status(200).json({ 
         message: "Rôle modifié avec succès",
+        user: user
       });
     } catch (error) {
-      console.error(error);
+      console.error('❌ Erreur Sequelize →', error.message);
       return res.status(500).json({ 
-        error: "Erreur lors de la modification du compte",
+        error: error.message
       });
     }
   },
