@@ -41,31 +41,32 @@ useEffect(() => {
 
   // Supprimer un sujet
   const handleClickDelete = async (topicId) => { 
-    let isSure = confirm("Etes-vous sûr(e) ?");
-    if(!isSure){
-      return
-    }else{
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}`,{
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        // body: JSON.stringify({user }),
-        });
-          if (!response.ok) {
-            throw new Error("Erreur lors de la suppression du message");
-          }
-        // Mise à jour de la liste locale après suppression
-            setTopicsList((prev) =>
-            prev.filter((topic) => topic.id !== topicId)  
-          );
-        toast.success("Suppression du message réussie !");
-
-      } catch (err) {
-        (err.message);
+    const isSure = confirm("Êtes-vous sûr(e) de vouloir supprimer ce sujet ?");
+    if (!isSure) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erreur lors de la suppression du sujet");
       }
+      
+      // Mise à jour de la liste locale après suppression
+      setTopicsList((prev) => prev.filter((topic) => topic.id !== topicId));
+      toast.success("Sujet supprimé avec succès !");
+
+    } catch (err) {
+      console.error("❌ Erreur suppression →", err.message);
+      toast.error("Erreur lors de la suppression : " + err.message);
     }
   }
 
@@ -99,18 +100,23 @@ useEffect(() => {
                   >
                   <p>{(topic.content || "").replace(/^./, (match) => match.toUpperCase())}</p>
                   </Link>
-                  {/* Affiche les boutons de CRD si l'utilisateur a les droits d'admin*/}
-                  {user ? (
-                    <a onClick={() => handleClickDelete(topic.id)} style={{ cursor: 'pointer' }}>
-                      <div className="crud">
-                      <p></p>
-                      <h4>{((user.role_id === 1)) ?("\ud83d\uddd1"):(" ")}</h4>
-                    </div>
-                    </a>
-                    ):(
-                    <p></p>
-                    )
-                  }
+                  {/* Affiche les boutons de suppression si l'utilisateur est admin ou instructeur */}
+                  {user && (user.role_id === 1 || user.role_id === 2) && (
+                    <button 
+                      onClick={() => handleClickDelete(topic.id)} 
+                      className="delete-button"
+                      title="Supprimer ce sujet"
+                      style={{ 
+                        cursor: 'pointer', 
+                        background: 'none', 
+                        border: 'none', 
+                        fontSize: '1.2em',
+                        color: '#e74c3c'
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  )}
                 </div>
               </div>
             </section>

@@ -39,11 +39,12 @@ export default function ForumNewDiscussion() {
         return;
       }
 
-      // Redirection vers la liste des sujets
+      // Message de succès et redirection
+      toast.success("Sujet créé avec succès !");
       navigate("/forum");
     } catch (err) {
-      console.error("Erreur d'envoi :", err);
-      setErrors(err.message);
+      console.error("❌ Erreur création sujet →", err.message);
+      toast.error("Erreur lors de la création du sujet : " + err.message);
     }
   };
 
