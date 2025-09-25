@@ -83,46 +83,58 @@ export const updateUserSchema = Joi.object({
 
 // Schéma pour la création d'une leçon
 export const lessonSchema = Joi.object({
-  name: Joi.string().min(3).max(255).required().messages({
+  title: Joi.string().min(3).max(255).required().messages({
     'string.empty': 'Le nom du cours ne peut pas être vide.',
     'string.min': 'Le nom doit contenir au moins 3 caractères.',
     'string.max': 'Le nom du cours ne doit pas dépasser 255 caractères.',
     'any.required': 'Le nom du cours est obligatoire.',
   }),
-  text: Joi.string().min(3).required().messages({
+  description: Joi.string().min(3).required().messages({
     'string.empty': 'Le contenu du texte ne peut pas être vide.',
     'string.min': 'Le contenu du texte doit contenir au moins 3 caractères.',
     'any.required': 'Le contenu du texte est obligatoire.',
   }),
+  category_id: Joi.number().integer().required().messages({
+    'any.required': 'La catégorie est obligatoire.',
+  }),
+  user_id: Joi.number().integer().required().messages({
+    'any.required': 'L’utilisateur est obligatoire.',
+  }),
   materials: Joi.array().items(Joi.object({
-    name: Joi.string().min(1).required()
+    name: Joi.string().min(1).required(),
+    quantity: Joi.number().integer().min(1).optional()
   })).optional(),
   steps: Joi.array().items(Joi.object({
     title: Joi.string().min(1).required(),
     description: Joi.string().min(1).required(),
-    media: Joi.string().optional()
+    media_url: Joi.string().uri().optional(),
+    media_alt: Joi.string().min(1).optional()
   })).optional()
 });
 
 // Schéma pour la modification d'une leçon
 export const updateLessonSchema = Joi.object({
-  name: Joi.string().min(3).max(100).empty('').messages({
-    'string.empty': 'Le nom du cours ne peut pas être vide.',
-    'string.min': 'Le nom du cours doit contenir au moins 3 caractères.',
-    'string.max': 'Le nom du cours ne doit pas dépasser 100 caractères.',
+  title: Joi.string().min(3).max(255).optional().messages({
+    'string.empty': 'Le titre du cours ne peut pas être vide.',
+    'string.min': 'Le titre du cours doit contenir au moins 3 caractères.',
+    'string.max': 'Le titre du cours ne doit pas dépasser 255 caractères.',
   }),
-  text: Joi.string().min(3).messages({
-    'string.empty': 'Le contenu du texte ne peut pas être vide.',
-    'string.min': 'Le texte doit contenir au moins 3 caractères.',
+  description: Joi.string().min(3).optional().messages({
+    'string.empty': 'La description ne peut pas être vide.',
+    'string.min': 'La description doit contenir au moins 3 caractères.',
   }),
+  category_id: Joi.number().integer().optional(),
+  user_id: Joi.number().integer().optional(),
   materials: Joi.array().items(Joi.object({
-    name: Joi.string().min(1).required()
+    name: Joi.string().min(1).required(),
+    quantity: Joi.number().integer().min(1).optional()
   })).optional(),
   steps: Joi.array().items(Joi.object({
     title: Joi.string().min(1).required(),
     description: Joi.string().min(1).required(),
-    media: Joi.string().optional()
-  })).optional(),
+    media_url: Joi.string().uri().optional(),
+    media_alt: Joi.string().min(1).optional()
+  })).optional()
 });
 
 
