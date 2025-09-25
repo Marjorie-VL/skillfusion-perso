@@ -6,7 +6,7 @@ import { accountController } from "../src/controllers/accountController.js";
 import { authentication } from "../src/controllers/authenticationController.js";
 import { boardController } from "../src/controllers/boardController.js";
 import { authenticateToken } from './middlewares/authenticateToken.js';
-import { isAdmin, isAdminOrInstructor, isSelfOrAdmin } from './middlewares/authorizeRole.js';
+import { isAdmin, isInstructor, isAdminOrInstructor, isSelfOrAdmin, isOwnerOrAdmin } from './middlewares/authorizeRole.js';
 
 export const router = Router();
 
@@ -34,9 +34,9 @@ router.delete("/lessons/:id/favorite", authenticateToken, boardController.remove
 router.get("/categories", categoryController.getAllCategories); // affiche la liste des catégories
 router.get("/categories/:id", categoryController.getOneCategory); // affiche une catégorie
 router.get("/categories/:id/lessons", categoryController.getLessonsByCategory); // affiche une catégorie et ses cours
-router.post("/categories", authenticateToken, isAdminOrInstructor, categoryController.addCategory);// ajoute une catégorie
-router.patch("/categories/:id", authenticateToken, isAdminOrInstructor, categoryController.updateCategory);// modifier une catégorie
-router.delete("/categories/:id", authenticateToken, isAdminOrInstructor, categoryController.deleteCategory);// supprime une catégorie
+router.post("/categories", authenticateToken, isAdminOrInstructor, categoryController.addCategory);// ajoute une catégorie (admin ou instructeur)
+router.patch("/categories/:id", authenticateToken, isAdminOrInstructor, categoryController.updateCategory);// modifier une catégorie (admin ou instructeur)
+router.delete("/categories/:id", authenticateToken, isAdminOrInstructor, categoryController.deleteCategory);// supprime une catégorie (admin ou instructeur)
 
 
 // Routes ACCOUNT
@@ -50,17 +50,17 @@ router.delete("/users/:id", authenticateToken, isAdmin, accountController.delete
 
 // Routes ROLE
 router.get("/roles", boardController.getAllRoles);// affiche la liste des rôles
-//router.patch("/roles/:id", authenticateToken, boardController.updateRole);// modifie un rôle
+router.patch("/users/:id/role", authenticateToken, isAdmin, accountController.updateRole);// modifie un rôle (admin seulement)
 
 
 // Route FORUM
 router.get("/forum", authenticateToken, forumController.getAllTopics);// affiche la liste des sujets
 router.post("/forum", authenticateToken, forumController.addTopic);// ajoute un sujet
-router.delete("/forum/:id", authenticateToken, isAdmin,forumController.deleteDiscussion);// supprimer un sujet et ses réponses
+router.patch("/forum/:id", authenticateToken, isOwnerOrAdmin, forumController.updateTopic);// modifier un sujet (propriétaire ou admin)
+router.delete("/forum/:id", authenticateToken, isAdminOrInstructor, forumController.deleteDiscussion);// supprimer un sujet (instructeur ou admin)
 router.get("/forum/:id", authenticateToken, forumController.getOneDiscussion);// Affiche un sujet et ses réponses
 router.post("/forum/:topicId/reply", authenticateToken, forumController.addReply);// ajoute une réponse à un sujet
-/*TODO Rajouter la route PATCH*/
-// router.patch("/forum/:topicId/reply/:replyId", authenticateToken, forumController.updateReply);// modifier une réponse 
-router.delete("/forum/:id/reply/:replyId", authenticateToken, isAdmin,forumController.deleteReply);// supprimer une réponse 
+router.patch("/forum/:topicId/reply/:replyId", authenticateToken, isOwnerOrAdmin, forumController.updateReply);// modifier une réponse (propriétaire ou admin)
+router.delete("/forum/:id/reply/:replyId", authenticateToken, isAdminOrInstructor, forumController.deleteReply);// supprimer une réponse (instructeur ou admin) 
 
 

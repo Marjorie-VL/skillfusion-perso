@@ -142,17 +142,19 @@ export const updateLessonSchema = Joi.object({
 export const categorySchema = Joi.object({
   name: Joi.string().min(3).max(30).required().messages({
     'string.empty': 'Le nom de la catégorie ne peut pas être vide.',
-    'string.min': 'Le nom doit contenir au moins 3 caractères.',
+    'string.min': 'Le nom de la catégorie doit contenir au moins 3 caractères.',
+    'string.max': 'Le nom de la catégorie ne doit pas dépasser 30 caractères.',
     'any.required': 'Le nom de la catégorie est obligatoire.',
   })
 });
 
 // Schéma pour la modification d'une catégorie
 export const updateCategorySchema = Joi.object({
-  name: Joi.string().min(3).max(30).empty('').messages({
-    'string.empty': 'Le nom du cours ne peut pas être vide.',
-    'string.min': 'Le nom du cours doit contenir au moins 3 caractères.',
-    'string.max': 'Le nom du cours ne doit pas dépasser 30 caractères.',
+  name: Joi.string().min(3).max(30).required().messages({
+    'string.empty': 'Le nom de la catégorie ne peut pas être vide.',
+    'string.min': 'Le nom de la catégorie doit contenir au moins 3 caractères.',
+    'string.max': 'Le nom de la catégorie ne doit pas dépasser 30 caractères.',
+    'any.required': 'Le nom de la catégorie est obligatoire.',
   })
 });
 
