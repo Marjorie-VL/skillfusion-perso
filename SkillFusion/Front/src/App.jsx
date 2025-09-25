@@ -42,7 +42,7 @@ export default function App() {
         <Route path="/profilchanges" element={<ProtectedRoute><ProfilChange /></ProtectedRoute>} />
         <Route path="/newlesson" element={<ProtectedRoute><NewLesson /></ProtectedRoute>} /> 
         <Route path="/newcategory" element={<ProtectedRoute><NewCategory /></ProtectedRoute>} /> 
-        <Route path="/forum/:id" element={<ProtectedRoute><ForumDiscussionDetail/></ProtectedRoute>} /> 
+        <Route path="/forum/:topicId" element={<ProtectedRoute><ForumDiscussionDetail/></ProtectedRoute>} /> 
         <Route path="/forum-new-discussion" element={<ProtectedRoute><ForumNewDiscussion /></ProtectedRoute>} /> 
         <Route path="/forum" element={<ProtectedRoute><ForumTopicsList /></ProtectedRoute>} /> 
         <Route path="/roleChange/:id" element={<ProtectedRoute><RoleChange/></ProtectedRoute>} />
