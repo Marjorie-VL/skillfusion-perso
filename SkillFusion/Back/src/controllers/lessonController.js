@@ -1,4 +1,4 @@
-import { Category, Lesson } from "../models/association.js";
+import { Lesson } from "../models/association.js";
 import { lessonSchema, updateLessonSchema } from "../middlewares/validation.js";
 
 const lessonController = {
@@ -40,65 +40,70 @@ const lessonController = {
 //Ajoute un cours
   async addLesson(req, res) {
     try {
-      const { title, description, category_id, user_id, materials, steps, media } = req.body;
+      const { title, description, category_id, user_id, materials, steps, media_url, media_alt } = req.body;
 
       // Validation simple
-      if (!title || !description || !category_id || !user_id) {
-        return res.status(400).json({ error: 'Nom, description, catégorie_id et users_id sont requis.' });
+      if (!title || !description || !category_id || !user_id || steps) {
+        return res.status(400).json({ error: 'Nom, description, catégorie_id et user_id sont requis.' });
       }
 
       //  Valider avec Joi
-      const { error } = lessonSchema.validate({ title, description, materials, steps }, { abortEarly: false });
+      const { error } = lessonSchema.validate({ title, description, category_id, user_id, materials, steps }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }
         const errors = {};
-        error.details.forEach(detail => {
-          const key = detail.path[0];
-          errors[key] = detail.message;
-        });
+        error.details.forEach(detail => 
+          (errors[detail.path[0]] = detail.message));
         return res.status(400).json({ errors });
       }
 
-      // Création de la leçon principale
+      // Création de la leçon
       const lesson = await Lesson.create({
         title,
         description,
-        is_published,
-        media_url,
-        media_alt,
         category_id,
-        user_id
+        user_id,
+        media_url: media_url ?? null,
+        media_alt: media_alt ?? null,
+        is_published: false, // par défaut
       });
 
-      //Ajout des materials s'ils existent
+      //Ajout des materials
       if (Array.isArray(materials) && materials.length > 0) {
         await Promise.all(materials.map(material =>
-          lesson.createMaterial({title : material}) // ou lesson.addMaterial selon tes associations
+          lesson.createMaterial({
+            name : material.name,
+            quantity: material.quantity ?? 1
+          }) 
         ));
       }
 
-    // Ajout des steps s'ils existent
+    // Ajout des steps
       if (Array.isArray(steps) && steps.length > 0) {
-        await Promise.all(steps.map(step =>
+        await Promise.all(steps.map((step, i) =>
         lesson.createStep({
+          step_order: i + 1,
           title: step.title,
           description: step.description,
-          media_url: step.media_url
-        }) // ou lesson.addStep selon tes associations
+          media_url: step.media_url ?? null,
+          media_alt: step.media_alt ?? null,
+        })
       ));
     }
 
-      // Récupérer la leçon complète avec associations pour la réponse
+      // Retourne la leçon complète
       const lessonWithAssociations = await Lesson.findByPk(lesson.id, {
-        include: ['category', 'materials', 'steps'],
+        include: ['category', 'materials', 'steps', 'user'],
       });
 
       res.status(201).json(lessonWithAssociations);
+
     } catch(error) {
       console.error('Erreur Sequelize →', error);
       res.status(500).json({ error: 'Erreur lors de la création de la leçon.' });
     }
   },
+
 // Met à jour un cours
 async updateLesson(req, res) {
   const t = await sequelize.transaction();
@@ -122,7 +127,7 @@ async updateLesson(req, res) {
       return res.status(400).json({ success: false, message: "Erreur de validation.", errors });
     }
 
-    const { title, description, category_id, user_id, media_url, materials, steps } = req.body;
+    const { title, description, category_id, user_id, media_url, media_alt,is_published, materials, steps } = req.body;
 
     // Mise à jour des champs basiques
     if (title !== undefined) lesson.title = title;
@@ -130,27 +135,34 @@ async updateLesson(req, res) {
     if (category_id !== undefined) lesson.category_id = category_id;
     if (user_id !== undefined) lesson.user_id = user_id;
     if (media_url !== undefined) lesson.media_url = media_url;
+    if (media_alt !== undefined) lesson.media_alt = media_alt;
 
     await lesson.save({ transaction: t });
 
-    // Materials
+    // Mise à jour du matériel si envoyé
     if (materials !== undefined) {
       await lesson.setMaterials([], { transaction: t });
       if (Array.isArray(materials) && materials.length > 0) {
-        await Promise.all(materials.map(m => lesson.createMaterial({ name: m }, { transaction: t })));
+        await Promise.all(materials.map(material => 
+          lesson.createMaterial({ 
+            name: material.name,
+            quantity: material.quantity ?? 1,
+           }, { transaction: t })
+          ));
       }
     }
 
-    // Steps
+    // Mise à jour des Steps si envoyé
     if (steps !== undefined) {
       await lesson.setSteps([], { transaction: t });
       if (Array.isArray(steps) && steps.length > 0) {
-        await Promise.all(
-          steps.map(s =>
+        await Promise.all(steps.map((step, i) =>
             lesson.createStep({
-              title: s.title,
-              description: s.description,
-              media_url: s.media_url,
+              step_order: i + 1,
+              title: step.title,
+              description: step.destepcription,
+              media_url: step.media_url ?? null,
+              media_alt: step.media_alt ?? null,
             }, { transaction: t })
           )
         );
@@ -167,7 +179,7 @@ async updateLesson(req, res) {
 
   } catch (error) {
     await t.rollback();
-    console.error("Erreur Sequelize →", error);
+    console.error("❌ Erreur Sequelize →", error);
     res.status(500).json({ success: false, message: "Erreur lors de la mise à jour de la leçon.", details: error.message });
   }
 },
@@ -175,9 +187,10 @@ async updateLesson(req, res) {
   //Supprime un cours
   async deleteLesson(req, res, next) {
     const lesson = await Lesson.findByPk(req.params.id);
+
     if (!lesson) {
-      return next();
-    }
+      return res.status(404).json({ error: "Leçon non trouvée." });
+    }    
 
     await lesson.destroy();
 
