@@ -12,6 +12,7 @@ export default function ForumTopicsList({topics}) {
   // Récupération des données utilisateur
   const {user} = useAuth();
 
+  // Récupération de la liste des sujets
 useEffect(() => {
   const fetchTopics = async () => {
     try {
@@ -27,7 +28,9 @@ useEffect(() => {
       }
 
       const data = await response.json();
-      setTopicsList(Array.isArray(data.discussions) ? data.discussions : []);
+      console.log(data);
+
+      setTopicsList(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(" Erreur de récupération :", err);
     }

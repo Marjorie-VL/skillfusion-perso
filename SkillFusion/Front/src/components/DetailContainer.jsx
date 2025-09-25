@@ -1,6 +1,8 @@
 import React from "react";
 
 export default function DetailContainer({ lesson }) {
+  console.log(lesson.materials);
+  
   return (
     <>
       <section className="lesson">

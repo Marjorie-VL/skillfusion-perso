@@ -26,7 +26,7 @@ export default function AdminDashboard({ usersData }) {
   const handleChangeRole = async (userId, newRoleId) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}/role`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -6,10 +6,6 @@ import { toast } from "react-toastify";
 export default function LessonContainer({ lessons, categoryName}) {
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  // Liste des leçons à afficher
-  console.log(lessons);
-  
   const [lessonList, setLessonList] =  useState(lessons || []);
 
     useEffect(() => { setLessonList(lessons || []);

@@ -8,20 +8,20 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function ForumDiscussionDetail() {
-  const { id } = useParams(); // récupère l'ID du sujet de la discussion depuis l'URL
+  const { topicId } = useParams(); // récupère l'ID du sujet de la discussion depuis l'URL
   const {user} = useAuth();
   const [topic, setTopic] = useState(null);
   const [reply, setReply] = useState("");
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const fetchTopic = async () => {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(`http://localhost:3000/forum/${id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -32,7 +32,9 @@ export default function ForumDiscussionDetail() {
         }
 
         const data = await response.json();
-        setTopic(data.forums);
+        console.log(data);
+        
+        setTopic(data);
       } catch (err) {
         toast.error("Impossible de charger la question !" + err.message);
       } finally {
@@ -41,7 +43,7 @@ export default function ForumDiscussionDetail() {
     };
 
     fetchTopic();
-  }, [id, user]);
+  }, [topicId]);
 
   if (loading) return <p>Chargement...</p>;
   if (!topic) return <p>Aucune donnée trouvée.</p>;
@@ -55,7 +57,7 @@ export default function ForumDiscussionDetail() {
     if (!reply.trim()) return; // évite les messages vides
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/forum/${id}/reply`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}/reply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,7 +84,7 @@ export default function ForumDiscussionDetail() {
     toast.success("Réponse envoyée !");
 
      // Re-fetch de la discussion complète avec toutes les réponses à jour
-     const updatedRes = await fetch(`${import.meta.env.VITE_API_URL}/forum/${id}`, {
+     const updatedRes = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}`, {
        headers: {
          Authorization: `Bearer ${token}`,
        },
@@ -91,7 +93,7 @@ export default function ForumDiscussionDetail() {
     if (!updatedRes.ok) throw new Error("Erreur lors du rechargement");
 
     const updatedData = await updatedRes.json();
-    setTopic(updatedData.discussions); // on remplace les données par celles à jour
+    setTopic(updatedData.topics); // on remplace les données par celles à jour
 
     } catch (error) {
       console.error(error);
@@ -100,12 +102,12 @@ export default function ForumDiscussionDetail() {
   }
     // Supprimer une réponse
     
-    const handleClickDelete = async (id,replyId) => { 
+    const handleClickDelete = async (topicId, replyId) => { 
       let isSure = confirm("Etes-vous sûr(e) ?");
       if(!isSure) return;
 
       try {
-        const reply = await fetch(`${import.meta.env.VITE_API_URL}/forum/${id}/${replyId}`,{
+        const reply = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}/${replyId}`,{
   
           method: "DELETE",
           headers: {
