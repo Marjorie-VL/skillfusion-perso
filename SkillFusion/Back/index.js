@@ -10,25 +10,42 @@ import { errorHandler } from "./src/middlewares/errorHandler.js";
 // Création de l'app Express
 const app = express();
 
-// --- Middlewares globaux ---
-// Sécurité : XSS sanitizer (avant la lecture du corps)
+// ========================================
+// MIDDLEWARES GLOBAUX
+// ========================================
+
+// 1. Sécurité : XSS sanitizer (AVANT la lecture du corps)
 app.use(xss());
+
+// 2. Parsing des données
 app.use(express.urlencoded({ extended: true })); 
 app.use(express.json());
+
+// 3. Configuration CORS
 app.use(corsConfig);
 
-// --- Router principal ---
+// ========================================
+// ROUTES
+// ========================================
+
+// Router principal
 app.use(router);
 
-// --- Gestion des erreurs ---
+// ========================================
+// GESTION DES ERREURS
+// ========================================
+
+// Gestionnaire d'erreurs global (DOIT être en dernier)
 app.use(errorHandler);
 
-// --- Router principal ---
-app.use(router);
+// ========================================
+// LANCEMENT DU SERVEUR
+// ========================================
 
-// --- Lancement du serveur ---
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`🚀 Server started at http://localhost:${port}`);
-  console.log(`📡 API ready to receive requests`);
+  console.log(`�� API ready to receive requests`);
+  console.log(`🔒 Security: XSS protection enabled`);
+  console.log(`�� CORS: Configured for localhost`);
 });
