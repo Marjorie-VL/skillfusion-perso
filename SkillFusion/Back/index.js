@@ -1,5 +1,14 @@
 import "dotenv/config";
 import express from "express";
+
+// Vérification des variables d'environnement critiques
+if (!process.env.ACCESS_TOKEN_SECRET) {
+  console.warn("⚠️  ACCESS_TOKEN_SECRET non défini, utilisation d'une valeur par défaut");
+  process.env.ACCESS_TOKEN_SECRET = "default-secret-key-change-in-production";
+}
+if (!process.env.ACCESS_TOKEN_EXPIRES_IN) {
+  process.env.ACCESS_TOKEN_EXPIRES_IN = "24h";
+}
 import { router } from "./src/router.js";
 import { xss } from "express-xss-sanitizer";
 

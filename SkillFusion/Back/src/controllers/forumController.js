@@ -7,7 +7,7 @@ const forumController = {
 	// Récupérer tous les sujets de discussion
 	async getAllTopics(req, res) {
 		try {
-			const discussions = await Topic.findAll({
+			const topics = await Topic.findAll({
 				include: [
 					{
 						model: User,
@@ -17,7 +17,7 @@ const forumController = {
 				]
 			});
 
-			return res.status(200).json(discussions);
+			return res.status(200).json(topics);
 		} catch (error) {
 			console.error('❌ Erreur Sequelize →', error.message);
 			return res.status(500).json({ error: error.message });
@@ -27,7 +27,9 @@ const forumController = {
 	// Récupérer une discussion et ses réponses associées
 	async getOneDiscussion(req, res) {
 		try {
-			const id = req.params.id
+			const id = req.params.topicId
+			console.log("🔍 getOneDiscussion - ID reçu:", id);
+			console.log("🔍 getOneDiscussion - Params complets:", req.params);
 			const discussion = await Topic.findByPk(id, {
 				include: [
 					{
@@ -50,9 +52,11 @@ const forumController = {
 			});
 
 			if (!discussion) {
+				console.log("❌ Discussion non trouvée pour l'ID:", id);
 				return res.status(404).json({ error: 'Discussion non trouvée' });
 			}
 
+			console.log("✅ Discussion trouvée:", discussion.id, discussion.title);
 			return res.status(200).json(discussion);
 
 		} catch (error) {
@@ -99,7 +103,7 @@ const forumController = {
 	async updateTopic(req, res) {
 		try {
 			const { title, content } = req.body;
-			const topicId = req.params.id;
+			const topicId = req.params.topicId;
 			const userId = req.user.id;
 
 			// Vérifier que le sujet existe
@@ -150,7 +154,7 @@ const forumController = {
 	async addReply(req, res) {
 		try {
 			const { content } = req.body;
-			const topicId = req.params.id;
+			const topicId = req.params.topicId;
 			const userId = req.user.id; // récupéré grâce à ton middleware d'auth
 
 			//  Valider avec Joi
@@ -236,7 +240,7 @@ const forumController = {
 	// Effacer une discussion (sujet + réponses associées)
 	async deleteDiscussion(req, res) {
 		try {
-			const message = await Topic.findByPk(req.params.id);
+			const message = await Topic.findByPk(req.params.topicId);
 			if (!message) {
 				return res.status(404).json({ error: "Discussion introuvable" });
 			}
@@ -257,19 +261,19 @@ const forumController = {
 	// Effacer une réponse
 	async deleteReply(req, res) {
 		try {
-			const { reply_id } = req.params; // ID de la réponse à supprimer
-			const { id } = req.params; // ID de la discussion
+			const { replyId } = req.params; // ID de la réponse à supprimer
+			const { topicId } = req.params; // ID de la discussion
 
 			// Vérifications des paramètres
-			if (!reply_id || !id) {
-				return res.status(400).json({ error: "Les paramètres 'reply_id' et 'id' sont obligatoires !" });
+			if (!replyId || !topicId) {
+				return res.status(400).json({ error: "Les paramètres 'replyId' et 'topicId' sont obligatoires !" });
 			}
 			
 			// Chercher la réponse spécifique
 			const reply = await Reply.findOne({
 				where: {
-					id: reply_id,
-					topic_id: id
+					id: replyId,
+					topic_id: topicId
 				}
 			});
 
