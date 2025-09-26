@@ -1,7 +1,18 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function AdminDashboard({ usersData }) {
   const [users, setUsers] = useState(usersData);
+
+  // Fonction pour obtenir le nom du rôle
+  const getRoleName = (roleId) => {
+    switch (roleId) {
+      case 1: return "Administrateur";
+      case 2: return "Instructeur";
+      case 3: return "Utilisateur";
+      default: return "Inconnu";
+    }
+  };
 
   // Fonction pour supprimer un utilisateur (exemple)
   const handleDeleteUser = async (userId) => {
@@ -25,8 +36,13 @@ export default function AdminDashboard({ usersData }) {
   // Fonction pour changer le rôle d'un utilisateur (exemple)
   const handleChangeRole = async (userId, newRoleId) => {
     try {
+      // Récupérer l'utilisateur avant la modification pour le message
+      const user = users.find(u => u.id === userId);
+      const oldRoleName = getRoleName(user.role_id);
+      const newRoleName = getRoleName(newRoleId);
+
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}/role`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -38,8 +54,12 @@ export default function AdminDashboard({ usersData }) {
 
       // Mise à jour locale
       setUsers(users.map(user => user.id === userId ? { ...user, role_id: newRoleId } : user));
+      
+      // Toast de succès avec message détaillé
+      toast.success(`L'utilisateur "${user.user_name}" est passé du rôle "${oldRoleName}" à "${newRoleName}"`);
     } catch (error) {
-      alert("Erreur lors de la modification : " + error.message);
+      console.error("❌ Erreur modification rôle →", error.message);
+      toast.error("Erreur lors de la modification du rôle : " + error.message);
     }
   };
 
@@ -64,7 +84,6 @@ export default function AdminDashboard({ usersData }) {
                       <option value={1}>Administrateur</option>
                       <option value={2}>Instructeur</option>
                       <option value={3}>Utilisateur</option>
-                      {/* Ajoute ici les autres rôles si besoin */}
                     </select>
                   </td>
                   <td>
