@@ -43,8 +43,8 @@ const lessonController = {
       const { title, description, category_id, user_id, materials, steps, media_url, media_alt } = req.body;
 
       // Validation simple
-      if (!title || !description || !category_id || !user_id || steps) {
-        return res.status(400).json({ error: 'Nom, description, catégorie_id et user_id sont requis.' });
+      if (!title || !description || !category_id || !user_id) {
+        return res.status(400).json({ error: 'Titre, description, catégorie et utilisateur sont requis.' });
       }
 
       //  Valider avec Joi
@@ -160,7 +160,7 @@ async updateLesson(req, res) {
             lesson.createStep({
               step_order: i + 1,
               title: step.title,
-              description: step.destepcription,
+              description: step.description,
               media_url: step.media_url ?? null,
               media_alt: step.media_alt ?? null,
             }, { transaction: t })
