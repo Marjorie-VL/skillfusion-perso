@@ -4,6 +4,7 @@ import { messageSchema, responseSchema } from "../middlewares/validation.js";
 
 
 const forumController = {
+
 	// Récupérer tous les sujets de discussion
 	async getAllTopics(req, res) {
 		try {
@@ -61,7 +62,7 @@ const forumController = {
 		}
 	},
 
-	// Ajouter une discussion
+	// Ajouter un sujet de discussion
 	async addTopic(req, res) {
 		try {
 			const { title, content} = req.body;
@@ -146,7 +147,7 @@ const forumController = {
 		}
 	},
 
-	// Ajouter une réponse à une discussion
+	// Ajouter une réponse à un sujet de discussion
 	async addReply(req, res) {
 		try {
 			const { content } = req.body;
@@ -233,16 +234,24 @@ const forumController = {
 		}
 	},
 
-	// Effacer une discussion (sujet + réponses associées)
+	// Effacer un sujet de discussion (sujet + réponses associées)
 	async deleteDiscussion(req, res) {
 		try {
-			const message = await Topic.findByPk(req.params.id);
-			if (!message) {
+			const { topicId } = req.params;
+			
+			// Vérifier que le sujet existe
+			const topic = await Topic.findByPk(topicId);
+			if (!topic) {
 				return res.status(404).json({ error: "Discussion introuvable" });
 			}
+
+			// Vérifier que l'utilisateur est le propriétaire ou admin/instructeur
+			if (topic.user_id !== req.user.id && req.user.role_id > 2) {
+				return res.status(403).json({ error: "Vous ne pouvez supprimer que vos propres sujets" });
+			}
 					
-			// Suppression de la discussion
-			await message.destroy();
+			// Suppression de la discussion (les réponses seront supprimées automatiquement via CASCADE)
+			await topic.destroy();
 									
 			return res.status(200).json({ 
 				message: "Discussion supprimée avec succès",
@@ -259,10 +268,9 @@ const forumController = {
 		try {
 			const { topicId, replyId } = req.params; // ID de la réponse à supprimer
 			
-
 			// Vérifications des paramètres
 			if (!replyId || !topicId) {
-				return res.status(400).json({ error: "Les paramètres 'reply_id' et 'id' sont obligatoires !" });
+				return res.status(400).json({ error: "Les paramètres 'replyId' et 'topicId' sont obligatoires !" });
 			}
 			
 			// Chercher la réponse spécifique
@@ -277,12 +285,16 @@ const forumController = {
 				return res.status(404).json({ error: "Réponse introuvable pour cette discussion" });
 			}
 
+			// Vérifier que l'utilisateur est le propriétaire ou admin/instructeur
+			if (reply.user_id !== req.user.id && req.user.role_id > 2) {
+				return res.status(403).json({ error: "Vous ne pouvez supprimer que vos propres réponses" });
+			}
+
 			// Suppression de la réponse
 			await reply.destroy();
 	
 			return res.status(200).json({ 
-				message: "Réponse supprimée avec succès",
-				reply: reply
+				message: "Réponse supprimée avec succès"
 			});
 
 		} catch (error) {
