@@ -12,7 +12,7 @@ export default function ProfilChange() {
   const [errors, setErrors] = useState({});
 
   // Récupération des données utilisateur
-  const {user} = useAuth();
+  const {user, setUser} = useAuth();
  
   const navigate = useNavigate();
 
@@ -21,11 +21,17 @@ export default function ProfilChange() {
     e.preventDefault();
     setErrors({});
 
-    // ✅ Vérification des champs vides
-    if (!username || !email || !password) {
-      toast.error("Tous les champs sont obligatoires");
+    // ✅ Vérification qu'au moins un champ est modifié
+    if (!username && !email && !password) {
+      toast.error("Veuillez modifier au moins un champ");
       return;
     }
+
+    // Préparer les données à envoyer (seulement les champs modifiés)
+    const updateData = {};
+    if (username) updateData.user_name = username;
+    if (email) updateData.email = email;
+    if (password) updateData.password = password;
 
     fetch(`${import.meta.env.VITE_API_URL}/users/${user.id}`, {
 
@@ -34,7 +40,7 @@ export default function ProfilChange() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`
       },
-      body: JSON.stringify({ username, email, password }),
+      body: JSON.stringify(updateData),
     })
     .then(async (res) => {
       const data = await res.json();
@@ -46,7 +52,7 @@ export default function ProfilChange() {
         } else if (data.message) {
           toast.error(data.message);
         } 
-        throw new Error("Erreur lors de l'inscription");
+        throw new Error("Erreur lors de la modification du profil");
       }
       return data;
 
@@ -54,8 +60,21 @@ export default function ProfilChange() {
       .then((data) => {
         console.log(data); // Affiche les données retournées par le serveur (succès de l'inscription)
 
-        toast.success("Modification réussie! ✅");
-        navigate("/"); // Redirection
+        // Mettre à jour l'utilisateur dans le contexte avec les nouvelles données
+        const updatedUser = { ...user };
+        if (username) updatedUser.user_name = username;
+        if (email) updatedUser.email = email;
+        setUser(updatedUser);
+
+        // Message de succès personnalisé selon les champs modifiés
+        const modifiedFields = [];
+        if (username) modifiedFields.push("nom d'utilisateur");
+        if (email) modifiedFields.push("email");
+        if (password) modifiedFields.push("mot de passe");
+        
+        const message = `Modification réussie ! ${modifiedFields.join(", ")} ${modifiedFields.length > 1 ? "ont été" : "a été"} mis à jour ✅`;
+        toast.success(message);
+        navigate("/board"); // Redirection
       })
       .catch((err) => {
         toast.error(err.message);
@@ -76,20 +95,20 @@ export default function ProfilChange() {
               <input
                 className="search-bar input-bar"
                 type="text"
-                placeholder="Username"
+                placeholder={`Actuel: ${user.user_name}`}
                 name="username"
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
-              {errors.username && <p style={{ color: "red" }}>{errors.username}</p>}            
+              {errors.user_name && <p style={{ color: "red" }}>{errors.user_name}</p>}            
               </div>
             <div className="form">
               <label htmlFor="mail">E-mail :</label>
               <input
                 className="search-bar input-bar"
                 type="email"
-                placeholder="E-mail"
+                placeholder={`Actuel: ${user.email}`}
                 name="email"
                 id="email"
                 value={email}
@@ -98,11 +117,11 @@ export default function ProfilChange() {
             {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}            
               </div>
             <div className="form">
-              <label htmlFor="password">Mot de passe :</label>
+              <label htmlFor="password">Nouveau mot de passe :</label>
               <input
                 className="search-bar input-bar"
                 type="password"
-                placeholder="Mot de passe"
+                placeholder="Laissez vide pour ne pas changer"
                 name="password"
                 id="password"
                 value={password}
