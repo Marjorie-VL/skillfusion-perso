@@ -27,8 +27,8 @@ const forumController = {
 	// Récupérer une discussion et ses réponses associées
 	async getOneDiscussion(req, res) {
 		try {
-			const id = req.params.id
-			const discussion = await Topic.findByPk(id, {
+			const { topicId } = req.params;
+			const discussion = await Topic.findByPk(topicId, {
 				include: [
 					{
 						model: User,
@@ -99,7 +99,7 @@ const forumController = {
 	async updateTopic(req, res) {
 		try {
 			const { title, content } = req.body;
-			const topicId = req.params.id;
+			const { topicId } = req.params;
 			const userId = req.user.id;
 
 			// Vérifier que le sujet existe
@@ -150,7 +150,7 @@ const forumController = {
 	async addReply(req, res) {
 		try {
 			const { content } = req.body;
-			const topicId = req.params.id;
+			const { topicId} = req.params;
 			const userId = req.user.id; // récupéré grâce à ton middleware d'auth
 
 			//  Valider avec Joi
@@ -257,19 +257,19 @@ const forumController = {
 	// Effacer une réponse
 	async deleteReply(req, res) {
 		try {
-			const { reply_id } = req.params; // ID de la réponse à supprimer
-			const { id } = req.params; // ID de la discussion
+			const { topicId, replyId } = req.params; // ID de la réponse à supprimer
+			
 
 			// Vérifications des paramètres
-			if (!reply_id || !id) {
+			if (!replyId || !topicId) {
 				return res.status(400).json({ error: "Les paramètres 'reply_id' et 'id' sont obligatoires !" });
 			}
 			
 			// Chercher la réponse spécifique
 			const reply = await Reply.findOne({
 				where: {
-					id: reply_id,
-					topic_id: id
+					id: replyId,
+					topic_id: topicId
 				}
 			});
 

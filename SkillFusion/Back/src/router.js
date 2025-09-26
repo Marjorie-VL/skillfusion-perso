@@ -56,11 +56,11 @@ router.patch("/users/:id/role", authenticateToken, isAdmin, accountController.up
 // Route FORUM
 router.get("/forum", authenticateToken, forumController.getAllTopics);// affiche la liste des sujets
 router.post("/forum", authenticateToken, forumController.addTopic);// ajoute un sujet
-router.patch("/forum/:id", authenticateToken, isOwnerOrAdmin, forumController.updateTopic);// modifier un sujet (propriétaire ou admin)
-router.delete("/forum/:id", authenticateToken, isAdminOrInstructor, forumController.deleteDiscussion);// supprimer un sujet (instructeur ou admin)
-router.get("/forum/:id", authenticateToken, forumController.getOneDiscussion);// Affiche un sujet et ses réponses
+router.patch("/forum/:topicId", authenticateToken, isOwnerOrAdmin, forumController.updateTopic);// modifier un sujet (propriétaire ou admin)
+router.delete("/forum/:topicId", authenticateToken, isAdminOrInstructor, forumController.deleteDiscussion);// supprimer un sujet (instructeur ou admin)
+router.get("/forum/:topicId", authenticateToken, forumController.getOneDiscussion);// Affiche un sujet et ses réponses
 router.post("/forum/:topicId/reply", authenticateToken, forumController.addReply);// ajoute une réponse à un sujet
 router.patch("/forum/:topicId/reply/:replyId", authenticateToken, isOwnerOrAdmin, forumController.updateReply);// modifier une réponse (propriétaire ou admin)
-router.delete("/forum/:id/reply/:replyId", authenticateToken, isAdminOrInstructor, forumController.deleteReply);// supprimer une réponse (instructeur ou admin) 
+router.delete("/forum/:topicId/reply/:replyId", authenticateToken, isAdminOrInstructor, forumController.deleteReply);// supprimer une réponse (instructeur ou admin) 
 
 
