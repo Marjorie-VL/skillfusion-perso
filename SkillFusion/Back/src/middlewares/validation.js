@@ -56,12 +56,12 @@ export const userLoginSchema = Joi.object({
 
 // Schéma pour la modification d'un utilisateur
 export const updateUserSchema = Joi.object({
-  pseudo: Joi.string().min(3).max(30).messages({
+  user_name: Joi.string().min(3).max(30).messages({
     'string.empty': 'Le pseudo ne peut pas être vide.',
     'string.min': 'Le pseudo doit contenir au moins 3 caractères.',
-    'string.max': 'Le psuedo ne doit pas dépasser 30 caractères.',
+    'string.max': 'Le pseudo ne doit pas dépasser 30 caractères.',
   }),
-  mail: Joi.string().email().messages({
+  email: Joi.string().email().messages({
     'string.empty': "L'email ne peut pas être vide.",
     'string.email': "L'email doit être valide.",
   }),
@@ -107,8 +107,8 @@ export const lessonSchema = Joi.object({
   steps: Joi.array().items(Joi.object({
     title: Joi.string().min(1).required(),
     description: Joi.string().min(1).required(),
-    media_url: Joi.string().uri().optional(),
-    media_alt: Joi.string().min(1).optional()
+    media_url: Joi.string().uri().allow(null, '').optional(),
+    media_alt: Joi.string().min(1).allow(null, '').optional()
   })).optional()
 });
 
@@ -132,8 +132,8 @@ export const updateLessonSchema = Joi.object({
   steps: Joi.array().items(Joi.object({
     title: Joi.string().min(1).required(),
     description: Joi.string().min(1).required(),
-    media_url: Joi.string().uri().optional(),
-    media_alt: Joi.string().min(1).optional()
+    media_url: Joi.string().uri().allow(null, '').optional(),
+    media_alt: Joi.string().min(1).allow(null, '').optional()
   })).optional()
 });
 

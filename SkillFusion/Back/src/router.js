@@ -5,8 +5,10 @@ import { forumController } from "../src/controllers/forumController.js";
 import { accountController } from "../src/controllers/accountController.js";
 import { authentication } from "../src/controllers/authenticationController.js";
 import { boardController } from "../src/controllers/boardController.js";
+import { uploadController } from "../src/controllers/uploadController.js";
 import { authenticateToken } from './middlewares/authenticateToken.js';
 import { isAdmin, isInstructor, isAdminOrInstructor, isSelfOrAdmin, isOwnerOrAdmin } from './middlewares/authorizeRole.js';
+import { upload } from '../src/middlewares/upload.js';
 
 export const router = Router();
 
@@ -47,7 +49,6 @@ router.patch("/users/:id", authenticateToken, isSelfOrAdmin, accountController.u
 router.delete("/users/:id", authenticateToken, isAdmin, accountController.deleteUser);// supprime le compte d'un utilisateur
 
 
-
 // Routes ROLE
 router.get("/roles", boardController.getAllRoles);// affiche la liste des rôles
 router.patch("/users/:id/role", authenticateToken, isAdmin, accountController.updateRole);// modifie un rôle (admin seulement)
@@ -62,5 +63,9 @@ router.get("/forum/:topicId", authenticateToken, forumController.getOneDiscussio
 router.post("/forum/:topicId/reply", authenticateToken, forumController.addReply);// ajoute une réponse à un sujet
 router.patch("/forum/:topicId/reply/:replyId", authenticateToken, isOwnerOrAdmin, forumController.updateReply);// modifier une réponse (propriétaire ou admin)
 router.delete("/forum/:topicId/reply/:replyId", authenticateToken, isAdminOrInstructor, forumController.deleteReply);// supprimer une réponse (instructeur ou admin) 
+
+// Routes UPLOAD
+router.post("/upload", authenticateToken, upload.single('file'), uploadController.uploadFile);// upload d'un fichier
+router.post("/upload/multiple", authenticateToken, upload.array('files', 10), uploadController.uploadMultipleFiles);// upload de plusieurs fichiers
 
 
