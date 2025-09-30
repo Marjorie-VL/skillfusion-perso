@@ -2,13 +2,13 @@ import Joi from 'joi';
 
 // Schéma pour l'inscription d'un utilisateur
 export const userSchema = Joi.object({
-  pseudo: Joi.string().min(3).max(30).required().messages({
-    'string.empty': 'Le pseudo ne peut pas être vide.',
-    'string.min': 'Le pseudo doit contenir au moins 3 caractères.',
-    'string.max': 'Le psuedo ne doit pas dépasser 30 caractères.',
-    'any.required': 'Le pseudo est obligatoire.',
+  user_name: Joi.string().min(3).max(30).required().messages({
+    'string.empty': 'Le nom d\'utilisateur ne peut pas être vide.',
+    'string.min': 'Le nom d\'utilisateur doit contenir au moins 3 caractères.',
+    'string.max': 'Le nom d\'utilisateur ne doit pas dépasser 30 caractères.',
+    'any.required': 'Le nom d\'utilisateur est obligatoire.',
   }),
-  mail: Joi.string().email().required().messages({
+  email: Joi.string().email().required().messages({
     'string.empty': "L'email ne peut pas être vide.",
     'string.email': "L'email doit être valide.",
     'any.required': "L'email est obligatoire."
@@ -33,7 +33,7 @@ export const userSchema = Joi.object({
 
 // Schéma pour la connexion d'un utilisateur
 export const userLoginSchema = Joi.object({
-  mail: Joi.string().email().required().messages({
+  email: Joi.string().email().required().messages({
     'string.empty': 'Le email ne peut pas être vide.',
     'string.email': "L'email doit être valide.",
     'any.required': "L'email est obligatoire."
@@ -98,8 +98,10 @@ export const lessonSchema = Joi.object({
     'any.required': 'La catégorie est obligatoire.',
   }),
   user_id: Joi.number().integer().required().messages({
-    'any.required': 'L’utilisateur est obligatoire.',
+    'any.required': 'L\'utilisateur est obligatoire.',
   }),
+  media_url: Joi.string().allow(null, '').optional(),
+  media_alt: Joi.string().min(1).allow(null, '').optional(),
   materials: Joi.array().items(Joi.object({
     name: Joi.string().min(1).required(),
     quantity: Joi.number().integer().min(1).optional()
@@ -107,7 +109,7 @@ export const lessonSchema = Joi.object({
   steps: Joi.array().items(Joi.object({
     title: Joi.string().min(1).required(),
     description: Joi.string().min(1).required(),
-    media_url: Joi.string().uri().allow(null, '').optional(),
+    media_url: Joi.string().allow(null, '').optional(),
     media_alt: Joi.string().min(1).allow(null, '').optional()
   })).optional()
 });
@@ -125,6 +127,9 @@ export const updateLessonSchema = Joi.object({
   }),
   category_id: Joi.number().integer().optional(),
   user_id: Joi.number().integer().optional(),
+  media_url: Joi.string().allow(null, '').optional(),
+  media_alt: Joi.string().min(1).allow(null, '').optional(),
+  is_published: Joi.boolean().optional(),
   materials: Joi.array().items(Joi.object({
     name: Joi.string().min(1).required(),
     quantity: Joi.number().integer().min(1).optional()
@@ -132,7 +137,7 @@ export const updateLessonSchema = Joi.object({
   steps: Joi.array().items(Joi.object({
     title: Joi.string().min(1).required(),
     description: Joi.string().min(1).required(),
-    media_url: Joi.string().uri().allow(null, '').optional(),
+    media_url: Joi.string().allow(null, '').optional(),
     media_alt: Joi.string().min(1).allow(null, '').optional()
   })).optional()
 });
