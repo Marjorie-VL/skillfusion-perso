@@ -44,7 +44,7 @@ router.delete("/categories/:id", authenticateToken, isAdminOrInstructor, categor
 // Routes ACCOUNT
 router.get("/users",  accountController.getAllUsers);// affiche la liste des utilisateurs avec leur rôle
 router.get("/users/:id", authenticateToken, isAdmin,accountController.getOneUser);// affiche le compte d'un utilisateur
-// router.get("/users/:id/favorites", authenticateToken, accountController.getAllFavorites); // affiche la liste des leçons favorites d'un utilisateur
+router.get("/users/:id/favorites", authenticateToken, accountController.getAllFavorites); // affiche la liste des leçons favorites d'un utilisateur
 router.patch("/users/:id", authenticateToken, isSelfOrAdmin, accountController.updateUser);// modifie un compte (soi-même ou admin)
 router.delete("/users/:id", authenticateToken, isAdmin, accountController.deleteUser);// supprime le compte d'un utilisateur
 

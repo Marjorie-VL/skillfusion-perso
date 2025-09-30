@@ -1,4 +1,4 @@
-import { Lesson } from "../models/association.js";
+import { Lesson, sequelize } from "../models/association.js";
 import { lessonSchema, updateLessonSchema } from "../middlewares/validation.js";
 
 const lessonController = {
@@ -48,7 +48,7 @@ const lessonController = {
       }
 
       //  Valider avec Joi
-      const { error } = lessonSchema.validate({ title, description, category_id, user_id, materials, steps }, { abortEarly: false });
+      const { error } = lessonSchema.validate({ title, description, category_id, user_id, media_url, media_alt, materials, steps }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }
         const errors = {};
@@ -141,7 +141,11 @@ async updateLesson(req, res) {
 
     // Mise à jour du matériel si envoyé
     if (materials !== undefined) {
-      await lesson.setMaterials([], { transaction: t });
+      // Supprimer tous les matériaux existants
+      const existingMaterials = await lesson.getMaterials({ transaction: t });
+      await Promise.all(existingMaterials.map(material => material.destroy({ transaction: t })));
+      
+      // Créer les nouveaux matériaux
       if (Array.isArray(materials) && materials.length > 0) {
         await Promise.all(materials.map(material => 
           lesson.createMaterial({ 
@@ -154,7 +158,11 @@ async updateLesson(req, res) {
 
     // Mise à jour des Steps si envoyé
     if (steps !== undefined) {
-      await lesson.setSteps([], { transaction: t });
+      // Supprimer toutes les étapes existantes
+      const existingSteps = await lesson.getSteps({ transaction: t });
+      await Promise.all(existingSteps.map(step => step.destroy({ transaction: t })));
+      
+      // Créer les nouvelles étapes
       if (Array.isArray(steps) && steps.length > 0) {
         await Promise.all(steps.map((step, i) =>
             lesson.createStep({
