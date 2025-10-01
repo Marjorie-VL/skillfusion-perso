@@ -1,5 +1,4 @@
-import { Category } from "../models/association.js";
-import { Lesson } from "../models/association.js";
+import { Category, Lesson, User } from "../models/association.js";
 import { categorySchema, updateCategorySchema } from "../middlewares/validation.js";
 import { Op } from "sequelize";
 
@@ -11,8 +10,15 @@ const categoryController = {
         {
           model: Lesson,
           as: 'lessons',
-          attributes: ['title'],                              
-        },    
+          attributes: ['title'],
+          where: { is_published: true },
+          required: false
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'user_name']
+        }
         ],
       });
       return res.status(200).json(categories);
@@ -29,7 +35,9 @@ const categoryController = {
         include: [
           {
             model: Lesson,
-            as: 'lessons',                            
+            as: 'lessons',
+            where: { is_published: true },
+            required: false
           },    
           ],
       });
@@ -52,6 +60,8 @@ const categoryController = {
         include: [{
           model: Lesson,
           as: 'lessons',
+          where: { is_published: true },
+          required: false,
           order: [['createdAt', 'DESC']]
         }]
       });
@@ -72,10 +82,11 @@ const categoryController = {
  
   async addCategory(req, res) {
     try {
-      const { name } = req.body;
+      const { name, description } = req.body;
+      const user_id = req.user.id; // Récupérer l'ID de l'utilisateur connecté
     
       //  Valider avec Joi
-      const { error } = categorySchema.validate({ name }, { abortEarly: false });
+      const { error } = categorySchema.validate({ name, description }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }
         const errors = {};
@@ -93,7 +104,11 @@ const categoryController = {
       }
     
       // Puis insertion si OK
-      const category = await Category.create({ name });
+      const category = await Category.create({ 
+        name, 
+        description: description || null,
+        user_id 
+      });
 
       return res.status(201).json(category);
     } catch (error) {
@@ -106,14 +121,23 @@ const categoryController = {
     try {
       // Vérifie que la catégorie existe
       const id = req.params.id;
-      const { name } = req.body;
+      const { name, description } = req.body;
       const category = await Category.findByPk(id);
       if (!category) {
         return res.status(404).json({ error: "Catégorie non trouvée" });
       }
 
+      // Vérifier que l'utilisateur est le propriétaire de la catégorie ou un admin
+      // Si user_id est null (catégorie existante), seul l'admin peut modifier
+      if (category.user_id && category.user_id !== req.user.id && req.user.role_id !== 1) {
+        return res.status(403).json({ error: "Vous ne pouvez modifier que vos propres catégories" });
+      }
+      if (!category.user_id && req.user.role_id !== 1) {
+        return res.status(403).json({ error: "Seuls les administrateurs peuvent modifier les catégories système" });
+      }
+
       //  Valider avec Joi
-      const { error } = updateCategorySchema.validate({ name }, { abortEarly: false });
+      const { error } = updateCategorySchema.validate({ name, description }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }
         const errors = {};
@@ -136,7 +160,10 @@ const categoryController = {
       }
 
       // Modification de la catégorie
-      await category.update({ name });
+      await category.update({ 
+        name,
+        description: description || null
+      });
             
       return res.status(200).json({ 
         message: "Catégorie modifiée avec succès",
@@ -156,6 +183,15 @@ const categoryController = {
       const category = await Category.findByPk(req.params.id);
       if (!category) {
         return res.status(404).json({ error: "Catégorie introuvable" });
+      }
+
+      // Vérifier que l'utilisateur est le propriétaire de la catégorie ou un admin
+      // Si user_id est null (catégorie existante), seul l'admin peut supprimer
+      if (category.user_id && category.user_id !== req.user.id && req.user.role_id !== 1) {
+        return res.status(403).json({ error: "Vous ne pouvez supprimer que vos propres catégories" });
+      }
+      if (!category.user_id && req.user.role_id !== 1) {
+        return res.status(403).json({ error: "Seuls les administrateurs peuvent supprimer les catégories système" });
       }
     
       // Suppression de la catégorie

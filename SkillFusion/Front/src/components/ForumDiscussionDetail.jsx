@@ -3,48 +3,25 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { useAuth } from "../services/api";
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { forumService } from "../services/forumService.js";
 // import { useNavigate } from "react-router-dom"; // Non utilisé pour le moment
 
 export default function ForumDiscussionDetail() {
   const { topicId } = useParams(); // récupère l'ID du sujet de la discussion depuis l'URL
   const {user} = useAuth();
+  const navigate = useNavigate();
   const [topic, setTopic] = useState(null);
   const [reply, setReply] = useState("");
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
-  // const navigate = useNavigate(); // Non utilisé pour le moment
   
   useEffect(() => {
     const fetchTopic = async () => {
-      const token = localStorage.getItem("token");
-      const apiUrl = `${import.meta.env.VITE_API_URL}/forum/${topicId}`;
-      
-      console.log("🌐 URL de l'API:", apiUrl);
-      console.log("🔑 Token présent:", !!token);
-      console.log("🔑 Token value:", token ? token.substring(0, 20) + "..." : "null");
-
       try {
-        const response = await fetch(apiUrl, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        
-        console.log("📡 Statut de la réponse:", response.status);
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            // Token expiré, redirection vers la page de connexion
-            localStorage.removeItem("token");
-            window.location.href = "/login";
-            return;
-          }
-          throw new Error("Erreur réseau ou autorisation");
-        }
-
-        const data = await response.json();
+        console.log("🌐 Récupération du topic:", topicId);
+        const data = await forumService.getTopicById(topicId);
         console.log("📊 Données reçues du backend:", data);
         console.log("📊 Structure des données:", {
           id: data.id,
@@ -57,7 +34,15 @@ export default function ForumDiscussionDetail() {
         
         setTopic(data);
       } catch (err) {
-        toast.error("Impossible de charger la question !" + err.message);
+        console.error("❌ Erreur récupération →", err);
+        
+        if (err.response && err.response.status === 401) {
+          console.error("❌ Token invalide ou expiré");
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        } else {
+          toast.error("Impossible de charger la question ! " + (err.response?.data?.error || err.message));
+        }
       } finally {
         setLoading(false);
       }
@@ -77,82 +62,79 @@ export default function ForumDiscussionDetail() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({}); // Reset erreurs
-    const token = localStorage.getItem("token");
 
     if (!reply.trim()) return; // évite les messages vides
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}/reply`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content: reply }),
-      });
+      await forumService.addReply(topicId, { content: reply });
 
-      const data = await res.json();
+      // Message de succès
+      setReply(""); // reset le champ
+      toast.success("Réponse envoyée !");
 
-      if (!res.ok) {
-        if (data.errors) {
-          setErrors(data.errors);
-        } else if (data.error || data.message) {
-          toast.error(data.error || data.message);
-        } else {
-          toast.error("Erreur inconnue lors de la création du message.");
-        }
-        return;
-      }
-
-    // Message de succès
-    setReply(""); // reset le champ
-    toast.success("Réponse envoyée !");
-
-     // Re-fetch de la discussion complète avec toutes les réponses à jour
-     const updatedRes = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}`, {
-       headers: {
-         Authorization: `Bearer ${token}`,
-       },
-     });
-
-    if (!updatedRes.ok) throw new Error("Erreur lors du rechargement");
-
-    const updatedData = await updatedRes.json();
-    console.log("🔄 Données mises à jour après ajout de réponse:", updatedData);
-    setTopic(updatedData);
+      // Re-fetch de la discussion complète avec toutes les réponses à jour
+      const updatedData = await forumService.getTopicById(topicId);
+      console.log("🔄 Données mises à jour après ajout de réponse:", updatedData);
+      setTopic(updatedData);
 
     } catch (error) {
-      console.error(error);
-      toast.error("Impossible d'envoyer la réponse.");
+      console.error("❌ Erreur ajout réponse →", error);
+      
+      if (error.response && error.response.data) {
+        const { data } = error.response;
+        
+        if (data.errors) {
+          setErrors(data.errors);
+          toast.error("Veuillez corriger les erreurs dans le formulaire");
+        } else if (data.error) {
+          toast.error(data.error);
+        } else {
+          toast.error("Erreur lors de l'envoi de la réponse");
+        }
+      } else if (error.request) {
+        toast.error("Erreur de connexion. Vérifiez votre connexion internet.");
+      } else {
+        toast.error("Une erreur inattendue s'est produite.");
+      }
     }
-  }
+    }
+
+    // Modifier une réponse
+    const handleClickEditReply = (topicId, replyId) => {
+      navigate(`/forum/${topicId}/edit-reply/${replyId}`);
+    };
+
+    // Supprimer un sujet
+    const handleClickDeleteTopic = async (topicId) => { 
+      const isSure = confirm("Êtes-vous sûr(e) de vouloir supprimer ce sujet ? Cette action supprimera également toutes les réponses.");
+      if (!isSure) return;
+
+      try {
+        await forumService.deleteTopic(topicId);
+        toast.success("Sujet supprimé avec succès !");
+        navigate("/forum");
+
+      } catch (err) {
+        console.error("❌ Erreur suppression →", err);
+        toast.error("Erreur lors de la suppression : " + (err.response?.data?.error || err.message));
+      }
+    };
+
     // Supprimer une réponse
     const handleClickDelete = async (topicId, replyId) => { 
       const isSure = confirm("Êtes-vous sûr(e) de vouloir supprimer cette réponse ?");
       if (!isSure) return;
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}/reply/${replyId}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`
-          }
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Erreur lors de la suppression de la réponse");
-        }
-        
+        await forumService.deleteReply(topicId, replyId);
         toast.success("Réponse supprimée avec succès !");
 
         // Recharger la page pour mettre à jour la liste des réponses
         window.location.reload();
 
       } catch (err) {
-        console.error("❌ Erreur suppression →", err.message);
-        toast.error("Erreur lors de la suppression : " + err.message);
+        console.error("❌ Erreur suppression →", err);
+        toast.error("Erreur lors de la suppression : " + (err.response?.data?.error || err.message));
       }
     }
 
@@ -182,6 +164,39 @@ export default function ForumDiscussionDetail() {
             <div className="category-box__desc">
               <h4>{topic.content.replace(/^./, (match) => match.toUpperCase())}</h4>
               
+              {/* Affiche les boutons de modification/suppression si l'utilisateur est propriétaire ou admin */}
+              {user && (user.id === topic.user_id || user.role_id === 1) && (
+                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                  <button 
+                    onClick={() => navigate(`/forum/edit/${topic.id}`)} 
+                    className="edit-button"
+                    title="Modifier ce sujet"
+                    style={{ 
+                      cursor: 'pointer', 
+                      background: 'none', 
+                      border: 'none', 
+                      fontSize: '1.2em',
+                      color: '#3498db'
+                    }}
+                  >
+                    ✏️
+                  </button>
+                  <button 
+                    onClick={() => handleClickDeleteTopic(topic.id)} 
+                    className="delete-button"
+                    title="Supprimer ce sujet"
+                    style={{ 
+                      cursor: 'pointer', 
+                      background: 'none', 
+                      border: 'none', 
+                      fontSize: '1.2em',
+                      color: '#e74c3c'
+                    }}
+                  >
+                    🗑️
+                  </button>
+                </div>
+              )}
             </div>
           </section>
         </section>
@@ -201,23 +216,38 @@ export default function ForumDiscussionDetail() {
               <div className="category-box__desc">
                 <p>{reply.content.replace(/^./, (match) => match.toUpperCase())}</p>
 
-                {/* Affiche les boutons de suppression si l'utilisateur est admin ou instructeur */}
-                {user && (user.role_id === 1 || user.role_id === 2) && (
-                  <button 
-                    onClick={() => handleClickDelete(topic.id, reply.id)} 
-                    className="delete-button"
-                    title="Supprimer cette réponse"
-                    style={{ 
-                      cursor: 'pointer', 
-                      background: 'none', 
-                      border: 'none', 
-                      fontSize: '1.2em',
-                      color: '#e74c3c',
-                      marginLeft: '10px'
-                    }}
-                  >
-                    🗑️
-                  </button>
+                {/* Affiche les boutons de modification/suppression si l'utilisateur est propriétaire ou admin */}
+                {user && (user.id === reply.user_id || user.role_id === 1) && (
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                    <button 
+                      onClick={() => handleClickEditReply(topic.id, reply.id)} 
+                      className="edit-button"
+                      title="Modifier cette réponse"
+                      style={{ 
+                        cursor: 'pointer', 
+                        background: 'none', 
+                        border: 'none', 
+                        fontSize: '1.2em',
+                        color: '#3498db'
+                      }}
+                    >
+                      ✏️
+                    </button>
+                    <button 
+                      onClick={() => handleClickDelete(topic.id, reply.id)} 
+                      className="delete-button"
+                      title="Supprimer cette réponse"
+                      style={{ 
+                        cursor: 'pointer', 
+                        background: 'none', 
+                        border: 'none', 
+                        fontSize: '1.2em',
+                        color: '#e74c3c'
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 )}
               </div>
             </section>

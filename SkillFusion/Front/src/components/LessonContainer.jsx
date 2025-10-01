@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../services/api.jsx";
 import { toast } from "react-toastify";
+import ImageDisplay from "./ImageDisplay";
 
 export default function LessonContainer({ lessons, categoryName}) {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function LessonContainer({ lessons, categoryName}) {
     return <div>Aucune leçon trouvée.</div>;
   }
 
-  // Gère l'ajout ou le retrait d'une leçon des favoris
+  // Gère l'ajout ou le retrait d'une leçon des favoris (uniquement pour les utilisateurs simples)
   const handleClickFav = async (lessonId) => {
     if (!favoriteIds.includes(lessonId)) {
       await addFavorite(lessonId);
@@ -98,18 +99,21 @@ export default function LessonContainer({ lessons, categoryName}) {
     }
   };
 
-  // Redirige vers la page de maintenance pour la modification
-  function handleClickUpdate() {
-    navigate("/erreurMaintenance");
-  }
-
   return (
     <section className="list-category" aria-label="Liste des catégories">
       {lessonList.map((lesson) => (
         <div className="box-lesson" key={lesson.id}>
           <div className="box-lesson__favorites">
             <h5 className="category-tag">{lesson.category?.name || categoryName}</h5>
-            {user ? (
+            <p className="instructor-name" style={{ 
+              fontSize: '0.9rem', 
+              color: '#666', 
+              margin: '0.2rem 0',
+              fontStyle: 'italic'
+            }}>
+              Par {lesson.user?.user_name || 'Instructeur inconnu'}
+            </p>
+            {user && user.role_id === 3 ? (
               <a onClick={() => handleClickFav(lesson.id)} style={{ cursor: "pointer" }}>
                 <p>{favoriteIds.includes(lesson.id) ? "\u2605" : "\u2606"}</p>
               </a>
@@ -119,9 +123,9 @@ export default function LessonContainer({ lessons, categoryName}) {
             {/* Boutons de CRUD si admin ou prof propriétaire */}
             {user && (
               <div className="crud">
-                {(user.role_id === 1 || (user.role_id === 2 && lesson.users_id === user.id)) && (
+                {(user.role_id === 1 || (user.role_id === 2 && lesson.user_id === user.id)) && (
                   <>
-                    <a onClick={() => handleClickUpdate(lesson.id)} style={{ cursor: "pointer" }}>
+                    <a onClick={() => navigate(`/edit-lesson/${lesson.id}`)} style={{ cursor: "pointer" }}>
                       <h4>{"\ud83d\udcdd"}</h4>
                     </a>
                     <a onClick={() => handleClickDeleteLesson(lesson.id)} style={{ cursor: "pointer" }}>
@@ -138,7 +142,46 @@ export default function LessonContainer({ lessons, categoryName}) {
           </div>
           <Link to={`/lesson/${lesson.id}`} style={{ textDecoration: "none", color: "inherit" }}>
             <div className="box-lesson__img">
-              <img className="image-lesson" src={`/Images/Photos/${lesson.media_url}`} alt={lesson.media_alt} />
+              {lesson.media_url ? (
+                lesson.media_url.startsWith('/uploads/') ? (
+                  <img
+                    className="image-lesson"
+                    src={`${import.meta.env.VITE_API_URL}${lesson.media_url}`}
+                    alt={lesson.media_alt || lesson.title}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                ) : lesson.media_url.startsWith('http') ? (
+                  <img
+                    className="image-lesson"
+                    src={lesson.media_url}
+                    alt={lesson.media_alt || lesson.title}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                ) : (
+                  <img
+                    className="image-lesson"
+                    src={`/Images/Photos/${lesson.media_url}`}
+                    alt={lesson.media_alt || lesson.title}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'block';
+                    }}
+                  />
+                )
+              ) : (
+                <div className="no-image-placeholder">
+                  <p>Aucune image</p>
+                </div>
+              )}
+              <div className="no-image-placeholder" style={{ display: 'none' }}>
+                <p>Image non disponible</p>
+              </div>
             </div>
           </Link>
           <p>{lesson.description}</p>

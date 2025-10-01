@@ -5,6 +5,8 @@ const accountController = {
   //Récupere les données de tous les utilisateurs
   async getAllUsers(req, res) {
     try {
+      console.log('🔍 getAllUsers - Request from user:', req.user?.id, 'role:', req.user?.role_id);
+      
       const users = await User.findAll({
         include: [
           {
@@ -13,6 +15,10 @@ const accountController = {
           }   
         ],
       });
+      
+      console.log('🔍 getAllUsers - Found users:', users.length);
+      console.log('🔍 getAllUsers - Users details:', users.map(u => ({ id: u.id, user_name: u.user_name, role_id: u.role_id })));
+      
       return res.status(200).json(users);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);

@@ -245,8 +245,8 @@ const forumController = {
 				return res.status(404).json({ error: "Discussion introuvable" });
 			}
 
-			// Vérifier que l'utilisateur est le propriétaire ou admin/instructeur
-			if (topic.user_id !== req.user.id && req.user.role_id > 2) {
+			// Vérifier que l'utilisateur est le propriétaire ou admin
+			if (topic.user_id !== req.user.id && req.user.role_id !== 1) {
 				return res.status(403).json({ error: "Vous ne pouvez supprimer que vos propres sujets" });
 			}
 					
@@ -285,8 +285,8 @@ const forumController = {
 				return res.status(404).json({ error: "Réponse introuvable pour cette discussion" });
 			}
 
-			// Vérifier que l'utilisateur est le propriétaire ou admin/instructeur
-			if (reply.user_id !== req.user.id && req.user.role_id > 2) {
+			// Vérifier que l'utilisateur est le propriétaire ou admin
+			if (reply.user_id !== req.user.id && req.user.role_id !== 1) {
 				return res.status(403).json({ error: "Vous ne pouvez supprimer que vos propres réponses" });
 			}
 

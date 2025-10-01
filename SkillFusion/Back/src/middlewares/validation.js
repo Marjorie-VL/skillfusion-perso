@@ -150,6 +150,10 @@ export const categorySchema = Joi.object({
     'string.min': 'Le nom de la catégorie doit contenir au moins 3 caractères.',
     'string.max': 'Le nom de la catégorie ne doit pas dépasser 30 caractères.',
     'any.required': 'Le nom de la catégorie est obligatoire.',
+  }),
+  description: Joi.string().min(3).max(500).optional().allow(null, '').messages({
+    'string.min': 'La description doit contenir au moins 3 caractères.',
+    'string.max': 'La description ne doit pas dépasser 500 caractères.',
   })
 });
 
@@ -160,6 +164,10 @@ export const updateCategorySchema = Joi.object({
     'string.min': 'Le nom de la catégorie doit contenir au moins 3 caractères.',
     'string.max': 'Le nom de la catégorie ne doit pas dépasser 30 caractères.',
     'any.required': 'Le nom de la catégorie est obligatoire.',
+  }),
+  description: Joi.string().min(3).max(500).optional().allow(null, '').messages({
+    'string.min': 'La description doit contenir au moins 3 caractères.',
+    'string.max': 'La description ne doit pas dépasser 500 caractères.',
   })
 });
 

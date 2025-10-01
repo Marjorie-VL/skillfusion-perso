@@ -42,11 +42,11 @@ router.delete("/categories/:id", authenticateToken, isAdminOrInstructor, categor
 
 
 // Routes ACCOUNT
-router.get("/users",  accountController.getAllUsers);// affiche la liste des utilisateurs avec leur rôle
+router.get("/users", authenticateToken, isAdmin, accountController.getAllUsers);// affiche la liste des utilisateurs avec leur rôle (admin seulement)
 router.get("/users/:id", authenticateToken, isAdmin,accountController.getOneUser);// affiche le compte d'un utilisateur
 router.get("/users/:id/favorites", authenticateToken, accountController.getAllFavorites); // affiche la liste des leçons favorites d'un utilisateur
 router.patch("/users/:id", authenticateToken, isSelfOrAdmin, accountController.updateUser);// modifie un compte (soi-même ou admin)
-router.delete("/users/:id", authenticateToken, isAdmin, accountController.deleteUser);// supprime le compte d'un utilisateur
+router.delete("/users/:id", authenticateToken, isSelfOrAdmin, accountController.deleteUser);// supprime le compte d'un utilisateur
 
 
 // Routes ROLE
@@ -58,11 +58,11 @@ router.patch("/users/:id/role", authenticateToken, isAdmin, accountController.up
 router.get("/forum", authenticateToken, forumController.getAllTopics);// affiche la liste des sujets
 router.post("/forum", authenticateToken, forumController.addTopic);// ajoute un sujet
 router.patch("/forum/:topicId", authenticateToken, isOwnerOrAdmin, forumController.updateTopic);// modifier un sujet (propriétaire ou admin)
-router.delete("/forum/:topicId", authenticateToken, isAdminOrInstructor, forumController.deleteDiscussion);// supprimer un sujet (instructeur ou admin)
+router.delete("/forum/:topicId", authenticateToken, isOwnerOrAdmin, forumController.deleteDiscussion);// supprimer un sujet (propriétaire ou admin)
 router.get("/forum/:topicId", authenticateToken, forumController.getOneDiscussion);// Affiche un sujet et ses réponses
 router.post("/forum/:topicId/reply", authenticateToken, forumController.addReply);// ajoute une réponse à un sujet
 router.patch("/forum/:topicId/reply/:replyId", authenticateToken, isOwnerOrAdmin, forumController.updateReply);// modifier une réponse (propriétaire ou admin)
-router.delete("/forum/:topicId/reply/:replyId", authenticateToken, isAdminOrInstructor, forumController.deleteReply);// supprimer une réponse (instructeur ou admin) 
+router.delete("/forum/:topicId/reply/:replyId", authenticateToken, isOwnerOrAdmin, forumController.deleteReply);// supprimer une réponse (propriétaire ou admin) 
 
 // Routes UPLOAD
 router.post("/upload", authenticateToken, upload.single('file'), uploadController.uploadFile);// upload d'un fichier
