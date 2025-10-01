@@ -110,6 +110,18 @@ User.belongsTo(Role, {
     onDelete: "CASCADE"
 });
 
+// USER <--> CATEGORY
+User.hasMany(Category, {
+    as: "categories",
+    foreignKey: { name: "user_id", allowNull: true },
+    onDelete: "CASCADE"
+});
+Category.belongsTo(User, {
+    as: "user",
+    foreignKey: { name: "user_id", allowNull: true },
+    onDelete: "CASCADE"
+});
+
 // LESSON <--> MATERIAL
 Lesson.hasMany(Material,{
     as: "materials",

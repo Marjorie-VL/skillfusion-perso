@@ -2,48 +2,44 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/api"; 
 import { toast } from "react-toastify";
+import { authService } from "../services/authService.js";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setUser } = useAuth(); // 👈
+  const [loading, setLoading] = useState(false);
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    fetch(`${import.meta.env.VITE_API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    })
-    .then((res) => {
-      if (!res.ok) throw new Error("Identifiants invalides");
-      return res.json();
-    })
-    .then((data) => {
-      localStorage.setItem("token", data.token);
-      return fetch(`${import.meta.env.VITE_API_URL}/me`, {
-        headers: {
-          Authorization: `Bearer ${data.token}`,
-        },
-      });
-    })
-    .then(res => {
-      if (!res.ok) {
-        localStorage.removeItem("token");
-        throw new Error("Impossible de récupérer le profil");
-      }
-      return res.json();
-    })
-    .then(userData => {
+    try {
+      // Connexion
+      const loginData = await authService.login({ email, password });
+      localStorage.setItem("token", loginData.token);
+
+      // Récupération du profil utilisateur
+      const userData = await authService.getCurrentUser();
       setUser(userData);
+      
       toast.success("Connexion réussie !");
       navigate("/");
-    })
-    .catch((err) => {
-      toast.error(err.message || "Erreur lors de la connexion ");
-    });
+      
+    } catch (error) {
+      console.error("Erreur connexion:", error);
+      
+      if (error.response && error.response.status === 401) {
+        toast.error("Email ou mot de passe incorrect");
+      } else if (error.request) {
+        toast.error("Erreur de connexion. Vérifiez votre connexion internet.");
+      } else {
+        toast.error("Une erreur inattendue s'est produite.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -72,10 +68,18 @@ export default function LoginForm() {
             />
           </div>
           <section className="see-more">
-        <button type="submit" className="main-button">
-          Connexion
-        </button>
-      </section>
+            <button 
+              type="submit" 
+              className="main-button"
+              disabled={loading}
+              style={{ 
+                opacity: loading ? 0.6 : 1,
+                cursor: loading ? "not-allowed" : "pointer"
+              }}
+            >
+              {loading ? "Connexion en cours..." : "Connexion"}
+            </button>
+          </section>
         </form>
       </section>
       

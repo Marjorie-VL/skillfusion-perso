@@ -2,8 +2,12 @@ import { useEffect, useState, useCallback } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import AdminDashboard from "../components/AdminDashboard.jsx";
+import InstructorDashboard from "../components/InstructorDashboard.jsx";
 import UserDashboard from "../components/UserDashboard.jsx";
+import { authService } from "../services/authService.js";
+import { userService } from "../services/userService.js";
 
 export default function Board() {
   const navigate = useNavigate();
@@ -12,38 +16,46 @@ export default function Board() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const ADMIN_ROLE_ID = 1;
+  const INSTRUCTOR_ROLE_ID = 2;
+  const USER_ROLE_ID = 3;
 
   const fetchAccount = useCallback(async () => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.status === 401 || response.status === 404) {
+      const data = await authService.getCurrentUser();
+      setUserData(data);
+    } catch (err) {
+      console.error("❌ Erreur récupération compte →", err);
+      
+      if (err.response && err.response.status === 401) {
         localStorage.removeItem("token");
         navigate("/login");
-        throw new Error("Non authentifié");
+        toast.error("Session expirée. Veuillez vous reconnecter.");
+      } else if (err.request) {
+        toast.error("Erreur de connexion. Vérifiez votre connexion internet.");
+      } else {
+        toast.error("Erreur lors du chargement de votre profil.");
       }
-      if (!response.ok) throw new Error("Erreur réseau ou autorisation");
-      setUserData(await response.json());
-    } catch (err) {
       setError(err.message);
     }
   }, [navigate]);
 
   const fetchAllUsers = useCallback(async () => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs");
-      const payload = await response.json();
-      setUsersData(Array.isArray(payload) ? payload : (payload.users || []));
+      console.log('🔍 Frontend - Fetching all users...');
+      const data = await userService.getAllUsers();
+      console.log('🔍 Frontend - Received users data:', data);
+      setUsersData(Array.isArray(data) ? data : []);
     } catch (err) {
-      if (err.message.includes("401")) {
+      console.error("❌ Erreur récupération utilisateurs →", err);
+      
+      if (err.response && err.response.status === 401) {
         navigate("/login");
-      }      
+        toast.error("Session expirée. Veuillez vous reconnecter.");
+      } else if (err.request) {
+        toast.error("Erreur de connexion. Vérifiez votre connexion internet.");
+      } else {
+        toast.error("Erreur lors du chargement des utilisateurs.");
+      }
       setError(err.message);
     }
   }, [navigate]);
@@ -51,8 +63,8 @@ export default function Board() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Toujours récupérer les données de l'utilisateur connecté
         await fetchAccount();
-        await fetchAllUsers();
       } catch (err) {
         setError(err.message);
       } finally {
@@ -60,33 +72,100 @@ export default function Board() {
       }
     };
     fetchData();
-  }, [fetchAccount, fetchAllUsers]);
+  }, [fetchAccount]);
 
-  if (isLoading) return <div>Chargement...</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
+  // Récupérer les utilisateurs seulement si c'est un admin
+  useEffect(() => {
+    if (userData?.role_id === ADMIN_ROLE_ID) {
+      fetchAllUsers();
+    }
+  }, [userData, fetchAllUsers]);
+
+  if (isLoading) {
+    return (
+      <div style={{ 
+        textAlign: "center", 
+        padding: "2rem",
+        fontSize: "1.2rem",
+        color: "#666"
+      }}>
+        <p>🔄 Chargement de votre tableau de bord...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ 
+        textAlign: "center", 
+        padding: "2rem",
+        color: "#d32f2f",
+        backgroundColor: "#ffebee",
+        borderRadius: "8px",
+        margin: "2rem",
+        border: "1px solid #ffcdd2"
+      }}>
+        <p>❌ Erreur : {error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          style={{
+            marginTop: "1rem",
+            padding: "0.5rem 1rem",
+            backgroundColor: "#1976d2",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer"
+          }}
+        >
+          🔄 Réessayer
+        </button>
+      </div>
+    );
+  }
+
+  // Vérification de sécurité : s'assurer que l'utilisateur a un rôle valide
+  if (!userData || ![ADMIN_ROLE_ID, INSTRUCTOR_ROLE_ID, USER_ROLE_ID].includes(userData.role_id)) {
+    return (
+      <div style={{ 
+        textAlign: "center", 
+        padding: "2rem",
+        color: "#d32f2f",
+        backgroundColor: "#ffebee",
+        borderRadius: "8px",
+        margin: "2rem",
+        border: "1px solid #ffcdd2"
+      }}>
+        <p>❌ Rôle utilisateur non reconnu. Veuillez contacter un administrateur.</p>
+        <button 
+          onClick={() => navigate("/login")} 
+          style={{
+            marginTop: "1rem",
+            padding: "0.5rem 1rem",
+            backgroundColor: "#1976d2",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer"
+          }}
+        >
+          🔐 Se reconnecter
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
       <Header />      
       <main>
-      <section className="head-button">
-      {userData?.role_id === ADMIN_ROLE_ID ? (
-        <Link to="/erreurMaintenance">
-          <button className="main-button">Créer un nouveau cours</button>
-        </Link>
-      ):(
-        <p></p>
-      )}
-      </section>
-      <section className="head-button">
-        <Link to="/profilchanges">
-          <button className="main-button">Modifier mon profil</button>
-        </Link>
-      </section>
-
-        {userData?.role_id === ADMIN_ROLE_ID ? (
+        {userData.role_id === ADMIN_ROLE_ID && (
           <AdminDashboard usersData={usersData} />
-        ) : (
+        )}
+        {userData.role_id === INSTRUCTOR_ROLE_ID && (
+          <InstructorDashboard />
+        )}
+        {userData.role_id === USER_ROLE_ID && (
           <UserDashboard favoriteLessons={userData.favorite_lessons} user={userData}/>
         )}
       </main>

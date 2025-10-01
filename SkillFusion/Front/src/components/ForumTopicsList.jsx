@@ -1,13 +1,16 @@
 import React, { useState, useEffect} from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../services/api.jsx";
 import { toast } from "react-toastify";
+import { forumService } from "../services/forumService.js";
+
 
 export default function ForumTopicsList({topics}) {
 
   const [topicsList, setTopicsList] = useState(Array.isArray(topics) ? topics : []);
+  const navigate = useNavigate();
 
   // Récupération des données utilisateur
   const {user} = useAuth();
@@ -16,18 +19,7 @@ export default function ForumTopicsList({topics}) {
 useEffect(() => {
   const fetchTopics = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum`,{
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      }
-      });
-
-      if (!response.ok) {
-        throw new Error("Impossible de charger les messages.");
-      }
-
-      const data = await response.json();
+      const data = await forumService.getAllTopics();
       console.log(data);
 
       setTopicsList(Array.isArray(data) ? data : []);
@@ -39,6 +31,11 @@ useEffect(() => {
   fetchTopics();
 }, []);
 
+  // Modifier un sujet
+  const handleClickEdit = (topicId) => {
+    navigate(`/forum/edit/${topicId}`);
+  };
+
   // Supprimer un sujet
   const handleClickDelete = async (topicId) => { 
     const isSure = confirm("Êtes-vous sûr(e) de vouloir supprimer ce sujet ?");
@@ -47,26 +44,15 @@ useEffect(() => {
     }
     
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum/${topicId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        }
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Erreur lors de la suppression du sujet");
-      }
+      await forumService.deleteTopic(topicId);
       
       // Mise à jour de la liste locale après suppression
       setTopicsList((prev) => prev.filter((topic) => topic.id !== topicId));
       toast.success("Sujet supprimé avec succès !");
 
     } catch (err) {
-      console.error("❌ Erreur suppression →", err.message);
-      toast.error("Erreur lors de la suppression : " + err.message);
+      console.error("❌ Erreur suppression →", err);
+      toast.error("Erreur lors de la suppression : " + (err.response?.data?.error || err.message));
     }
   }
 
@@ -100,22 +86,38 @@ useEffect(() => {
                   >
                   <p>{(topic.content || "").replace(/^./, (match) => match.toUpperCase())}</p>
                   </Link>
-                  {/* Affiche les boutons de suppression si l'utilisateur est admin ou instructeur */}
-                  {user && (user.role_id === 1 || user.role_id === 2) && (
-                    <button 
-                      onClick={() => handleClickDelete(topic.id)} 
-                      className="delete-button"
-                      title="Supprimer ce sujet"
-                      style={{ 
-                        cursor: 'pointer', 
-                        background: 'none', 
-                        border: 'none', 
-                        fontSize: '1.2em',
-                        color: '#e74c3c'
-                      }}
-                    >
-                      🗑️
-                    </button>
+                  {/* Affiche les boutons de modification/suppression si l'utilisateur est propriétaire ou admin */}
+                  {user && (user.id === topic.user_id || user.role_id === 1) && (
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                      <button 
+                        onClick={() => handleClickEdit(topic.id)} 
+                        className="edit-button"
+                        title="Modifier ce sujet"
+                        style={{ 
+                          cursor: 'pointer', 
+                          background: 'none', 
+                          border: 'none', 
+                          fontSize: '1.2em',
+                          color: '#3498db'
+                        }}
+                      >
+                        ✏️
+                      </button>
+                      <button 
+                        onClick={() => handleClickDelete(topic.id)} 
+                        className="delete-button"
+                        title="Supprimer ce sujet"
+                        style={{ 
+                          cursor: 'pointer', 
+                          background: 'none', 
+                          border: 'none', 
+                          fontSize: '1.2em',
+                          color: '#e74c3c'
+                        }}
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>

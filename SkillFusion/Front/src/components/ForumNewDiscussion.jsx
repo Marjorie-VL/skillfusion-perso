@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import { toast } from "react-toastify";
+import { forumService } from "../services/forumService.js";
 
 export default function ForumNewDiscussion() {
   const navigate = useNavigate();
@@ -17,34 +18,30 @@ export default function ForumNewDiscussion() {
 
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/forum`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ title, content: content }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (data.errors) {
-          setErrors(data.errors);
-        } else if (data.error || data.message) {
-          toast.error(data.error || data.message);
-        } else {
-          toast.error("Erreur inconnue lors de la création du sujet.");
-        }
-        return;
-      }
+      await forumService.createTopic({ title, content });
 
       // Message de succès et redirection
       toast.success("Sujet créé avec succès !");
       navigate("/forum");
     } catch (err) {
-      console.error("❌ Erreur création sujet →", err.message);
-      toast.error("Erreur lors de la création du sujet : " + err.message);
+      console.error("❌ Erreur création sujet →", err);
+      
+      if (err.response && err.response.data) {
+        const { data } = err.response;
+        
+        if (data.errors) {
+          setErrors(data.errors);
+          toast.error("Veuillez corriger les erreurs dans le formulaire");
+        } else if (data.error) {
+          toast.error(data.error);
+        } else {
+          toast.error("Erreur lors de la création du sujet");
+        }
+      } else if (err.request) {
+        toast.error("Erreur de connexion. Vérifiez votre connexion internet.");
+      } else {
+        toast.error("Une erreur inattendue s'est produite.");
+      }
     }
   };
 
