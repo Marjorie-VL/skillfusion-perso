@@ -1,4 +1,4 @@
-import { Lesson } from "../models/association.js";
+import { Lesson, User, sequelize } from "../models/association.js";
 import { lessonSchema, updateLessonSchema } from "../middlewares/validation.js";
 
 const lessonController = {
@@ -10,7 +10,34 @@ const lessonController = {
       if (req.query?.category_id) {
         where.category_id = req.query.category_id;
       }
-      const lessons = await Lesson.findAll({ where, include: ['category'] });
+      if (req.query?.user_id) {
+        where.user_id = req.query.user_id;
+      }
+      
+      // Par défaut, ne montrer que les cours publiés
+      // Sauf si on demande les cours d'un utilisateur spécifique (pour son tableau de bord)
+      // ou si on force l'inclusion des brouillons (pour les admins)
+      if (!req.query?.user_id && !req.query?.include_drafts) {
+        where.is_published = true;
+      }
+      // Si user_id est spécifié ou include_drafts=true, on retourne tous les cours (publiés + brouillons)
+      
+      
+      const lessons = await Lesson.findAll({ 
+        where, 
+        include: [
+          'category',
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'user_name']
+          }
+        ]
+      });
+      
+      console.log('🔍 getAllLessons - Found lessons:', lessons.length);
+      console.log('🔍 getAllLessons - Lessons details:', lessons.map(l => ({ id: l.id, title: l.title, is_published: l.is_published })));
+      
       return res.status(200).json(lessons);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
@@ -40,15 +67,16 @@ const lessonController = {
 //Ajoute un cours
   async addLesson(req, res) {
     try {
-      const { title, description, category_id, user_id, materials, steps, media_url, media_alt } = req.body;
+      console.log('🔍 addLesson - Request body:', req.body);
+      const { title, description, category_id, user_id, materials, steps, media_url, media_alt, is_published } = req.body;
 
       // Validation simple
-      if (!title || !description || !category_id || !user_id || steps) {
-        return res.status(400).json({ error: 'Nom, description, catégorie_id et user_id sont requis.' });
+      if (!title || !description || !category_id || !user_id) {
+        return res.status(400).json({ error: 'Titre, description, catégorie et utilisateur sont requis.' });
       }
 
       //  Valider avec Joi
-      const { error } = lessonSchema.validate({ title, description, category_id, user_id, materials, steps }, { abortEarly: false });
+      const { error } = lessonSchema.validate({ title, description, category_id, user_id, media_url, media_alt, materials, steps }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }
         const errors = {};
@@ -65,7 +93,7 @@ const lessonController = {
         user_id,
         media_url: media_url ?? null,
         media_alt: media_alt ?? null,
-        is_published: false, // par défaut
+        is_published: is_published ?? false, // utilise la valeur envoyée ou false par défaut
       });
 
       //Ajout des materials
@@ -99,7 +127,9 @@ const lessonController = {
       res.status(201).json(lessonWithAssociations);
 
     } catch(error) {
-      console.error('Erreur Sequelize →', error);
+      console.error('❌ Erreur Sequelize addLesson →', error);
+      console.error('❌ Error details:', error.message);
+      console.error('❌ Error stack:', error.stack);
       res.status(500).json({ error: 'Erreur lors de la création de la leçon.' });
     }
   },
@@ -136,12 +166,17 @@ async updateLesson(req, res) {
     if (user_id !== undefined) lesson.user_id = user_id;
     if (media_url !== undefined) lesson.media_url = media_url;
     if (media_alt !== undefined) lesson.media_alt = media_alt;
+    if (is_published !== undefined) lesson.is_published = is_published;
 
     await lesson.save({ transaction: t });
 
     // Mise à jour du matériel si envoyé
     if (materials !== undefined) {
-      await lesson.setMaterials([], { transaction: t });
+      // Supprimer tous les matériaux existants
+      const existingMaterials = await lesson.getMaterials({ transaction: t });
+      await Promise.all(existingMaterials.map(material => material.destroy({ transaction: t })));
+      
+      // Créer les nouveaux matériaux
       if (Array.isArray(materials) && materials.length > 0) {
         await Promise.all(materials.map(material => 
           lesson.createMaterial({ 
@@ -154,13 +189,17 @@ async updateLesson(req, res) {
 
     // Mise à jour des Steps si envoyé
     if (steps !== undefined) {
-      await lesson.setSteps([], { transaction: t });
+      // Supprimer toutes les étapes existantes
+      const existingSteps = await lesson.getSteps({ transaction: t });
+      await Promise.all(existingSteps.map(step => step.destroy({ transaction: t })));
+      
+      // Créer les nouvelles étapes
       if (Array.isArray(steps) && steps.length > 0) {
         await Promise.all(steps.map((step, i) =>
             lesson.createStep({
               step_order: i + 1,
               title: step.title,
-              description: step.destepcription,
+              description: step.description,
               media_url: step.media_url ?? null,
               media_alt: step.media_alt ?? null,
             }, { transaction: t })

@@ -1,10 +1,12 @@
-import { User, Role, Lesson } from "../models/association.js";
+import { User, Role, Lesson, Category } from "../models/association.js";
 import { updateUserSchema } from "../middlewares/validation.js";
 
 const accountController = {
   //Récupere les données de tous les utilisateurs
   async getAllUsers(req, res) {
     try {
+      console.log('🔍 getAllUsers - Request from user:', req.user?.id, 'role:', req.user?.role_id);
+      
       const users = await User.findAll({
         include: [
           {
@@ -13,6 +15,10 @@ const accountController = {
           }   
         ],
       });
+      
+      console.log('🔍 getAllUsers - Found users:', users.length);
+      console.log('🔍 getAllUsers - Users details:', users.map(u => ({ id: u.id, user_name: u.user_name, role_id: u.role_id })));
+      
       return res.status(200).json(users);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
@@ -158,6 +164,42 @@ const accountController = {
       return res.status(500).json({ 
         error: error.message
       });
+    }
+  },
+
+  // Récupère les leçons favorites d'un utilisateur
+  async getAllFavorites(req, res) {
+    try {
+      const userId = req.params.id;
+      
+      // Vérifier que l'utilisateur existe
+      const user = await User.findByPk(userId);
+      if (!user) {
+        return res.status(404).json({ error: "Utilisateur non trouvé" });
+      }
+
+      // Récupérer les leçons favorites avec les détails
+      const favorites = await user.getFavorite_lessons({
+        include: [
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'user_name']
+          },
+          {
+            model: Category,
+            as: 'category',
+            attributes: ['id', 'name']
+          }
+        ]
+      });
+
+      return res.status(200).json({
+        favorite_lessons: favorites
+      });
+    } catch (error) {
+      console.error('❌ Erreur Sequelize →', error.message);
+      return res.status(500).json({ error: error.message });
     }
   },
 };

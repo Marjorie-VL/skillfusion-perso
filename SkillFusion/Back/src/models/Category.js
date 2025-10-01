@@ -16,6 +16,14 @@ Category.init(
             allowNull: false,
             unique: true,
         },
+        user_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true, // Temporairement true pour les catégories existantes
+            references: {
+                model: 'user',
+                key: 'id'
+            }
+        },
     },
     {
         sequelize,

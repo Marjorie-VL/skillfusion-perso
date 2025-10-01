@@ -59,6 +59,10 @@
         align-items: flex-start;
         justify-content: center;
     width: 58%;
+    word-wrap: break-word; /*Force la coupure des mots longs*/
+    overflow-wrap: break-word; /*Force la coupure des mots longs*/
+    hyphens: auto; /*Ajoute des tirets automatiques pour les coupures*/
+    box-sizing: border-box; /*Permet d'inclure le padding dans le calcul de la largeur/hauteur*/
 }
 
 .steps__title{
@@ -72,6 +76,10 @@
 .steps__desc p, h4{
     padding:0;
     margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
 }
 
 .steps__img{

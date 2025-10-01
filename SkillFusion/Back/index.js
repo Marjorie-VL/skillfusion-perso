@@ -24,6 +24,9 @@ app.use(express.json());
 // 3. Configuration CORS
 app.use(corsConfig);
 
+// 4. Servir les fichiers statiques (images uploadées)
+app.use('/uploads', express.static('uploads'));
+
 // ========================================
 // ROUTES
 // ========================================

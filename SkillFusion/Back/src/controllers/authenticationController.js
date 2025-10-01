@@ -12,11 +12,11 @@ const authentication = {
 
     // Vérifier que tous les champs sont présents
     if (!user_name || !password || !email ) {
-      return res.status(400).json({ error: 'Tous les champs (pseudo, password, email) sont obligatoires.' });
+      return res.status(400).json({ error: 'Tous les champs (user_name, password, email) sont obligatoires.' });
     }
     
     // Valider avec Joi, avec abortEarly: false pour récupérer toutes les erreurs
-    const { error } = userSchema.validate({ pseudo: user_name, email, password }, { abortEarly: false });
+    const { error } = userSchema.validate({ user_name, email, password }, { abortEarly: false });
     if (error) {
       // Transformer les erreurs Joi en objet simple { champ: message }
       const errors = {};
