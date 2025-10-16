@@ -132,7 +132,7 @@ Material.belongsTo(Lesson,{
     as: "lesson",
     foreignKey: { name: "lesson_id", allowNull: false },
     onDelete: "CASCADE"
-})
+});
 
 
 export { Lesson, Category, Material, User, Role, Topic, Step, Reply, sequelize };

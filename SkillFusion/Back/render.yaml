@@ -1,0 +1,30 @@
+services:
+  # Service Backend API
+  - type: web
+    name: skillfusion-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: ACCESS_TOKEN_SECRET
+        generateValue: true
+      - key: ACCESS_TOKEN_EXPIRES_IN
+        value: 24h
+      - key: PG_URL
+        fromDatabase:
+          name: skillfusion-db
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://your-frontend-domain.com
+
+  # Base de données PostgreSQL
+  - type: pserv
+    name: skillfusion-db
+    env: postgresql
+    plan: free
+    ipAllowList: []

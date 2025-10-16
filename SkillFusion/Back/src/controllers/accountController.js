@@ -1,5 +1,6 @@
 import { User, Role, Lesson, Category } from "../models/association.js";
 import { updateUserSchema } from "../middlewares/validation.js";
+import argon2 from "argon2";
 
 const accountController = {
   //Récupere les données de tous les utilisateurs
@@ -103,7 +104,12 @@ const accountController = {
         }
       }
 
-      const updateData = { user_name, email, password }; 
+      const updateData = { user_name, email }; 
+
+      // Hacher le mot de passe s'il est fourni
+      if (password) {
+        updateData.password = await argon2.hash(password);
+      }
 
       // Vérifie si on essaie de modifier le rôle
       if (role_id !== undefined) {

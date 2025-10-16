@@ -28,29 +28,6 @@ const uploadController = {
     }
   },
 
-  // Upload de plusieurs fichiers
-  async uploadMultipleFiles(req, res) {
-    try {
-      if (!req.files || req.files.length === 0) {
-        return res.status(400).json({ error: 'Aucun fichier fourni' });
-      }
-
-      const uploadedFiles = req.files.map(file => ({
-        filename: file.filename,
-        originalName: file.originalname,
-        url: `/uploads/${file.filename}`,
-        size: file.size
-      }));
-
-      return res.status(200).json({
-        message: 'Fichiers uploadés avec succès',
-        files: uploadedFiles
-      });
-    } catch (error) {
-      console.error('❌ Erreur upload multiple →', error.message);
-      return res.status(500).json({ error: 'Erreur lors de l\'upload des fichiers' });
-    }
-  }
 };
 
 export { uploadController };

@@ -66,6 +66,5 @@ router.delete("/forum/:topicId/reply/:replyId", authenticateToken, isOwnerOrAdmi
 
 // Routes UPLOAD
 router.post("/upload", authenticateToken, upload.single('file'), uploadController.uploadFile);// upload d'un fichier
-router.post("/upload/multiple", authenticateToken, upload.array('files', 10), uploadController.uploadMultipleFiles);// upload de plusieurs fichiers
 
 

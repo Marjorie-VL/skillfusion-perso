@@ -27,7 +27,7 @@ Step.init(
     },
     media_alt: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     lesson_id: {
       type: DataTypes.INTEGER,

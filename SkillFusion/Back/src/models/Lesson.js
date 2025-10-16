@@ -31,6 +31,7 @@ Lesson.init (
     },
     media_alt: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     is_published: {
       type: DataTypes.BOOLEAN,

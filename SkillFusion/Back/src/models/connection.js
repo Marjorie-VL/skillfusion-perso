@@ -36,8 +36,11 @@ if (pgUrl) {
       updatedAt: 'updated_at',
     },
     dialectOptions: {
-      // Autoriser SSL si fourni via URL (ex: hébergement), sinon ignore
-      ssl: false,
+      // Configuration SSL pour Render PostgreSQL
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      },
     },
   });
 } else {

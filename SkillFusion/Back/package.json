@@ -5,6 +5,10 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
+    "build": "npm run db:create && npm run db:seed",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "db:create": "node src/migrations/createTables.js",
     "db:seed:roles": "node src/seeders/seed-roles.js",
     "db:seed:users": "node src/seeders/seed-users.js",
@@ -16,7 +20,8 @@
     "db:seed:replies": "node src/seeders/seed-replies.js",
     "db:seed:favorites": "node src/seeders/seed-favorites.js",
     "db:seed": "npm run db:seed:roles && npm run db:seed:users && npm run db:seed:categories && npm run db:seed:lessons && npm run db:seed:steps && npm run db:seed:materials && npm run db:seed:topics && npm run db:seed:replies && npm run db:seed:favorites",
-    "db:reset": "npm run db:create && npm run db:seed"
+    "db:reset": "npm run db:create && npm run db:seed",
+    "render-postbuild": "npm run db:create && npm run db:seed"
   },
   "type": "module",
   "keywords": [
@@ -41,5 +46,11 @@
     "pg": "^8.15.1",
     "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "babel-jest": "^30.2.0",
+    "jest": "^30.2.0"
   }
 }

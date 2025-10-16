@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { router } from "./src/router.js";
 import { xss } from "express-xss-sanitizer";
+import { sequelize } from "./src/models/connection.js";
 
 // Middlewares custom
 import { corsConfig } from "./src/middlewares/corsConfig.js";

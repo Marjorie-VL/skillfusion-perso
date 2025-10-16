@@ -15,14 +15,14 @@ CASCADE;
 -- Table: Role
 CREATE TABLE role (
   "id" SERIAL PRIMARY KEY,
-  "name" VARCHAR(100) NOT NULL
+  "name" VARCHAR(50) NOT NULL
 );
 
 -- Table: User
 CREATE TABLE "user" (
   "id" SERIAL PRIMARY KEY,
-  "user_name" VARCHAR(100) NOT NULL,
-  "email" VARCHAR(100) NOT NULL,
+  "user_name" VARCHAR(30) NOT NULL,
+  "email" VARCHAR(255) NOT NULL,
   "password" VARCHAR(255) NOT NULL, 
   "role_id" INTEGER NOT NULL,
   FOREIGN KEY ("role_id") REFERENCES "role"("id") ON DELETE CASCADE
@@ -31,7 +31,7 @@ CREATE TABLE "user" (
 -- Table: Category
 CREATE TABLE "category" (
   "id" SERIAL PRIMARY KEY,
-  "name" VARCHAR(100) UNIQUE NOT NULL
+  "name" VARCHAR(30) UNIQUE NOT NULL
 );
 
 -- Table: Lesson
@@ -40,8 +40,8 @@ CREATE TABLE "lesson" (
   "title" VARCHAR(255) UNIQUE,
   "description" TEXT,
   "is_published" BOOLEAN DEFAULT FALSE,
-  "media_url" TEXT,
-  "media_alt" TEXT NOT NULL,
+  "media_url" VARCHAR(255),
+  "media_alt" VARCHAR(255),
   "category_id" INTEGER NOT NULL,
   "user_id" INTEGER NOT NULL,
   FOREIGN KEY ("category_id") REFERENCES "category"("id") ON DELETE CASCADE,
@@ -54,8 +54,8 @@ CREATE TABLE "step" (
   "step_order" INTEGER NOT NULL,
   "title" VARCHAR(255),
   "description" TEXT,
-  "media_url" TEXT,
-  "media_alt" TEXT NOT NULL,
+  "media_url" VARCHAR(255),
+  "media_alt" VARCHAR(255),
   "lesson_id" INTEGER NOT NULL,
   FOREIGN KEY ("lesson_id") REFERENCES "lesson"("id") ON DELETE CASCADE
 );
