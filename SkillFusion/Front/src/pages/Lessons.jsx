@@ -8,7 +8,7 @@ export default function Lessons() {
   const [lessons, setLessons] = useState([]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/lessons`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/lessons`)
       .then((response) => response.json())
       .then((data) => setLessons(Array.isArray(data) ? data : data.lessons || []))
       .catch((error) => console.error("Erreur API:", error))

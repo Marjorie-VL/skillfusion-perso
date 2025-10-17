@@ -32,8 +32,8 @@ app.use('/uploads', express.static('uploads'));
 // ROUTES
 // ========================================
 
-// Router principal
-app.use(router);
+// Router principal avec préfixe /api
+app.use('/api', router);
 
 // ========================================
 // GESTION DES ERREURS

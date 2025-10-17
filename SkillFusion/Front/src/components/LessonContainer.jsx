@@ -42,7 +42,7 @@ export default function LessonContainer({ lessons, categoryName}) {
   // Ajoute une leçon aux favoris
   const addFavorite = async (lessonId) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/lessons/${lessonId}/favorite`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/lessons/${lessonId}/favorite`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export default function LessonContainer({ lessons, categoryName}) {
   // Supprime une leçon des favoris
   const deleteFavorite = async (lessonId) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/lessons/${lessonId}/favorite`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/lessons/${lessonId}/favorite`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +81,7 @@ export default function LessonContainer({ lessons, categoryName}) {
   const handleClickDeleteLesson = async (lessonId) => {
     if (!window.confirm("Etes-vous sûr(e) ?")) return;
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/lessons/${lessonId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/lessons/${lessonId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

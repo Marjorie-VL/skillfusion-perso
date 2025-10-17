@@ -17,7 +17,7 @@ export default function LessonDetail() {
 
   useEffect(() => {
         // Fetch lesson details
-    fetch(`${import.meta.env.VITE_API_URL}/lessons/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/lessons/${id}`)
       .then((response) => response.json())
       .then((data) => setLesson(data))
       
@@ -37,7 +37,7 @@ export default function LessonDetail() {
   const fetchAccount = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!response.ok) throw new Error("Erreur réseau ou autorisation");
@@ -76,7 +76,7 @@ export default function LessonDetail() {
 
   // Fonction de suppression
   const handleDelete = async () => {
-    await fetch(`${import.meta.env.VITE_API_URL}/lesson/${lesson.id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/lesson/${lesson.id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,

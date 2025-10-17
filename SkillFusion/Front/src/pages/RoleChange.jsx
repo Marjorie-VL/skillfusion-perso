@@ -17,7 +17,7 @@ export default function ProfilChange() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/roles`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/roles`)
       .then((res) => res.json())
       .then((data) => {
         setRoles(Array.isArray(data) ? data : data.roles || []);
@@ -36,7 +36,7 @@ export default function ProfilChange() {
       return;
     }
 
-    fetch(`${import.meta.env.VITE_API_URL}/users/${user.id}`, {
+    fetch(`${import.meta.env.VITE_API_URL}/api/users/${user.id}`, {
 
       method: "PATCH",
       headers: {

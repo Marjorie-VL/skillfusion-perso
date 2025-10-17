@@ -17,16 +17,19 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/me`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       const data = await res.json();
       if (res.ok && data) {
-        setUser(data); // ou `data.user` si ton backend retourne un objet { user, isAuthenticated }
+        setUser(data);
+        // Mettre à jour le localStorage avec les données utilisateur
+        localStorage.setItem('user', JSON.stringify(data));
       } else {
         setUser(null);
+        localStorage.removeItem('user');
       }
     } catch (err) {
       console.error("Erreur auth:", err);
@@ -39,6 +42,7 @@ export function AuthProvider({ children }) {
    // Fonction de déconnexion
    const logout = () => {
     localStorage.removeItem("token"); // Supprimer le token du localStorage
+    localStorage.removeItem("user"); // Supprimer les données utilisateur du localStorage
     setUser(null); // Réinitialiser l'état de l'utilisateur
     navigate("/"); // Redirection
   };

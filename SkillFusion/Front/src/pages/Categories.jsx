@@ -10,7 +10,7 @@ export default function Categories() {
 
   // Récupère la liste de toutes les catégories
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/categories`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/categories`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Erreur lors du chargement des catégories");

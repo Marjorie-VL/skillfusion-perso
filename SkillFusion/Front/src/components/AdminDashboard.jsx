@@ -57,7 +57,7 @@ export default function AdminDashboard({ usersData }) {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${userId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -79,7 +79,7 @@ export default function AdminDashboard({ usersData }) {
       const newRoleName = getRoleName(newRoleId);
 
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/users/${userId}/role`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${userId}/role`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export default function AdminDashboard({ usersData }) {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/lessons/${lessonId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/lessons/${lessonId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -125,7 +125,7 @@ export default function AdminDashboard({ usersData }) {
   const handleTogglePublish = async (lessonId, currentStatus) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/lessons/${lessonId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/lessons/${lessonId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

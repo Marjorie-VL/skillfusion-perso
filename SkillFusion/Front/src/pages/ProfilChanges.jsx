@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../services/api.jsx";
+import api from "../services/axios.js";
 
 export default function ProfilChange() {
   const [username, setUsername] = useState("");
@@ -17,7 +18,7 @@ export default function ProfilChange() {
   const navigate = useNavigate();
 
   // Fonction pour l'envoi du formulaire
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
 
@@ -33,52 +34,53 @@ export default function ProfilChange() {
     if (email) updateData.email = email;
     if (password) updateData.password = password;
 
-    fetch(`${import.meta.env.VITE_API_URL}/users/${user.id}`, {
+    try {
+      // Utiliser le service axios configuré
+      const response = await api.patch(`/users/${user.id}`, updateData);
+      
+      console.log("✅ Modification réussie:", response.data);
 
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
-      },
-      body: JSON.stringify(updateData),
-    })
-    .then(async (res) => {
-      const data = await res.json();
+      // Récupérer les données utilisateur mises à jour depuis le serveur
+      const updatedUserResponse = await api.get('/me');
+      const updatedUserData = updatedUserResponse.data;
 
-     if (!res.ok) {
-        // S'il y a un objet d'erreurs côté backend, on le récupère
-        if (data.errors) {
+      // Mettre à jour le contexte avec les nouvelles données
+      setUser(updatedUserData);
+
+      // Mettre à jour le localStorage avec les nouvelles données
+      localStorage.setItem('user', JSON.stringify(updatedUserData));
+
+      // Message de succès personnalisé selon les champs modifiés
+      const modifiedFields = [];
+      if (username) modifiedFields.push("nom d'utilisateur");
+      if (email) modifiedFields.push("email");
+      if (password) modifiedFields.push("mot de passe");
+      
+      const message = `Modification réussie ! ${modifiedFields.join(", ")} ${modifiedFields.length > 1 ? "ont été" : "a été"} mis à jour ✅`;
+      toast.success(message);
+      navigate("/board"); // Redirection
+
+    } catch (error) {
+      console.error("❌ Erreur modification profil:", error);
+      
+      // Gestion des erreurs spécifiques
+      if (error.response) {
+        const { status, data } = error.response;
+        
+        if (status === 400 && data.errors) {
+          // Erreurs de validation
           setErrors(data.errors);
         } else if (data.message) {
           toast.error(data.message);
-        } 
-        throw new Error("Erreur lors de la modification du profil");
+        } else {
+          toast.error("Erreur lors de la modification du profil");
+        }
+      } else if (error.request) {
+        toast.error("Erreur de connexion. Vérifiez votre connexion internet.");
+      } else {
+        toast.error("Une erreur inattendue s'est produite.");
       }
-      return data;
-
-    })
-      .then((data) => {
-        console.log(data); // Affiche les données retournées par le serveur (succès de l'inscription)
-
-        // Mettre à jour l'utilisateur dans le contexte avec les nouvelles données
-        const updatedUser = { ...user };
-        if (username) updatedUser.user_name = username;
-        if (email) updatedUser.email = email;
-        setUser(updatedUser);
-
-        // Message de succès personnalisé selon les champs modifiés
-        const modifiedFields = [];
-        if (username) modifiedFields.push("nom d'utilisateur");
-        if (email) modifiedFields.push("email");
-        if (password) modifiedFields.push("mot de passe");
-        
-        const message = `Modification réussie ! ${modifiedFields.join(", ")} ${modifiedFields.length > 1 ? "ont été" : "a été"} mis à jour ✅`;
-        toast.success(message);
-        navigate("/board"); // Redirection
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+    }
   };
   return (
     <>

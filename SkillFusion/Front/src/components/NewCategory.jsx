@@ -14,7 +14,7 @@ export default function NewCategoryForm() {
     setErrors({}); // Reset erreurs
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/categories`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/categories`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
