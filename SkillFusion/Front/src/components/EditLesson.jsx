@@ -193,17 +193,18 @@ export default function EditLesson() {
   return (
     <>
       <Header />
-      <main>
-        <section className="head-banner">
-          <h2>Modifier la leçon</h2>
+      <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
+        <section className="flex flex-col justify-center items-center">
+          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Modifier la leçon</h2>
         </section>
-        <section className="lessons">
-          <form onSubmit={handleSubmit}>
+        <section className="w-full max-w-[900px] mx-auto px-4">
+          <div className="bg-skill-tertiary border-2 border-skill-success/50 rounded-lg p-6 md:p-8 shadow-lg">
+            <form onSubmit={handleSubmit} className="w-full flex flex-col items-center">
             {/* Catégorie */}
-            <div className="form">
-              <label htmlFor="category">Catégorie :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="category" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Catégorie :</label>
               <select
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 id="category"
                 value={selectedCategory}
                 onChange={e => {
@@ -218,18 +219,18 @@ export default function EditLesson() {
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
-              {loading && <p style={{ color: "blue" }}>Chargement des catégories...</p>}
-              {categoriesError && <p style={{ color: "red" }}>Erreur: {categoriesError}</p>}
+              {loading && <p className="text-blue-600 text-sm mt-2">Chargement des catégories...</p>}
+              {categoriesError && <p className="text-red-600 text-sm mt-2">Erreur: {categoriesError}</p>}
               {!loading && !categoriesError && categories.length === 0 && (
-                <p style={{ color: "orange" }}>Aucune catégorie disponible</p>
+                <p className="text-orange-600 text-sm mt-2">Aucune catégorie disponible</p>
               )}
             </div>
 
             {/* Titre */}
-            <div className="form">
-              <label htmlFor="title">Titre :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="title" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Titre :</label>
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                 type="text"
                 id="title"
                 placeholder="Titre du cours"
@@ -240,19 +241,18 @@ export default function EditLesson() {
             </div>
 
             {/* Image résultat */}
-            <div className="form">
-              <label htmlFor="resul_img">Image du résultat :</label>
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="resul_img" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Image du résultat :</label>
+              <div className="flex gap-2 items-center mb-2">
                 <input
-                  className="search-bar input-bar"
+                  className="h-8 md:h-10 text-base md:text-xl p-1 my-2 flex-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                   type="text"
                   id="resul_img"
                   placeholder="URL de l'image"
                   value={mediaUrl}
                   onChange={e => setMediaUrl(e.target.value)}
-                  style={{ flex: 1 }}
                 />
-                <span style={{ color: '#666' }}>OU</span>
+                <span className="text-gray-600 text-sm">OU</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -269,11 +269,11 @@ export default function EditLesson() {
                         }
                     }
                   }}
-                  style={{ flex: 1 }}
+                  className="flex-1"
                 />
               </div>
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                 type="text"
                 placeholder="Description de l'image (optionnel)"
                 value={mediaAlt}
@@ -281,20 +281,14 @@ export default function EditLesson() {
               />
               {/* Prévisualisation de l'image principale */}
               {mediaUrl && (
-                <div style={{ marginTop: '10px' }}>
-                  <p style={{ fontSize: '14px', color: '#666', marginBottom: '5px' }}>Aperçu :</p>
-                  <div style={{ 
-                    maxWidth: '300px', 
-                    maxHeight: '200px', 
-                    border: '1px solid #ddd', 
-                    borderRadius: '4px',
-                    overflow: 'hidden'
-                  }}>
+                <div className="mt-2">
+                  <p className="text-sm text-gray-600 mb-1">Aperçu :</p>
+                  <div className="max-w-[300px] max-h-[200px] border border-gray-300 rounded overflow-hidden">
                     {mediaUrl.startsWith('/uploads/') ? (
                       <img 
                         src={`${import.meta.env.VITE_API_URL}${mediaUrl}`} 
                         alt={mediaAlt || "Aperçu de l'image"}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        className="w-full h-full object-cover"
                         onError={(e) => {
                           e.target.style.display = 'none';
                           e.target.nextSibling.style.display = 'block';
@@ -304,36 +298,21 @@ export default function EditLesson() {
                       <img 
                         src={mediaUrl} 
                         alt={mediaAlt || "Aperçu de l'image"}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        className="w-full h-full object-cover"
                         onError={(e) => {
                           e.target.style.display = 'none';
                           e.target.nextSibling.style.display = 'block';
                         }}
                       />
                     )}
-                    <div style={{ 
-                      display: 'none', 
-                      padding: '20px', 
-                      textAlign: 'center', 
-                      color: '#999',
-                      backgroundColor: '#f5f5f5'
-                    }}>
+                    <div className="hidden p-5 text-center text-gray-500 bg-gray-100">
                       Image non disponible
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => setMediaUrl("")}
-                    style={{ 
-                      marginTop: '5px',
-                      background: '#e74c3c', 
-                      color: 'white', 
-                      border: 'none', 
-                      padding: '5px 10px', 
-                      cursor: 'pointer',
-                      borderRadius: '4px',
-                      fontSize: '12px'
-                    }}
+                    className="mt-1 py-1 px-2 bg-red-600 text-white border-none rounded cursor-pointer text-xs hover:bg-red-700 transition-colors"
                   >
                     Supprimer l'image
                   </button>
@@ -342,59 +321,55 @@ export default function EditLesson() {
             </div>
 
             {/* Description */}
-            <div className="form">
-              <label htmlFor="lesson-desc">Description :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="lesson-desc" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Description :</label>
               <textarea
                 id="lesson-desc"
                 placeholder="Description du cours"
                 value={content}
                 onChange={e => setContent(e.target.value)}
                 required
+                className="h-20 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent resize-y"
               />
             </div>
 
             {/* Matériel */}
-            <div className="form">
-              <label>Matériel :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Matériel :</label>
               {materials.map((mat, i) => (
-                <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                <div key={i} className="flex gap-2 items-center mb-2">
                   <input
-                    className="search-bar input-bar"
+                    className="h-8 md:h-10 text-base md:text-xl p-1 my-2 flex-[2] border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                     type="text"
                     placeholder="Nom du matériel"
                     value={mat.name}
                     onChange={e => updateMaterial(i, 'name', e.target.value)}
-                    style={{ flex: 2 }}
                   />
                   <input
-                    className="search-bar input-bar"
+                    className="h-8 md:h-10 text-base md:text-xl p-1 my-2 flex-1 max-w-[100px] border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                     type="number"
                     placeholder="Quantité"
                     min="1"
                     value={mat.quantity}
                     onChange={e => updateMaterial(i, 'quantity', e.target.value)}
-                    style={{ flex: 1, maxWidth: '100px' }}
                   />
                   {materials.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeMaterial(i)}
-                      style={{ 
-                        background: '#e74c3c', 
-                        color: 'white', 
-                        border: 'none', 
-                        padding: '8px 12px', 
-                        cursor: 'pointer',
-                        borderRadius: '4px'
-                      }}
+                      className="bg-red-600 text-white border-none py-2 px-3 rounded cursor-pointer hover:bg-red-700 transition-colors"
                     >
                       🗑️
                     </button>
                   )}
                 </div>
               ))}
-              <div className="add-button">
-                <button className="mini-button" type="button" onClick={addMaterial}>
+              <div className="flex justify-end w-full">
+                <button 
+                  className="h-6 text-sm font-bold py-2 px-3 bg-skill-secondary rounded flex flex-col justify-center items-center hover:bg-skill-accent transition-colors" 
+                  type="button" 
+                  onClick={addMaterial}
+                >
                   Ajouter un matériel
                 </button>
               </div>
@@ -402,35 +377,35 @@ export default function EditLesson() {
 
             {/* Étapes */}
             {steps.map((step, i) => (
-              <div className="form" key={i}>
-                <label htmlFor={`step-title-${i}`}>Etape {i + 1} :</label>
+              <div className="flex flex-col mb-2 w-3/4" key={i}>
+                <label htmlFor={`step-title-${i}`} className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Etape {i + 1} :</label>
                 <input
-                  className="search-bar input-bar"
+                  className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                   type="text"
                   id={`step-title-${i}`}
                   placeholder="Titre de l'étape"
                   value={step.title}
                   onChange={e => updateStep(i, "title", e.target.value)}
                 />
-                <label htmlFor={`step-desc-${i}`}>Description :</label>
+                <label htmlFor={`step-desc-${i}`} className="text-xl md:text-2xl mb-1 mt-2 text-skill-text-primary font-semibold">Description :</label>
                 <textarea
                   id={`step-desc-${i}`}
                   placeholder="Description de l'étape"
                   value={step.description}
                   onChange={e => updateStep(i, "description", e.target.value)}
+                  className="h-20 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent resize-y"
                 />
-                <label htmlFor={`step-media-${i}`}>Média de l'étape :</label>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <label htmlFor={`step-media-${i}`} className="text-xl md:text-2xl mb-1 mt-2 text-skill-text-primary font-semibold">Média de l'étape :</label>
+                <div className="flex gap-2 items-center mb-2">
                   <input
-                    className="search-bar input-bar"
+                    className="h-8 md:h-10 text-base md:text-xl p-1 my-2 flex-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                     type="text"
                     id={`step-media-${i}`}
                     placeholder="URL de l'image ou vidéo"
                     value={step.mediaUrl}
                     onChange={e => updateStep(i, "mediaUrl", e.target.value)}
-                    style={{ flex: 1 }}
                   />
-                  <span style={{ color: '#666' }}>OU</span>
+                  <span className="text-gray-600 text-sm">OU</span>
                   <input
                     type="file"
                     accept="image/*,video/*"
@@ -447,12 +422,12 @@ export default function EditLesson() {
                           }
                       }
                     }}
-                    style={{ flex: 1 }}
+                    className="flex-1"
                   />
                 </div>
-                <label htmlFor={`step-media-alt-${i}`}>Description du média :</label>
+                <label htmlFor={`step-media-alt-${i}`} className="text-xl md:text-2xl mb-1 mt-2 text-skill-text-primary font-semibold">Description du média :</label>
                 <input
-                  className="search-bar input-bar"
+                  className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                   type="text"
                   id={`step-media-alt-${i}`}
                   placeholder="Description de l'image ou vidéo"
@@ -461,20 +436,14 @@ export default function EditLesson() {
                 />
                 {/* Prévisualisation du média de l'étape */}
                 {step.mediaUrl && (
-                  <div style={{ marginTop: '10px' }}>
-                    <p style={{ fontSize: '14px', color: '#666', marginBottom: '5px' }}>Aperçu :</p>
-                    <div style={{ 
-                      maxWidth: '300px', 
-                      maxHeight: '200px', 
-                      border: '1px solid #ddd', 
-                      borderRadius: '4px',
-                      overflow: 'hidden'
-                    }}>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-600 mb-1">Aperçu :</p>
+                    <div className="max-w-[300px] max-h-[200px] border border-gray-300 rounded overflow-hidden">
                       {step.mediaUrl.startsWith('/uploads/') ? (
                         <img 
                           src={`${import.meta.env.VITE_API_URL}${step.mediaUrl}`} 
                           alt={step.mediaAlt || "Aperçu du média"}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.style.display = 'none';
                             e.target.nextSibling.style.display = 'block';
@@ -484,44 +453,33 @@ export default function EditLesson() {
                         <img 
                           src={step.mediaUrl} 
                           alt={step.mediaAlt || "Aperçu du média"}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.style.display = 'none';
                             e.target.nextSibling.style.display = 'block';
                           }}
                         />
                       )}
-                      <div style={{ 
-                        display: 'none', 
-                        padding: '20px', 
-                        textAlign: 'center', 
-                        color: '#999',
-                        backgroundColor: '#f5f5f5'
-                      }}>
+                      <div className="hidden p-5 text-center text-gray-500 bg-gray-100">
                         Média non disponible
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => updateStep(i, "mediaUrl", "")}
-                      style={{ 
-                        marginTop: '5px',
-                        background: '#e74c3c', 
-                        color: 'white', 
-                        border: 'none', 
-                        padding: '5px 10px', 
-                        cursor: 'pointer',
-                        borderRadius: '4px',
-                        fontSize: '12px'
-                      }}
+                      className="mt-1 py-1 px-2 bg-red-600 text-white border-none rounded cursor-pointer text-xs hover:bg-red-700 transition-colors"
                     >
                       Supprimer le média
                     </button>
                   </div>
                 )}
                 {i === steps.length - 1 && (
-                  <div className="add-button">
-                    <button className="mini-button" type="button" onClick={addStep}>
+                  <div className="flex justify-end w-full">
+                    <button 
+                      className="h-6 text-sm font-bold py-2 px-3 bg-skill-secondary rounded flex flex-col justify-center items-center hover:bg-skill-accent transition-colors" 
+                      type="button" 
+                      onClick={addStep}
+                    >
                       Ajouter une étape
                     </button>
                   </div>
@@ -531,8 +489,8 @@ export default function EditLesson() {
 
             {/* Affichage des erreurs de validation */}
             {Object.keys(errors).length > 0 && (
-              <div style={{ color: "red", marginBottom: "20px" }}>
-                <h4>Erreurs de validation :</h4>
+              <div className="text-red-600 mb-5 w-3/4">
+                <h4 className="font-semibold mb-2">Erreurs de validation :</h4>
                 {Object.entries(errors).map(([field, message]) => (
                   <p key={field}>• {message}</p>
                 ))}
@@ -540,62 +498,39 @@ export default function EditLesson() {
             )}
 
             {/* Boutons d'envoi */}
-            <section className="see-more">
-              <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <section className="flex flex-row justify-center items-center">
+              <div className="flex gap-4 justify-center flex-wrap">
                 <button 
                   type="button" 
                   onClick={(e) => handleSubmit(e, false)}
-                  className="main-button" 
                   disabled={submitLoading}
-                  style={{ 
-                    backgroundColor: '#6c757d',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px',
-                    cursor: submitLoading ? 'not-allowed' : 'pointer',
-                    opacity: submitLoading ? 0.6 : 1
-                  }}
+                  className={`font-['Lobster'] text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                    submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-gray-600 hover:bg-gray-700'
+                  }`}
                 >
-                  {submitLoading ? "Sauvegarde..." : "📝 Enregistrer en brouillon"}
+                  {submitLoading ? "Sauvegarde..." : "Enregistrer en brouillon"}
                 </button>
                 
                 <button 
                   type="button" 
                   onClick={(e) => handleSubmit(e, true)}
-                  className="main-button" 
                   disabled={submitLoading}
-                  style={{ 
-                    backgroundColor: '#28a745',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px',
-                    cursor: submitLoading ? 'not-allowed' : 'pointer',
-                    opacity: submitLoading ? 0.6 : 1
-                  }}
+                  className={`font-['Lobster'] text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                    submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-green-600 hover:bg-green-700'
+                  }`}
                 >
-                  {submitLoading ? "Publication..." : "🚀 Publier maintenant"}
+                  {submitLoading ? "Publication..." : "Publier maintenant"}
                 </button>
               </div>
               
-              {submitError && <div style={{ color: "red", marginTop: "10px", textAlign: "center" }}>{submitError}</div>}
+              {submitError && <div className="text-red-600 mt-2 text-center w-full">{submitError}</div>}
               
-              <div style={{ 
-                marginTop: "15px", 
-                padding: "10px", 
-                backgroundColor: "#f8f9fa", 
-                borderRadius: "6px", 
-                fontSize: "14px", 
-                color: "#6c757d",
-                textAlign: "center"
-              }}>
+              <div className="mt-4 p-2 bg-gray-100 rounded text-sm text-gray-600 text-center w-3/4">
                 <strong>💡 Astuce :</strong> Enregistrez en brouillon pour continuer plus tard, ou publiez directement pour rendre votre cours visible aux utilisateurs.
               </div>
             </section>
           </form>
+          </div>
         </section>
       </main>
       <Footer />

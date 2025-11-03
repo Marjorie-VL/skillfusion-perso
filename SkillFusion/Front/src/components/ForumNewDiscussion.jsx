@@ -48,17 +48,18 @@ export default function ForumNewDiscussion() {
   return (
     <>
       <Header />
-      <main>
-        <section className="head-banner">
-          <h2>Nouveau sujet</h2>
+      <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
+        <section className="flex flex-col justify-center items-center">
+          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Nouveau sujet</h2>
         </section>
 
-        <section className="lessons">
-          <form onSubmit={handleSubmit}>
-            <div className="form">
-              <label htmlFor="title">Sujet :</label>
+        <section className="w-full max-w-[900px] mx-auto px-4">
+          <div className="bg-skill-tertiary border-2 border-skill-success/50 rounded-lg p-6 md:p-8 shadow-lg">
+            <form onSubmit={handleSubmit} className="w-full flex flex-col items-center">
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="title" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Sujet :</label>
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                 type="text"
                 id="title"
                 placeholder="Titre du sujet"
@@ -66,27 +67,32 @@ export default function ForumNewDiscussion() {
                 onChange={(e) => setTitle(e.target.value)}
                 required
               />
-              {errors.title && <p style={{ color: "red" }} className="text-red-500">{errors.title}</p>}
+              {errors.title && <p className="text-red-600 text-sm mt-2">{errors.title}</p>}
             </div>
 
-            <div className="form">
-              <label htmlFor="new-discussion">Message :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="new-discussion" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Message :</label>
               <textarea
                 id="new-discussion"
                 placeholder="Message"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 required
+                className="h-32 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent resize-y"
               ></textarea>
-              {errors.text && <p style={{ color: "red" }} className="text-red-500">{errors.text}</p>}
+              {errors.text && <p className="text-red-600 text-sm mt-2">{errors.text}</p>}
             </div>
 
-            <div className="see-more">
-              <button type="submit" className="main-button">
+            <section className="flex flex-row justify-center items-center">
+              <button 
+                type="submit" 
+                className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
+              >
                 Envoyer
               </button>
-            </div>
+            </section>
           </form>
+          </div>
         </section>
       </main>
       <Footer />

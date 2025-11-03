@@ -218,17 +218,18 @@ export default function NewLesson() {
   return (
     <>
       <Header />
-      <main>
-        <section className="head-banner">
-          <h2>Créer un cours</h2>
+      <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
+        <section className="flex flex-col justify-center items-center">
+          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Créer un cours</h2>
         </section>
-        <section className="lessons">
-          <form onSubmit={handleSubmit}>
+        <section className="w-full max-w-[900px] mx-auto px-4">
+          <div className="bg-skill-tertiary border-2 border-skill-success/50 rounded-lg p-6 md:p-8 shadow-lg">
+            <form onSubmit={handleSubmit} className="w-full flex flex-col items-center">
             {/* Catégorie */}
-            <div className="form">
-              <label htmlFor="category">Catégorie :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="category" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Catégorie :</label>
               <select
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 id="category"
                 value={selectedCategory}
                 onChange={e => {
@@ -250,21 +251,21 @@ export default function NewLesson() {
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
                 {/* Option pour créer une nouvelle catégorie */}
-                <option value="new-category" style={{ fontWeight: 'bold', color: '#1976d2' }}>
-                  ➕ Nouvelle catégorie
+                <option value="new-category" className="font-bold text-green-600">
+                  + Nouvelle catégorie
                 </option>
               </select>
-              {loading && <p style={{ color: "blue" }}>Chargement des catégories...</p>}
-              {categoriesError && <p style={{ color: "red" }}>Erreur: {categoriesError}</p>}
+              {loading && <p className="text-blue-600 text-sm mt-2">Chargement des catégories...</p>}
+              {categoriesError && <p className="text-red-600 text-sm mt-2">Erreur: {categoriesError}</p>}
               {!loading && !categoriesError && categories.length === 0 && (
-                <p style={{ color: "orange" }}>Aucune catégorie disponible</p>
+                <p className="text-orange-600 text-sm mt-2">Aucune catégorie disponible</p>
               )}
             </div>
             {/* Titre */}
-            <div className="form">
-              <label htmlFor="title">Titre :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="title" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Titre :</label>
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                 type="text"
                 id="title"
                 placeholder="Titre du cours"
@@ -274,38 +275,37 @@ export default function NewLesson() {
               />
             </div>
             {/* Image résultat */}
-            <div className="form">
-              <label htmlFor="resul_img">Image du résultat :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="resul_img" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Image du résultat :</label>
               
               {/* Aperçu de l'image si une URL est fournie */}
               {mediaUrl && (
-                <div style={{ marginBottom: '10px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px' }}>
-                  <p style={{ fontSize: '12px', color: '#666', margin: '0 0 5px 0' }}>Aperçu :</p>
+                <div className="mb-2 p-2 border border-gray-300 rounded">
+                  <p className="text-xs text-gray-600 mb-1">Aperçu :</p>
                   <img 
                     src={mediaUrl.startsWith('http') ? mediaUrl : `${import.meta.env.VITE_API_URL}${mediaUrl}`}
                     alt="Aperçu"
-                    style={{ maxWidth: '200px', maxHeight: '150px', objectFit: 'cover' }}
+                    className="max-w-[200px] max-h-[150px] object-cover"
                     onError={(e) => {
                       e.target.style.display = 'none';
                       e.target.nextSibling.style.display = 'block';
                     }}
                   />
-                  <p style={{ display: 'none', color: 'red', fontSize: '12px' }}>Impossible de charger l'aperçu</p>
+                  <p className="hidden text-red-600 text-xs">Impossible de charger l'aperçu</p>
                 </div>
               )}
               
-              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+              <div className="flex gap-2 items-center mb-2">
                 <input
-                  className="search-bar input-bar"
+                  className="h-8 md:h-10 text-base md:text-xl p-1 my-2 flex-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                   type="text"
                   id="resul_img"
                   placeholder="URL de l'image (ex: https://example.com/image.jpg)"
                   value={mediaUrl}
                   onChange={e => setMediaUrl(e.target.value)}
-                  style={{ flex: 1 }}
                 />
-                <span style={{ color: '#666', fontSize: '14px' }}>OU</span>
-                <div style={{ flex: 1, position: 'relative' }}>
+                <span className="text-gray-600 text-sm">OU</span>
+                <div className="flex-1 relative">
                   <input
                     type="file"
                     accept="image/*"
@@ -332,16 +332,16 @@ export default function NewLesson() {
                         }
                       }
                     }}
-                    style={{ width: '100%' }}
+                    className="w-full"
                   />
-                  <div style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+                  <div className="text-xs text-gray-600 mt-1">
                     Formats acceptés: JPG, PNG, GIF (max 10MB)
                   </div>
                 </div>
               </div>
               
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                 type="text"
                 placeholder="Description de l'image (optionnel)"
                 value={mediaAlt}
@@ -357,108 +357,96 @@ export default function NewLesson() {
                     setMediaAlt("");
                     toast.info("Image supprimée");
                   }}
-                  style={{
-                    marginTop: '10px',
-                    padding: '5px 10px',
-                    background: '#e74c3c',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '12px'
-                  }}
+                  className="mt-2 py-1 px-2 bg-red-600 text-white border-none rounded cursor-pointer text-xs hover:bg-red-700 transition-colors"
                 >
                   🗑️ Supprimer l'image
                 </button>
               )}
             </div>
             {/* Description */}
-            <div className="form">
-              <label htmlFor="lesson-desc">Description :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="lesson-desc" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Description :</label>
               <textarea
                 id="lesson-desc"
                 placeholder="Description du cours"
                 value={content}
                 onChange={e => setContent(e.target.value)}
                 required
+                className="h-20 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent resize-y"
               />
             </div>
             {/* Matériel */}
-            <div className="form">
-              <label>Matériel :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Matériel :</label>
               {materials.map((mat, i) => (
-                <div key={i} style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                <div key={i} className="flex gap-2 items-center mb-2">
                 <input
-                  className="search-bar input-bar"
+                  className="h-8 md:h-10 text-base md:text-xl p-1 my-2 flex-[2] border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                   type="text"
                     placeholder="Nom du matériel"
                     value={mat.name}
                     onChange={e => updateMaterial(i, 'name', e.target.value)}
-                    style={{ flex: 2 }}
                   />
                   <input
-                    className="search-bar input-bar"
+                    className="h-8 md:h-10 text-base md:text-xl p-1 my-2 flex-1 max-w-[100px] border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                     type="number"
                     placeholder="Quantité"
                     min="1"
                     value={mat.quantity}
                     onChange={e => updateMaterial(i, 'quantity', e.target.value)}
-                    style={{ flex: 1, maxWidth: '100px' }}
                   />
                   {materials.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeMaterial(i)}
-                      style={{ 
-                        background: '#e74c3c', 
-                        color: 'white', 
-                        border: 'none', 
-                        padding: '8px 12px', 
-                        cursor: 'pointer',
-                        borderRadius: '4px'
-                      }}
+                      className="bg-red-600 text-white border-none py-2 px-3 rounded cursor-pointer hover:bg-red-700 transition-colors"
                     >
                       🗑️
                     </button>
                   )}
                 </div>
               ))}
-              <div className="add-button">
-                <button className="mini-button" type="button" onClick={addMaterial}>
+              <div className="flex justify-end w-full">
+                <button 
+                  className="h-6 text-sm font-bold py-2 px-3 bg-skill-secondary rounded flex flex-col justify-center items-center hover:bg-skill-accent transition-colors" 
+                  type="button" 
+                  onClick={addMaterial}
+                >
                   Ajouter un matériel
                 </button>
               </div>
             </div>
             {/* Étapes */}
             {steps.map((step, i) => (
-              <div className="form" key={i}>
-                <label htmlFor={`step-title-${i}`}>Etape {i + 1} :</label>
+              <div className="flex flex-col mb-2 w-3/4" key={i}>
+                <label htmlFor={`step-title-${i}`} className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Etape {i + 1} :</label>
                 <input
-                  className="search-bar input-bar"
+                  className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                   type="text"
                   id={`step-title-${i}`}
                   placeholder="Titre de l'étape"
                   value={step.title}
                   onChange={e => updateStep(i, "title", e.target.value)}
                 />
-                <label htmlFor={`step-desc-${i}`}>Description :</label>
+                <label htmlFor={`step-desc-${i}`} className="text-xl md:text-2xl mb-1 mt-2 text-skill-text-primary font-semibold">Description :</label>
                 <textarea
                   id={`step-desc-${i}`}
                   placeholder="Description de l'étape"
                   value={step.description}
                   onChange={e => updateStep(i, "description", e.target.value)}
+                  className="h-20 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent resize-y"
                 />
-                <label htmlFor={`step-media-${i}`}>Média de l'étape :</label>
+                <label htmlFor={`step-media-${i}`} className="text-xl md:text-2xl mb-1 mt-2 text-skill-text-primary font-semibold">Média de l'étape :</label>
                 
                 {/* Aperçu du média si une URL est fournie */}
                 {step.mediaUrl && (
-                  <div style={{ marginBottom: '10px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px' }}>
-                    <p style={{ fontSize: '12px', color: '#666', margin: '0 0 5px 0' }}>Aperçu :</p>
+                  <div className="mb-2 p-2 border border-gray-300 rounded">
+                    <p className="text-xs text-gray-600 mb-1">Aperçu :</p>
                     {step.mediaUrl.match(/\.(mp4|mov|avi|webm)$/i) ? (
                       <video 
                         src={step.mediaUrl.startsWith('http') ? step.mediaUrl : `${import.meta.env.VITE_API_URL}${step.mediaUrl}`}
                         controls
-                        style={{ maxWidth: '200px', maxHeight: '150px' }}
+                        className="max-w-[200px] max-h-[150px]"
                         onError={(e) => {
                           e.target.style.display = 'none';
                           e.target.nextSibling.style.display = 'block';
@@ -468,29 +456,28 @@ export default function NewLesson() {
                       <img 
                         src={step.mediaUrl.startsWith('http') ? step.mediaUrl : `${import.meta.env.VITE_API_URL}${step.mediaUrl}`}
                         alt="Aperçu"
-                        style={{ maxWidth: '200px', maxHeight: '150px', objectFit: 'cover' }}
+                        className="max-w-[200px] max-h-[150px] object-cover"
                         onError={(e) => {
                           e.target.style.display = 'none';
                           e.target.nextSibling.style.display = 'block';
                         }}
                       />
                     )}
-                    <p style={{ display: 'none', color: 'red', fontSize: '12px' }}>Impossible de charger l'aperçu</p>
+                    <p className="hidden text-red-600 text-xs">Impossible de charger l'aperçu</p>
                   </div>
                 )}
                 
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
+                <div className="flex gap-2 items-center mb-2">
                   <input
-                    className="search-bar input-bar"
+                    className="h-8 md:h-10 text-base md:text-xl p-1 my-2 flex-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                     type="text"
                     id={`step-media-${i}`}
                     placeholder="URL de l'image ou vidéo"
                     value={step.mediaUrl}
                     onChange={e => updateStep(i, "mediaUrl", e.target.value)}
-                    style={{ flex: 1 }}
                   />
-                  <span style={{ color: '#666', fontSize: '14px' }}>OU</span>
-                  <div style={{ flex: 1, position: 'relative' }}>
+                  <span className="text-gray-600 text-sm">OU</span>
+                  <div className="flex-1 relative">
                     <input
                       type="file"
                       accept="image/*,video/*"
@@ -515,9 +502,9 @@ export default function NewLesson() {
                           }
                         }
                       }}
-                      style={{ width: '100%' }}
+                      className="w-full"
                     />
-                    <div style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+                    <div className="text-xs text-gray-600 mt-1">
                       Images: JPG, PNG, GIF | Vidéos: MP4, MOV, AVI (max 10MB)
                     </div>
                   </div>
@@ -532,23 +519,14 @@ export default function NewLesson() {
                       updateStep(i, "mediaAlt", "");
                       toast.info("Média supprimé");
                     }}
-                    style={{
-                      marginBottom: '10px',
-                      padding: '5px 10px',
-                      background: '#e74c3c',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      fontSize: '12px'
-                    }}
+                    className="mb-2 py-1 px-2 bg-red-600 text-white border-none rounded cursor-pointer text-xs hover:bg-red-700 transition-colors"
                   >
                     🗑️ Supprimer le média
                   </button>
                 )}
-                <label htmlFor={`step-media-alt-${i}`}>Description du média :</label>
+                <label htmlFor={`step-media-alt-${i}`} className="text-xl md:text-2xl mb-1 mt-2 text-skill-text-primary font-semibold">Description du média :</label>
                 <input
-                  className="search-bar input-bar"
+                  className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                   type="text"
                   id={`step-media-alt-${i}`}
                   placeholder="Description de l'image ou vidéo"
@@ -556,8 +534,12 @@ export default function NewLesson() {
                   onChange={e => updateStep(i, "mediaAlt", e.target.value)}
                 />
                 {i === steps.length - 1 && (
-                  <div className="add-button">
-                    <button className="mini-button" type="button" onClick={addStep}>
+                  <div className="flex justify-end w-full">
+                    <button 
+                      className="h-6 text-sm font-bold py-2 px-3 bg-skill-secondary rounded flex flex-col justify-center items-center hover:bg-skill-accent transition-colors" 
+                      type="button" 
+                      onClick={addStep}
+                    >
                       Ajouter une étape
                     </button>
                   </div>
@@ -566,8 +548,8 @@ export default function NewLesson() {
             ))}
             {/* Affichage des erreurs de validation */}
             {Object.keys(errors).length > 0 && (
-              <div style={{ color: "red", marginBottom: "20px" }}>
-                <h4>Erreurs de validation :</h4>
+              <div className="text-red-600 mb-5 w-3/4">
+                <h4 className="font-semibold mb-2">Erreurs de validation :</h4>
                 {Object.entries(errors).map(([field, message]) => (
                   <p key={field}>• {message}</p>
                 ))}
@@ -575,96 +557,53 @@ export default function NewLesson() {
             )}
 
             {/* Boutons d'envoi */}
-            <section className="see-more">
-              <div style={{ display: 'flex', gap: '15px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <section className="flex flex-row justify-center items-center">
+              <div className="flex gap-4 justify-center flex-wrap">
                 <button 
                   type="button" 
                   onClick={(e) => handleSubmit(e, false)}
-                  className="main-button" 
                   disabled={submitLoading}
-                  style={{ 
-                    backgroundColor: '#6c757d',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px',
-                    cursor: submitLoading ? 'not-allowed' : 'pointer',
-                    opacity: submitLoading ? 0.6 : 1
-                  }}
+                  className={`font-['Lobster'] text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                    submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-gray-600 hover:bg-gray-700'
+                  }`}
                 >
-                  {submitLoading ? "Sauvegarde..." : "📝 Enregistrer en brouillon"}
+                  {submitLoading ? "Sauvegarde..." : "Enregistrer en brouillon"}
                 </button>
                 
                 <button 
                   type="button" 
                   onClick={(e) => handleSubmit(e, true)}
-                  className="main-button" 
                   disabled={submitLoading}
-                  style={{ 
-                    backgroundColor: '#28a745',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '6px',
-                    color: 'white',
-                    fontSize: '16px',
-                    cursor: submitLoading ? 'not-allowed' : 'pointer',
-                    opacity: submitLoading ? 0.6 : 1
-                  }}
+                  className={`font-['Lobster'] text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                    submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-green-600 hover:bg-green-700'
+                  }`}
                 >
-                  {submitLoading ? "Publication..." : "🚀 Publier maintenant"}
+                  {submitLoading ? "Publication..." : "Publier maintenant"}
                 </button>
               </div>
               
-              {submitError && <div style={{ color: "red", marginTop: "10px", textAlign: "center" }}>{submitError}</div>}
+              {submitError && <div className="text-red-600 mt-2 text-center w-full">{submitError}</div>}
               
-              <div style={{ 
-                marginTop: "15px", 
-                padding: "10px", 
-                backgroundColor: "#f8f9fa", 
-                borderRadius: "6px", 
-                fontSize: "14px", 
-                color: "#6c757d",
-                textAlign: "center"
-              }}>
+              <div className="mt-4 p-2 bg-gray-100 rounded text-sm text-gray-600 text-center w-3/4">
                 <strong>💡 Astuce :</strong> Enregistrez en brouillon pour continuer plus tard, ou publiez directement pour rendre votre cours visible aux utilisateurs.
               </div>
             </section>
           </form>
+          </div>
         </section>
       </main>
       <Footer />
 
       {/* Modale pour créer une nouvelle catégorie */}
       {showCategoryModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '2rem',
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto'
-          }}>
-            <h3 style={{ marginTop: 0, marginBottom: '1.5rem', color: '#1976d2' }}>
-              ➕ Créer une nouvelle catégorie
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
+          <div className="bg-white p-8 rounded-lg shadow-lg max-w-[500px] w-[90%] max-h-[80vh] overflow-auto">
+            <h3 className="mt-0 mb-6 text-green-600 font-['Lobster'] text-xl md:text-2xl">
+              + Créer une nouvelle catégorie
             </h3>
             
-            <div style={{ marginBottom: '1rem' }}>
-              <label htmlFor="new-category-name" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+            <div className="mb-4">
+              <label htmlFor="new-category-name" className="block mb-2 font-bold text-lg">
                 Nom de la catégorie : *
               </label>
               <input
@@ -673,19 +612,13 @@ export default function NewLesson() {
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 placeholder="Ex: Cuisine, Bricolage, Informatique..."
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '1rem'
-                }}
+                className="w-full p-3 border border-gray-300 rounded text-base focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 disabled={categoryLoading}
               />
             </div>
 
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label htmlFor="new-category-description" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+            <div className="mb-6">
+              <label htmlFor="new-category-description" className="block mb-2 font-bold text-lg">
                 Description (optionnel) :
               </label>
               <textarea
@@ -694,19 +627,12 @@ export default function NewLesson() {
                 onChange={(e) => setNewCategoryDescription(e.target.value)}
                 placeholder="Décrivez brièvement cette catégorie..."
                 rows={3}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '1rem',
-                  resize: 'vertical'
-                }}
+                className="w-full p-3 border border-gray-300 rounded text-base resize-y focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 disabled={categoryLoading}
               />
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+            <div className="flex gap-4 justify-end">
               <button
                 type="button"
                 onClick={() => {
@@ -715,15 +641,7 @@ export default function NewLesson() {
                   setNewCategoryDescription("");
                 }}
                 disabled={categoryLoading}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  backgroundColor: '#6c757d',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: categoryLoading ? 'not-allowed' : 'pointer',
-                  fontSize: '1rem'
-                }}
+                className="py-3 px-6 bg-gray-600 text-white border-none rounded cursor-pointer text-base hover:bg-gray-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 Annuler
               </button>
@@ -731,15 +649,11 @@ export default function NewLesson() {
                 type="button"
                 onClick={handleCreateCategory}
                 disabled={categoryLoading || !newCategoryName.trim()}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  backgroundColor: categoryLoading || !newCategoryName.trim() ? '#ccc' : '#1976d2',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: categoryLoading || !newCategoryName.trim() ? 'not-allowed' : 'pointer',
-                  fontSize: '1rem'
-                }}
+                className={`py-3 px-6 text-white border-none rounded cursor-pointer text-base transition-colors ${
+                  categoryLoading || !newCategoryName.trim() 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-blue-600 hover:bg-blue-700'
+                }`}
               >
                 {categoryLoading ? 'Création...' : 'Créer la catégorie'}
               </button>

@@ -85,43 +85,44 @@ export default function ProfilChange() {
   return (
     <>
       <Header />
-      <main>
-        <section className="head-banner">
-          <h2>Modifier mon profil</h2>
+      <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
+        <section className="flex flex-col justify-center items-center">
+          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Modifier mon profil</h2>
         </section>
 
-        <section className="lessons">
-          <form method="post" onSubmit={(e) => handleSubmit(e)}>
-            <div className="form">
-              <label htmlFor="username">User Name :</label>
+        <section className="w-full max-w-[900px] mx-auto px-4">
+          <div className="bg-skill-tertiary border-2 border-skill-success/50 rounded-lg p-6 md:p-8 shadow-lg">
+            <form method="post" onSubmit={(e) => handleSubmit(e)} className="w-full flex flex-col items-center">
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="username" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">User Name :</label>
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                 type="text"
-                placeholder={`Actuel: ${user.user_name}`}
+                placeholder={`${user.user_name}`}
                 name="username"
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
-              {errors.user_name && <p style={{ color: "red" }}>{errors.user_name}</p>}            
+              {errors.user_name && <p className="text-red-600 text-sm mt-2">{errors.user_name}</p>}            
               </div>
-            <div className="form">
-              <label htmlFor="mail">E-mail :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="mail" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">E-mail :</label>
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                 type="email"
-                placeholder={`Actuel: ${user.email}`}
+                placeholder={`${user.email}`}
                 name="email"
                 id="email"
                 value={email}
                 onChange={(e) => setMail(e.target.value)}
               />
-            {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}            
+            {errors.email && <p className="text-red-600 text-sm mt-2">{errors.email}</p>}            
               </div>
-            <div className="form">
-              <label htmlFor="password">Nouveau mot de passe :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="password" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-semibold">Nouveau mot de passe :</label>
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                 type="password"
                 placeholder="Laissez vide pour ne pas changer"
                 name="password"
@@ -129,16 +130,20 @@ export default function ProfilChange() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-             {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
+             {errors.password && <p className="text-red-600 text-sm mt-2">{errors.password}</p>}
             </div>
-            <section className="see-more">
+            <section className="flex flex-row justify-center items-center">
               <div>
-                <button type="submit" className="main-button">
+                <button 
+                  type="submit" 
+                  className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
+                >
                   Enregistrer
                 </button>
               </div>
             </section>
           </form>
+          </div>
         </section>
       </main>
       <Footer />

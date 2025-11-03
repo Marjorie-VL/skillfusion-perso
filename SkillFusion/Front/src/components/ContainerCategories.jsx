@@ -19,7 +19,7 @@ export default function ContainerCategories({ categories }) {
   // Récupération des données utilisateur
   const {user} = useAuth();
   if (!categoryList.length){
-    return <div>Aucune catégorie trouvée.</div>;
+    return <div className="text-center p-8">Aucune catégorie trouvée.</div>;
   }
   // Supprimer une catégorie
   const handleClickDelete = async (categoryId) => { 
@@ -128,84 +128,69 @@ export default function ContainerCategories({ categories }) {
     }
   };
   return (
-    <section className="list-category" aria-label="Liste des catégories">
+    <section className="flex flex-col justify-center items-center" aria-label="Liste des catégories">
       {categoryList.map((category) => (
-        <section className="category-box" key={category.name}>
-          <div className="category-box__desc">
-            <p> </p>
-            <Link
-              to={`/categories/${category.id}/lessons` }
-              style={{ textDecoration: "none", color: "inherit" }}
-              key={category.id}
-              >
-              <h3>{category.name.replace(/^./, (match) => match.toUpperCase())}</h3>
-            </Link>
+        <section className="h-32 my-4 flex flex-row justify-center items-center w-full" key={category.name}>
+          <Link
+            to={`/categories/${category.id}/lessons`}
+            className="h-full w-[75vw] bg-skill-tertiary border border-skill-success/50 rounded mx-4 px-4 flex flex-row justify-between items-center hover:bg-skill-tertiary/70 hover:border-skill-success transition-colors cursor-pointer no-underline text-inherit"
+          >
+            <p className="m-0"> </p>
+            <h3 className="font-['Lobster'] text-xl md:text-2xl mb-0">{category.name.replace(/^./, (match) => match.toUpperCase())}</h3>
             {/* Affiche les boutons de CRUD si l'utilisateur a les droits d'admin ou s'il est propriétaire de la catégorie*/}
             {user ? (
-              <div className="crud">
-                <a onClick={() => handleClickUpdate(category.id)} style={{ cursor: 'pointer' }}>
-                  <h4>{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\udcdd"):(" ")}</h4>
+              <div className="w-14 flex flex-row justify-between" onClick={(e) => e.stopPropagation()}>
+                <a onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleClickUpdate(category.id);
+                }} className="cursor-pointer">
+                  <h4 className="text-xl mb-4 font-['Lobster'] font-light text-black m-0">{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\udcdd"):(" ")}</h4>
                 </a>
-                <a onClick={() => handleClickDelete(category.id)} style={{ cursor: 'pointer' }}>
-                    <h4>{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\uddd1"):(" ")}</h4>
+                <a onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleClickDelete(category.id);
+                }} className="cursor-pointer">
+                    <h4 className="text-xl mb-4 font-['Lobster'] font-light text-black m-0">{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\uddd1"):(" ")}</h4>
                 </a>
               </div>
               ):(
-              <p></p>
+              <p className="m-0"></p>
               )
             }
-          </div>
+          </Link>
         </section>
           
       ))}
 
       {/* Affiche le bouton 'ajouter' si l'utilisateur a les droits d'admin ou prof*/}
 
-      <div className="see-more"></div>
+      <div className="flex flex-row justify-center items-center"></div>
             {user && (user.role_id === 1 || user.role_id === 2) ?
         (
         <button 
           type="button" 
-          className="main-button"
+          className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
           onClick={handleCreateCategory}
         >
           Nouvelle catégorie
         </button>
         ):(
-        <p></p>
+        <p className="m-0"></p>
         )
       }
 
       {/* Modale pour créer/modifier une catégorie */}
       {showCategoryModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            padding: '2rem',
-            borderRadius: '8px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto'
-          }}>
-            <h3 style={{ marginTop: 0, marginBottom: '1.5rem', color: '#1976d2' }}>
-              {editingCategory ? '✏️ Modifier la catégorie' : '➕ Créer une nouvelle catégorie'}
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
+          <div className="bg-skill-primary p-8 rounded-lg shadow-lg border-2 border-skill-secondary max-w-[500px] w-[90%] max-h-[80vh] overflow-auto">
+            <h3 className="mt-0 mb-6 text-skill-text-primary font-['Lobster'] text-xl md:text-2xl">
+              {editingCategory ? '✏️ Modifier la catégorie' : '+ Créer une nouvelle catégorie'}
             </h3>
             
-            <div style={{ marginBottom: '1rem' }}>
-              <label htmlFor="category-name" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+            <div className="mb-4">
+              <label htmlFor="category-name" className="block mb-2 font-bold text-lg text-skill-text-primary">
                 Nom de la catégorie : *
               </label>
               <input
@@ -214,19 +199,13 @@ export default function ContainerCategories({ categories }) {
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
                 placeholder="Ex: Cuisine, Bricolage, Informatique..."
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '1rem'
-                }}
+                className="w-full p-3 border-2 border-skill-secondary rounded bg-white text-skill-text-primary focus:outline-none focus:ring-2 focus:ring-skill-accent focus:border-skill-accent disabled:opacity-50"
                 disabled={categoryLoading}
               />
             </div>
 
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label htmlFor="category-description" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+            <div className="mb-6">
+              <label htmlFor="category-description" className="block mb-2 font-bold text-lg text-skill-text-primary">
                 Description (optionnel) :
               </label>
               <textarea
@@ -235,32 +214,17 @@ export default function ContainerCategories({ categories }) {
                 onChange={(e) => setCategoryDescription(e.target.value)}
                 placeholder="Décrivez brièvement cette catégorie..."
                 rows={3}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  fontSize: '1rem',
-                  resize: 'vertical'
-                }}
+                className="w-full p-3 border-2 border-skill-secondary rounded bg-white text-skill-text-primary resize-y focus:outline-none focus:ring-2 focus:ring-skill-accent focus:border-skill-accent disabled:opacity-50"
                 disabled={categoryLoading}
               />
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+            <div className="flex gap-4 justify-end">
               <button
                 type="button"
                 onClick={handleCloseModal}
                 disabled={categoryLoading}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  backgroundColor: '#6c757d',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: categoryLoading ? 'not-allowed' : 'pointer',
-                  fontSize: '1rem'
-                }}
+                className="py-3 px-6 bg-skill-secondary text-white border border-skill-secondary rounded cursor-pointer text-base font-['Lobster'] hover:bg-skill-accent hover:border-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 Annuler
               </button>
@@ -268,15 +232,11 @@ export default function ContainerCategories({ categories }) {
                 type="button"
                 onClick={handleSaveCategory}
                 disabled={categoryLoading || !categoryName.trim()}
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  backgroundColor: categoryLoading || !categoryName.trim() ? '#ccc' : '#1976d2',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: categoryLoading || !categoryName.trim() ? 'not-allowed' : 'pointer',
-                  fontSize: '1rem'
-                }}
+                className={`py-3 px-6 text-white border border-skill-success rounded cursor-pointer text-base font-['Lobster'] transition-colors ${
+                  categoryLoading || !categoryName.trim() 
+                    ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
+                    : 'bg-skill-success hover:bg-skill-success/90 hover:border-skill-success/90'
+                }`}
               >
                 {categoryLoading ? 'Sauvegarde...' : (editingCategory ? 'Modifier la catégorie' : 'Créer la catégorie')}
               </button>
