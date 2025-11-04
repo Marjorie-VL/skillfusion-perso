@@ -23,7 +23,7 @@ export default function LessonDetail() {
       
 
     // Fetch all lessons
-    fetch(`${import.meta.env.VITE_API_URL}/lessons`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/lessons`)
       .then((response) => response.json())
       .then((data) => setLessons(Array.isArray(data) ? data : data.lessons || []))
         }, [id]);
@@ -64,7 +64,7 @@ export default function LessonDetail() {
   }, [id]);
 
     if (!lesson) {
-    return <p>Chargement...</p>;
+    return <div className="text-center p-8"><p>Chargement...</p></div>;
   }
 
   const suggestions = lessons
@@ -76,7 +76,7 @@ export default function LessonDetail() {
 
   // Fonction de suppression
   const handleDelete = async () => {
-    await fetch(`${import.meta.env.VITE_API_URL}/api/lesson/${lesson.id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/lessons/${lesson.id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -90,18 +90,18 @@ export default function LessonDetail() {
   return (
     <>
       <Header />
-      <main>
+      <main className="flex flex-col justify-between items-center mb-4">
         <DetailContainer lesson={lesson} key={lesson.id} />
 
         {userData?.role?.description === "Administrateur" && (
-        <>
+        <div className="flex justify-center my-4">
         <button
-          className="main-button"
+          className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
           onClick={() => navigate(`/lessons`)}
         >
           Retour au catalogue
         </button>
-        </>
+        </div>
         )}
         <ConfirmDeleteModal
           show={showModal}
@@ -109,9 +109,9 @@ export default function LessonDetail() {
           onConfirm={handleDelete}
           lessonTitle={lesson.name}
         />
-        <section>
-        <h2>Suggestion de cours :</h2>
-          <article className="lessons">
+        <section className="w-full flex flex-col items-center my-8">
+        <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-4">Suggestion de cours :</h2>
+          <article className="w-screen flex flex-col md:flex-row md:flex-wrap justify-center items-center">
             <LessonContainer lessons={suggestions} />
           </article>
         </section>

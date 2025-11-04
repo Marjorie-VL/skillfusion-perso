@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../services/api.jsx";
 import { toast } from "react-toastify";
 import { categoryService } from "../services/categoryService.js";
+import ConfirmDeleteModal from "../pages/ConfirmDeleteModal";
 
 export default function ContainerCategories({ categories }) {
   const [categoryList,setCategoryList] = useState(
@@ -15,6 +16,9 @@ export default function ContainerCategories({ categories }) {
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
   const [categoryLoading, setCategoryLoading] = useState(false);
+  // États pour la modale de suppression
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState({ id: null, name: "" });
 
   // Récupération des données utilisateur
   const {user} = useAuth();
@@ -22,25 +26,29 @@ export default function ContainerCategories({ categories }) {
     return <div className="text-center p-8">Aucune catégorie trouvée.</div>;
   }
   // Supprimer une catégorie
-  const handleClickDelete = async (categoryId) => { 
-    const categoryName = categoryList.find(cat => cat.id === categoryId)?.name || "cette catégorie";
-    const isSure = confirm(`Êtes-vous sûr de vouloir supprimer la catégorie "${categoryName}" ? Cette action supprimera également tous les cours associés.`);
-    
-    if (!isSure) {
-      return;
-    }
+  const handleClickDelete = (categoryId) => { 
+    const category = categoryList.find(cat => cat.id === categoryId);
+    setDeleteTarget({ 
+      id: categoryId, 
+      name: category?.name || "cette catégorie" 
+    });
+    setShowDeleteModal(true);
+  };
 
+  const confirmDelete = async () => {
     try {
-      await categoryService.deleteCategory(categoryId);
+      await categoryService.deleteCategory(deleteTarget.id);
       
       // Mise à jour de la liste locale après suppression
-      setCategoryList((prev) => prev.filter((category) => category.id !== categoryId));
+      setCategoryList((prev) => prev.filter((category) => category.id !== deleteTarget.id));
       toast.success("Catégorie supprimée avec succès !");
+      setShowDeleteModal(false);
     } catch (err) {
       console.error("Erreur suppression catégorie:", err);
       toast.error(err.response?.data?.error || err.message || "Erreur lors de la suppression de la catégorie");
+      setShowDeleteModal(false);
     }
-  }
+  };
   // Modifier une catégorie
   const handleClickUpdate = (categoryId) => {
     const category = categoryList.find(cat => cat.id === categoryId);
@@ -244,6 +252,15 @@ export default function ContainerCategories({ categories }) {
           </div>
         </div>
       )}
+
+      {/* Modale de confirmation suppression catégorie */}
+      <ConfirmDeleteModal
+        show={showDeleteModal}
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={confirmDelete}
+        title="Supprimer la catégorie"
+        message={`Êtes-vous sûr de vouloir supprimer la catégorie "${deleteTarget.name}" ? Cette action supprimera également tous les cours associés.`}
+      />
     </section>
   );
 }

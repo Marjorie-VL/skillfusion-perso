@@ -41,7 +41,7 @@ const lessonController = {
       return res.status(200).json(lessons);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 
@@ -70,12 +70,7 @@ const lessonController = {
       console.log('🔍 addLesson - Request body:', req.body);
       const { title, description, category_id, user_id, materials, steps, media_url, media_alt, is_published } = req.body;
 
-      // Validation simple
-      if (!title || !description || !category_id || !user_id) {
-        return res.status(400).json({ error: 'Titre, description, catégorie et utilisateur sont requis.' });
-      }
-
-      //  Valider avec Joi
+      // Valider avec Joi
       const { error } = lessonSchema.validate({ title, description, category_id, user_id, media_url, media_alt, materials, steps }, { abortEarly: false });
       if (error) {
         // Transformer les erreurs Joi en objet simple { champ: message }

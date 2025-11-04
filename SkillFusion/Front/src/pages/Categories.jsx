@@ -28,21 +28,21 @@ export default function Categories() {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <main>
-        <section className="head-banner">
-          <h2>Nos catégories</h2>
+      <main className="flex flex-col justify-center items-center mb-4 flex-grow">
+        <section className="flex flex-col justify-center items-center w-full">
+          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Nos catégories</h2>
+          
+          {loading && <div className="text-center p-8">Chargement des catégories...</div>}
+          {error && <div className="text-center p-8 text-red-600">Erreur : {error}</div>}
+          {!loading && !error && (
+            <ContainerCategories categories={categories} />
+          )}
         </section>
-
-        {loading && <div>Chargement des catégories...</div>}
-        {error && <div>Erreur : {error}</div>}
-        {!loading && !error && (
-          <ContainerCategories categories={categories} />
-        )}
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
 

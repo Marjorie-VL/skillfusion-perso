@@ -74,15 +74,15 @@ export default function ProfilChange() {
   return (
     <>
       <Header />
-      <main>
-        <section className="head-banner">
-          <h2>Modifier le rôle de {user.user_name.replace(/^./, (match) => match.toUpperCase())}</h2>
+      <main className="flex flex-col justify-between items-center mb-4">
+        <section className="flex flex-col justify-center items-center">
+          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Modifier le rôle de {user.user_name.replace(/^./, (match) => match.toUpperCase())}</h2>
         </section>
 
-        <section className="lessons">
-          <form method="post" onSubmit={(e) => handleSubmit(e)}>
-          <div className="form">
-            <label htmlFor="role">
+        <section className="w-screen flex flex-col md:flex-row md:flex-wrap justify-center items-center">
+          <form method="post" onSubmit={(e) => handleSubmit(e)} className="w-full max-w-[850px] flex flex-col items-center">
+          <div className="flex flex-col mb-2 w-3/4">
+            <label htmlFor="role" className="text-xl md:text-2xl mb-1">
               Rôle (actuel : {user.role.name})
             </label>
             <select
@@ -91,17 +91,21 @@ export default function ProfilChange() {
               value={roleCurrentUser}
               onChange={(e) => setRoleCurrentUser(e.target.value)}
               required
+              className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
             >
               <option value="">Sélectionnez un rôle</option>
               {roles.map((role) =>
-              <option value={role.id}>{role.name}</option>
+              <option key={role.id} value={role.id}>{role.name}</option>
               )}
             </select>
-            {errors.role && <p style={{ color: "red" }}>{errors.role}</p>}
+            {errors.role && <p className="text-red-600 text-sm mt-2">{errors.role}</p>}
           </div>
-            <section className="see-more">
+            <section className="flex flex-row justify-center items-center">
               <div>
-                <button type="submit" className="main-button">
+                <button 
+                  type="submit" 
+                  className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
+                >
                   Enregistrer
                 </button>
               </div>

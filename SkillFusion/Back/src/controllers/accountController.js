@@ -23,7 +23,7 @@ const accountController = {
       return res.status(200).json(users);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 
@@ -47,7 +47,7 @@ const accountController = {
       return res.status(200).json(oneUser);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 
@@ -68,7 +68,7 @@ const accountController = {
       });
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
  
@@ -205,7 +205,7 @@ const accountController = {
       });
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 };

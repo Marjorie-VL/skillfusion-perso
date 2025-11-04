@@ -19,7 +19,7 @@ export const userSchema = Joi.object({
   .pattern(/[A-Z]/, 'majuscule')     // au moins une majuscule
   .pattern(/[a-z]/, 'minuscule')     // au moins une minuscule
   .pattern(/[0-9]/, 'chiffre')       // au moins un chiffre
-  .pattern(/[!@#$%^&*(),.?":{}|<>]/, 'symbole') // au moins un symbole
+  .pattern(/[!@#$%^&*(),.?":{}|<>_-]/, 'symbole') // au moins un symbole
   .pattern(/^\S*$/, 'pas d\'espace') // pas d'espaces
   .required()
   .messages({

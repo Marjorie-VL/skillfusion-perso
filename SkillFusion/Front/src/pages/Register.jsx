@@ -12,6 +12,8 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -115,17 +117,17 @@ export default function Register() {
   return (
     <>
       <Header />
-      <main>
-        <section className="head-banner">
-          <h2>Créer un compte</h2>
+      <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
+        <section className="flex flex-col justify-center items-center">
+          <h2 className="my-8 font-['Lobster'] text-center text-2xl md:text-4xl">Créer un compte</h2>
         </section>
 
-        <section className="lessons">
-          <form method="post" onSubmit={handleSubmit}>
-            <div className="form">
-              <label htmlFor="user_name">Nom d'utilisateur :</label>
+        <section className="w-screen flex flex-col md:flex-row md:flex-wrap justify-center items-center">
+          <form method="post" onSubmit={handleSubmit} className="w-full max-w-[850px] flex flex-col items-center">
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="user_name" className="text-xl md:text-2xl mb-1">Nom d'utilisateur :</label>
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 type="text"
                 placeholder="Votre nom d'utilisateur (3-30 caractères)"
                 name="user_name"
@@ -135,13 +137,13 @@ export default function Register() {
                 required
                 disabled={loading}
               />
-              {errors.user_name && <p style={{ color: "red", fontSize: "0.9rem", marginTop: "0.5rem" }}>{errors.user_name}</p>}
+              {errors.user_name && <p className="text-red-600 text-sm mt-2">{errors.user_name}</p>}
             </div>
             
-            <div className="form">
-              <label htmlFor="mail">E-mail :</label>
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="mail" className="text-xl md:text-2xl mb-1">E-mail :</label>
               <input
-                className="search-bar input-bar"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 type="email"
                 placeholder="votre.email@exemple.com"
                 name="mail"
@@ -151,52 +153,86 @@ export default function Register() {
                 required
                 disabled={loading}
               />
-              {errors.mail && <p style={{ color: "red", fontSize: "0.9rem", marginTop: "0.5rem" }}>{errors.mail}</p>}
+              {errors.mail && <p className="text-red-600 text-sm mt-2">{errors.mail}</p>}
             </div>
             
-            <div className="form">
-              <label htmlFor="password">Mot de passe :</label>
-              <input
-                className="search-bar input-bar"
-                type="password"
-                placeholder="Minimum 12 caractères avec majuscule, minuscule, chiffre et symbole"
-                name="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
-              {errors.password && <p style={{ color: "red", fontSize: "0.9rem", marginTop: "0.5rem" }}>{errors.password}</p>}
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="password" className="text-xl md:text-2xl mb-1">Mot de passe :</label>
+              <div className="relative">
+                <input
+                  className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Minimum 12 caractères avec majuscule, minuscule, chiffre et symbole"
+                  name="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
+                  aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  disabled={loading}
+                >
+                  {showPassword ? (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              {errors.password && <p className="text-red-600 text-sm mt-2">{errors.password}</p>}
             </div>
 
-            <div className="form">
-              <label htmlFor="confirmPassword">Confirmer le mot de passe :</label>
-              <input
-                className="search-bar input-bar"
-                type="password"
-                placeholder="Répétez votre mot de passe"
-                name="confirmPassword"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
-              {errors.confirmPassword && <p style={{ color: "red", fontSize: "0.9rem", marginTop: "0.5rem" }}>{errors.confirmPassword}</p>}
+            <div className="flex flex-col mb-2 w-3/4">
+              <label htmlFor="confirmPassword" className="text-xl md:text-2xl mb-1">Confirmer le mot de passe :</label>
+              <div className="relative">
+                <input
+                  className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Répétez votre mot de passe"
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
+                  aria-label={showConfirmPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  disabled={loading}
+                >
+                  {showConfirmPassword ? (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              {errors.confirmPassword && <p className="text-red-600 text-sm mt-2">{errors.confirmPassword}</p>}
             </div>
 
             {/* Affichage des erreurs globales */}
             {Object.keys(errors).length > 0 && (
-              <div style={{ 
-                backgroundColor: "#fdf2f2", 
-                border: "1px solid #fecaca", 
-                borderRadius: "8px", 
-                padding: "1rem", 
-                marginBottom: "1rem" 
-              }}>
-                <h4 style={{ color: "#dc2626", margin: "0 0 0.5rem 0" }}>Veuillez corriger les erreurs suivantes :</h4>
-                <ul style={{ color: "#dc2626", margin: 0, paddingLeft: "1.5rem" }}>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 w-3/4">
+                <h4 className="text-red-700 mb-2 font-semibold">Veuillez corriger les erreurs suivantes :</h4>
+                <ul className="text-red-700 list-disc pl-6 m-0">
                   {Object.entries(errors).map(([field, message]) => (
                     <li key={field}>{message}</li>
                   ))}
@@ -204,23 +240,19 @@ export default function Register() {
               </div>
             )}
 
-            <section className="see-more">
+            <section className="flex flex-row justify-center items-center">
               <div>
                 <button 
                   type="submit" 
-                  className="main-button"
+                  className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   disabled={loading}
-                  style={{ 
-                    opacity: loading ? 0.6 : 1,
-                    cursor: loading ? "not-allowed" : "pointer"
-                  }}
                 >
                   {loading ? "Inscription en cours..." : "S'inscrire"}
                 </button>
               </div>
-              <div style={{ textAlign: "center", marginTop: "1rem" }}>
-                <p style={{ color: "#666", fontSize: "0.9rem" }}>
-                  Déjà un compte ? <a href="/login" style={{ color: "#1976d2", textDecoration: "none" }}>Se connecter</a>
+              <div className="text-center mt-4 w-full">
+                <p className="text-gray-600 text-sm">
+                  Déjà un compte ? <a href="/login" className="text-blue-600 no-underline hover:text-skill-accent">Se connecter</a>
                 </p>
               </div>
             </section>

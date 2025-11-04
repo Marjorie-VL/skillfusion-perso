@@ -5,7 +5,13 @@ export default function PublicRoute({ children }) {
   const { user, loading } = useAuth();
 
   // Pendant le chargement des données utilisateur, on affiche un message
-  if (loading) return <div>Chargement...</div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen items-center justify-center">
+        <div className="text-center text-skill-text-primary font-['Lobster'] text-lg md:text-xl">Chargement...</div>
+      </div>
+    );
+  }
 
   // Si l'utilisateur est déjà connecté, on le redirige vers la page d'accueil
   if (user) return <Navigate to="/" />;

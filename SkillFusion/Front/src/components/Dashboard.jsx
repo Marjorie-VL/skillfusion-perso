@@ -17,7 +17,7 @@ export default function Dashboard() {
       return <UserDashboard />;
     default:
       return (
-        <div style={{ textAlign: "center", padding: "2rem" }}>
+        <div className="text-center p-8">
           <p>Rôle non reconnu. Veuillez contacter l'administrateur.</p>
         </div>
       );

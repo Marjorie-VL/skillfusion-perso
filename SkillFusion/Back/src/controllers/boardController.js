@@ -31,7 +31,7 @@ const boardController = {
       return res.status(200).json({ message: 'Favori ajouté avec succès', lesson });
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 
@@ -65,7 +65,7 @@ const boardController = {
       return res.status(200).json({ message: 'Favori supprimé avec succès' });
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 
@@ -76,7 +76,7 @@ const boardController = {
       return res.status(200).json(roles);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 };

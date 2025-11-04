@@ -10,11 +10,6 @@ const authentication = {
     // Récupérer les données du body
     const { user_name, password, email } = req.body;
 
-    // Vérifier que tous les champs sont présents
-    if (!user_name || !password || !email ) {
-      return res.status(400).json({ error: 'Tous les champs (user_name, password, email) sont obligatoires.' });
-    }
-    
     // Valider avec Joi, avec abortEarly: false pour récupérer toutes les erreurs
     const { error } = userSchema.validate({ user_name, email, password }, { abortEarly: false });
     if (error) {
@@ -47,7 +42,7 @@ const authentication = {
     } catch (error) {
       // On pourrait probablement fouiller un peu la variable error pour avoir un message d'erreur plus clair, mais c'est pas le sujet du cours
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 

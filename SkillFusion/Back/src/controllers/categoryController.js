@@ -24,7 +24,7 @@ const categoryController = {
       return res.status(200).json(categories);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 
@@ -48,7 +48,7 @@ const categoryController = {
       return res.status(200).json(category);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
 
@@ -76,7 +76,7 @@ const categoryController = {
       });
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
  
@@ -113,7 +113,7 @@ const categoryController = {
       return res.status(201).json(category);
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   },
     
@@ -202,7 +202,7 @@ const categoryController = {
       });
     } catch (error) {
       console.error('❌ Erreur Sequelize →', error.message);
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: 'Erreur interne du serveur' });
     }
   }
 };

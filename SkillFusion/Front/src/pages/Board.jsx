@@ -83,12 +83,7 @@ export default function Board() {
 
   if (isLoading) {
     return (
-      <div style={{ 
-        textAlign: "center", 
-        padding: "2rem",
-        fontSize: "1.2rem",
-        color: "#666"
-      }}>
+      <div className="text-center p-8 text-xl text-gray-600">
         <p>🔄 Chargement de votre tableau de bord...</p>
       </div>
     );
@@ -96,27 +91,11 @@ export default function Board() {
 
   if (error) {
     return (
-      <div style={{ 
-        textAlign: "center", 
-        padding: "2rem",
-        color: "#d32f2f",
-        backgroundColor: "#ffebee",
-        borderRadius: "8px",
-        margin: "2rem",
-        border: "1px solid #ffcdd2"
-      }}>
+      <div className="text-center p-8 text-red-700 bg-red-50 rounded-lg m-8 border border-red-200">
         <p>❌ Erreur : {error}</p>
         <button 
           onClick={() => window.location.reload()} 
-          style={{
-            marginTop: "1rem",
-            padding: "0.5rem 1rem",
-            backgroundColor: "#1976d2",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer"
-          }}
+          className="mt-4 py-2 px-4 bg-blue-600 text-white border-none rounded cursor-pointer hover:bg-blue-700 transition-colors"
         >
           🔄 Réessayer
         </button>
@@ -127,27 +106,11 @@ export default function Board() {
   // Vérification de sécurité : s'assurer que l'utilisateur a un rôle valide
   if (!userData || ![ADMIN_ROLE_ID, INSTRUCTOR_ROLE_ID, USER_ROLE_ID].includes(userData.role_id)) {
     return (
-      <div style={{ 
-        textAlign: "center", 
-        padding: "2rem",
-        color: "#d32f2f",
-        backgroundColor: "#ffebee",
-        borderRadius: "8px",
-        margin: "2rem",
-        border: "1px solid #ffcdd2"
-      }}>
+      <div className="text-center p-8 text-red-700 bg-red-50 rounded-lg m-8 border border-red-200">
         <p>❌ Rôle utilisateur non reconnu. Veuillez contacter un administrateur.</p>
         <button 
           onClick={() => navigate("/login")} 
-          style={{
-            marginTop: "1rem",
-            padding: "0.5rem 1rem",
-            backgroundColor: "#1976d2",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer"
-          }}
+          className="mt-4 py-2 px-4 bg-blue-600 text-white border-none rounded cursor-pointer hover:bg-blue-700 transition-colors"
         >
           🔐 Se reconnecter
         </button>
@@ -156,9 +119,9 @@ export default function Board() {
   }
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />      
-      <main>
+      <main className="flex-grow">
         {userData.role_id === ADMIN_ROLE_ID && (
           <AdminDashboard usersData={usersData} />
         )}
@@ -170,6 +133,6 @@ export default function Board() {
         )}
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

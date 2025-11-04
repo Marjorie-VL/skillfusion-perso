@@ -17,7 +17,7 @@ export default function CategoryPage() {
       setError(null);
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/categories/${id}/lessons`
+          `${import.meta.env.VITE_API_URL}/api/categories/${id}/lessons`
         );
         const data = await res.json();
         if (data.lessons) {
@@ -34,22 +34,45 @@ export default function CategoryPage() {
       }
     };
 
-
     fetchCategoryLessons();
+  }, [id]);
+
+  // Rafraîchir les données quand on revient sur la page (focus)
+  useEffect(() => {
+    const handleFocus = () => {
+      const fetchCategoryLessons = async () => {
+        try {
+          const res = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/categories/${id}/lessons`
+          );
+          const data = await res.json();
+          if (data.lessons) {
+            setLessons(data.lessons);
+            setCategoryName(data.categoryName || "Nom de la catégorie");
+          }
+        } catch (error) {
+          console.error("Erreur lors du rafraîchissement:", error);
+        }
+      };
+      fetchCategoryLessons();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, [id]);
 
   return (
     <>
       <Header />
-      <main>
-        <section className="home__articles">
-          <h2>{loading ? "Chargement..." : categoryName}</h2>
-          <article className="lessons">
-            {loading && <p>Chargement des cours...</p>}
+      <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
+        <section className="max-w-[95%] flex flex-col justify-center items-center">
+          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">{loading ? "Chargement..." : categoryName}</h2>
+          <article className="w-full">
+            {loading && <p className="text-center p-8">Chargement des cours...</p>}
             {lessons.length > 0 ? (
               <LessonContainer lessons={lessons} categoryName={categoryName}/>
             ) : (
-              <p>Aucun cours disponible pour cette catégorie.</p>
+              <p className="text-center p-8">Aucun cours disponible pour cette catégorie.</p>
             )}
           </article>
         </section>

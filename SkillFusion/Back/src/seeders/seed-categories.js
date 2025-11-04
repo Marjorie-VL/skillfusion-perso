@@ -5,6 +5,7 @@ async function seedCategories() {
     "Maçonnerie",
     "Peinture",
     "Électricité",
+    "Plomberie",
     "Autres",
   ];
 

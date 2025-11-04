@@ -5,7 +5,13 @@ export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
   // Pendant le chargement des données utilisateur, on affiche un message
-  if (loading) return <div>Chargement...</div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen items-center justify-center">
+        <div className="text-center text-skill-text-primary font-['Lobster'] text-lg md:text-xl">Chargement...</div>
+      </div>
+    );
+  }
 
   // Si l'utilisateur n'est pas connecté, on affiche la page 404 (ou un accès refusé)
   if (!user) return <ErrorPage />;

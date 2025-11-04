@@ -5,12 +5,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../services/api.jsx";
 import { toast } from "react-toastify";
 import { forumService } from "../services/forumService.js";
+import ConfirmDeleteModal from "../pages/ConfirmDeleteModal";
 
 
 export default function ForumTopicsList({topics}) {
 
   const [topicsList, setTopicsList] = useState(Array.isArray(topics) ? topics : []);
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
 
   // Récupération des données utilisateur
   const {user} = useAuth();
@@ -37,95 +40,96 @@ useEffect(() => {
   };
 
   // Supprimer un sujet
-  const handleClickDelete = async (topicId) => { 
-    const isSure = confirm("Êtes-vous sûr(e) de vouloir supprimer ce sujet ?");
-    if (!isSure) {
-      return;
-    }
-    
+  const handleClickDelete = (topicId) => { 
+    setDeleteTargetId(topicId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await forumService.deleteTopic(topicId);
+      await forumService.deleteTopic(deleteTargetId);
       
       // Mise à jour de la liste locale après suppression
-      setTopicsList((prev) => prev.filter((topic) => topic.id !== topicId));
+      setTopicsList((prev) => prev.filter((topic) => topic.id !== deleteTargetId));
       toast.success("Sujet supprimé avec succès !");
-
+      setShowDeleteModal(false);
     } catch (err) {
       console.error("❌ Erreur suppression →", err);
       toast.error("Erreur lors de la suppression : " + (err.response?.data?.error || err.message));
+      setShowDeleteModal(false);
     }
-  }
+  };
 
   return (
     <>
       <Header />
-      <main>
-      <section className="head-button">
-          <Link to="/forum-new-discussion">
-            <button className="main-button">
+      <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
+      <section className="flex flex-row justify-end items-center w-full h-20 mb-4">
+          <Link to="/forum-new-discussion" className="m-4">
+            <button className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors">
             Créer un nouveau sujet
             </button>
           </Link>
         </section>
-        <section className="forum-banner head-banner">
-          <h2>Nos sujets</h2>
+        <section className="flex flex-col justify-center items-center">
+          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Nos sujets</h2>
         </section>
 
-        <section className="list-category">       
+        <section className="flex flex-col justify-center items-center w-full mb-8">       
           {topicsList.length === 0 ? (
-            <p>Aucun sujet pour le moment.</p>
+            <p className="text-center p-8">Aucun sujet pour le moment.</p>
           ) : topicsList.map((topic) => (
-            <section className="forum-box category-box" key={topic.id}>
-              <div className="topic-box__desc">
-                <h4>{(topic.title || "").replace(/^./, (match) => match.toUpperCase())}</h4>
-                <div className="topic-box__center">
-                  <p></p>
-                  <Link
-                  to={`/forum/${topic.id}`}
-                  style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                  <p>{(topic.content || "").replace(/^./, (match) => match.toUpperCase())}</p>
-                  </Link>
+            <section className="h-32 my-4 flex flex-row justify-center items-center w-full" key={topic.id}>
+              <Link
+                to={`/forum/${topic.id}`}
+                className="h-full w-[75vw] bg-skill-tertiary border border-skill-success/50 rounded mx-4 px-4 flex flex-col justify-center items-center hover:bg-skill-tertiary/70 hover:border-skill-success transition-colors cursor-pointer no-underline text-inherit"
+              >
+                <h4 className="font-['Lobster'] text-xl md:text-2xl mb-2">{(topic.title || "").replace(/^./, (match) => match.toUpperCase())}</h4>
+                <div className="w-full flex flex-col items-center relative">
+                  <p className="text-center px-4 w-full">{(topic.content || "").replace(/^./, (match) => match.toUpperCase())}</p>
                   {/* Affiche les boutons de modification/suppression si l'utilisateur est propriétaire ou admin */}
                   {user && (user.id === topic.user_id || user.role_id === 1) && (
-                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                    <div className="absolute top-0 right-0 flex gap-2" onClick={(e) => e.stopPropagation()}>
                       <button 
-                        onClick={() => handleClickEdit(topic.id)} 
-                        className="edit-button"
-                        title="Modifier ce sujet"
-                        style={{ 
-                          cursor: 'pointer', 
-                          background: 'none', 
-                          border: 'none', 
-                          fontSize: '1.2em',
-                          color: '#3498db'
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleClickEdit(topic.id);
                         }}
+                        className="cursor-pointer bg-transparent border-none text-xl text-blue-500 hover:text-blue-700 transition-colors"
+                        title="Modifier ce sujet"
                       >
                         ✏️
                       </button>
                       <button 
-                        onClick={() => handleClickDelete(topic.id)} 
-                        className="delete-button"
-                        title="Supprimer ce sujet"
-                        style={{ 
-                          cursor: 'pointer', 
-                          background: 'none', 
-                          border: 'none', 
-                          fontSize: '1.2em',
-                          color: '#e74c3c'
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleClickDelete(topic.id);
                         }}
+                        className="cursor-pointer bg-transparent border-none text-xl text-red-600 hover:text-red-700 transition-colors"
+                        title="Supprimer ce sujet"
                       >
                         🗑️
                       </button>
                     </div>
                   )}
                 </div>
-              </div>
+              </Link>
             </section>
           ))}
         </section>
       </main>
       <Footer />
+      
+      {/* Modale de confirmation suppression sujet */}
+      <ConfirmDeleteModal
+        show={showDeleteModal}
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={confirmDelete}
+        title="Supprimer le sujet"
+        message="Êtes-vous sûr(e) de vouloir supprimer ce sujet ?"
+      />
     </>
   );
 }

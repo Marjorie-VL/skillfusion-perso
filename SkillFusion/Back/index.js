@@ -2,8 +2,6 @@ import "dotenv/config";
 import express from "express";
 import { router } from "./src/router.js";
 import { xss } from "express-xss-sanitizer";
-import { sequelize } from "./src/models/connection.js";
-
 // Middlewares custom
 import { corsConfig } from "./src/middlewares/corsConfig.js";
 import { errorHandler } from "./src/middlewares/errorHandler.js";
@@ -49,7 +47,4 @@ app.use(errorHandler);
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`🚀 Server started at http://localhost:${port}`);
-  console.log(`�� API ready to receive requests`);
-  console.log(`🔒 Security: XSS protection enabled`);
-  console.log(`�� CORS: Configured for localhost`);
 });

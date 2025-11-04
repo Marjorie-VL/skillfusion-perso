@@ -5,21 +5,16 @@ export default function DetailContainer({ lesson }) {
   
   return (
     <>
-      <section className="lesson">
-        <h2> {lesson.title}</h2>
-        <p className="instructor-info" style={{ 
-          fontSize: '1rem', 
-          color: '#666', 
-          margin: '0.5rem 0',
-          fontStyle: 'italic'
-        }}>
+      <section className="flex flex-col w-4/5 mx-auto">
+        <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl mb-4"> {lesson.title}</h2>
+        <p className="text-base text-gray-600 my-2 italic">
           Créé par {lesson.user?.user_name || 'Instructeur inconnu'}
         </p>
-        <div className="lesson-introduction__img">
+        <div className="max-w-full max-h-80 overflow-hidden border border-black my-4 shadow-[2px_2px_rgb(122,122,122)] rounded-lg">
           {lesson.media_url ? (
             lesson.media_url.startsWith('/uploads/') ? (
               <img
-                className="image-lesson"
+                className="w-full h-full object-cover object-[50%_50%]"
                 src={`${import.meta.env.VITE_API_URL}${lesson.media_url}`}
                 alt={lesson.media_alt || "Image du résultat final du cours"}
                 onError={(e) => {
@@ -29,7 +24,7 @@ export default function DetailContainer({ lesson }) {
               />
             ) : lesson.media_url.startsWith('http') ? (
               <img
-                className="image-lesson"
+                className="w-full h-full object-cover object-[50%_50%]"
                 src={lesson.media_url}
                 alt={lesson.media_alt || "Image du résultat final du cours"}
                 onError={(e) => {
@@ -39,7 +34,7 @@ export default function DetailContainer({ lesson }) {
               />
             ) : (
               <img
-                className="image-lesson"
+                className="w-full h-full object-cover object-[50%_50%]"
                 src={`/Images/Photos/${lesson.media_url}`}
                 alt={lesson.media_alt || "Image du résultat final du cours"}
                 onError={(e) => {
@@ -49,42 +44,43 @@ export default function DetailContainer({ lesson }) {
               />
             )
           ) : (
-            <div className="no-image-placeholder">
+            <div className="p-4">
               <p>Aucune image disponible</p>
             </div>
           )}
-          <div className="no-image-placeholder" style={{ display: 'none' }}>
+          <div className="p-4 hidden">
             <p>Image non disponible</p>
           </div>
         </div>
-        <p className="lesson__description">{lesson.description}</p>
+        <p className="px-4 text-justify text-lg md:text-2xl">{lesson.description}</p>
       </section>
-      <section className="lesson">
-        <h3>Matériaux nécessaires :</h3>
-        <ul>
-          {lesson.materials.map((material, index) => (
-            <li key={index}>{material.name}</li>
-          ))}
-        </ul>
+      <section className="flex flex-col w-4/5 mx-auto">
+        <h3 className="font-['Lobster'] text-center text-xl md:text-3xl my-4">Matériaux nécessaires :</h3>
+        <div className="bg-skill-primary/50 border border-skill-secondary/50 rounded-lg p-6">
+          <ul className="list-disc ml-8">
+            {lesson.materials.map((material, index) => (
+              <li key={index} className="text-base md:text-xl mt-4">{material.name}</li>
+            ))}
+          </ul>
+        </div>
       </section>
 
-      <section className="lesson">
-        <h3>Etapes à suivre:</h3>
+      <section className="flex flex-col w-4/5 mx-auto">
+        <h3 className="font-['Lobster'] text-center text-xl md:text-3xl my-4">Etapes à suivre:</h3>
         {lesson.steps.map((step, index) => (
-          <div className="steps" key={step.id}>
-            <div className ="steps__desc">
-              <div className="steps__title" key={step.id}>
-                <h4>
+          <div className="w-full mb-8" key={step.id}>
+            <div className="bg-skill-primary/20 border border-skill-secondary/50 rounded-lg flex flex-row items-start justify-between break-words box-border overflow-hidden">
+              <div className="flex flex-col justify-start flex-1 p-6" key={step.id}>
+                <h4 className="font-['Lobster'] text-lg md:text-2xl p-0 m-0 mb-4 break-words max-w-full" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', hyphens: 'auto' }}>
                   Etape {index + 1}: {step.title}
                 </h4>
+                <p className="p-0 m-0 break-words max-w-full" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', hyphens: 'auto' }}>{step.description}</p>
               </div>
-              <p>{step.description}</p>
-            </div>
-            <div className="steps__img">
-                {step.media_url ? (
-                  step.media_url.startsWith('/uploads/') ? (
+              {step.media_url && (
+                <div className="w-[350px] h-[250px] flex-shrink-0 overflow-hidden rounded-r-lg">
+                  {step.media_url.startsWith('/uploads/') ? (
                     <img
-                      className="image-lesson"
+                      className="w-full h-full object-cover object-[50%_50%]"
                       src={`${import.meta.env.VITE_API_URL}${step.media_url}`}
                       alt={step.media_alt || "Image de l'étape"}
                       onError={(e) => {
@@ -94,7 +90,7 @@ export default function DetailContainer({ lesson }) {
                     />
                   ) : step.media_url.startsWith('http') ? (
                     <img
-                      className="image-lesson"
+                      className="w-full h-full object-cover object-[50%_50%]"
                       src={step.media_url}
                       alt={step.media_alt || "Image de l'étape"}
                       onError={(e) => {
@@ -104,7 +100,7 @@ export default function DetailContainer({ lesson }) {
                     />
                   ) : (
                     <img
-                      className="image-lesson"
+                      className="w-full h-full object-cover object-[50%_50%]"
                       src={`/Images/Photos/${step.media_url}`}
                       alt={step.media_alt || "Image de l'étape"}
                       onError={(e) => {
@@ -112,15 +108,12 @@ export default function DetailContainer({ lesson }) {
                         e.target.nextSibling.style.display = 'block';
                       }}
                     />
-                  )
-                ) : (
-                  <div className="no-image-placeholder">
-                    <p>Aucune image pour cette étape</p>
+                  )}
+                  <div className="p-4 hidden">
+                    <p>Image non disponible</p>
                   </div>
-                )}
-                <div className="no-image-placeholder" style={{ display: 'none' }}>
-                  <p>Image non disponible</p>
                 </div>
+              )}
             </div>
           </div>
         ))}
