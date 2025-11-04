@@ -25,7 +25,7 @@ export default function Header() {
     return (
       <header className="w-full relative">
         <div className="w-full bg-skill-primary border-b border-skill-secondary py-4 md:py-6 flex items-center justify-center min-h-[100px]">
-          <div className="text-center text-skill-text-primary font-['Lobster'] text-lg">Chargement...</div>
+          <div className="text-center text-skill-text-primary font-display text-lg">Chargement...</div>
         </div>
       </header>
     );
@@ -65,21 +65,21 @@ export default function Header() {
               }}
             />
           </a>
-          <h1 className="font-['Lobster'] text-2xl md:text-4xl text-skill-text-primary">SkillFusion</h1>
+          <h1 className="font-display text-2xl md:text-4xl text-skill-text-primary">SkillFusion</h1>
         </div>
 
         {/* Menu de navigation et utilisateur - Desktop seulement */}
         <div className="hidden md:flex flex-1 justify-center relative z-10">
           <div className="flex flex-row justify-center items-center gap-2 md:gap-4 bg-white/40 backdrop-blur-sm px-4 py-2 rounded-lg border border-skill-secondary/50 shadow-md">
             <ul className="flex flex-row justify-center items-center gap-2 md:gap-4">
-              <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-['Lobster'] text-lg md:text-xl" href="/">Accueil</a></li>
-              <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-['Lobster'] text-lg md:text-xl" href="/lessons">Catalogue</a></li>
-              <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-['Lobster'] text-lg md:text-xl" href="/categories">Catégories</a></li>
-              <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-['Lobster'] text-lg md:text-xl" href="/contact">Contact</a></li>
+              <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/">Accueil</a></li>
+              <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/lessons">Catalogue</a></li>
+              <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/categories">Catégories</a></li>
+              <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/contact">Contact</a></li>
               {user && (
                 <>
-                  <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-['Lobster'] text-lg md:text-xl" href="/forum">Forum</a></li>
-                  <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-['Lobster'] text-lg md:text-xl" href="/board">Tableau de bord</a></li>
+                  <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/forum">Forum</a></li>
+                  <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/board">Tableau de bord</a></li>
                 </>
               )}
             </ul>
@@ -87,17 +87,17 @@ export default function Header() {
             {/* Nom d'utilisateur et déconnexion */}
             {user ? (
               <div className="flex flex-row items-center gap-3 ml-12 md:ml-16 pl-12 md:pl-16 border-l border-skill-secondary/30">
-                <span className="text-lg md:text-xl text-skill-text-primary font-['Lobster']">{user.user_name.replace(/^./, (match) => match.toUpperCase())}</span>
+                <span className="text-lg md:text-xl text-skill-text-primary font-display">{user.user_name.replace(/^./, (match) => match.toUpperCase())}</span>
                 <button 
                   onClick={handleLogoutClick} 
-                  className="text-lg md:text-xl bg-skill-secondary text-white border border-skill-secondary px-3 py-1 rounded-lg cursor-pointer hover:bg-skill-accent hover:border-skill-accent transition-colors whitespace-nowrap font-['Lobster']"
+                  className="text-lg md:text-xl bg-skill-secondary text-white border border-skill-secondary px-3 py-1 rounded-lg cursor-pointer hover:bg-skill-accent hover:border-skill-accent transition-colors whitespace-nowrap font-display"
                 >
                   Déconnexion
                 </button>
               </div>
             ) : (
               <div className="ml-12 md:ml-16 pl-12 md:pl-16 border-l border-skill-secondary/30">
-                <a className="no-underline text-skill-text-primary hover:text-skill-accent whitespace-nowrap font-['Lobster'] text-lg md:text-xl" href="/login">Connexion</a>
+                <a className="no-underline text-skill-text-primary hover:text-skill-accent whitespace-nowrap font-display text-lg md:text-xl" href="/login">Connexion</a>
               </div>
             )}
           </div>
@@ -127,7 +127,7 @@ export default function Header() {
         <ul className="flex flex-col justify-between items-center p-4">
           <li className="mt-3">
             <a 
-              className="no-underline text-white hover:text-skill-accent font-['Lobster']" 
+              className="no-underline text-white hover:text-skill-accent font-display" 
               href="/" 
               onClick={closeMobileMenu}
             >
@@ -136,7 +136,7 @@ export default function Header() {
           </li>
           <li className="mt-3">
             <a 
-              className="no-underline text-white hover:text-skill-accent font-['Lobster']" 
+              className="no-underline text-white hover:text-skill-accent font-display" 
               href="/lessons" 
               onClick={closeMobileMenu}
             >
@@ -145,7 +145,7 @@ export default function Header() {
           </li>
           <li className="mt-3">
             <a 
-              className="no-underline text-white hover:text-skill-accent font-['Lobster']" 
+              className="no-underline text-white hover:text-skill-accent font-display" 
               href="/categories" 
               onClick={closeMobileMenu}
             >
@@ -154,7 +154,7 @@ export default function Header() {
           </li>
           <li className="mt-3">
             <a 
-              className="no-underline text-white hover:text-skill-accent font-['Lobster']" 
+              className="no-underline text-white hover:text-skill-accent font-display" 
               href="/contact" 
               onClick={closeMobileMenu}
             >
@@ -165,7 +165,7 @@ export default function Header() {
             <>
               <li className="mt-3">
                 <a 
-                  className="no-underline text-white hover:text-skill-accent font-['Lobster']" 
+                  className="no-underline text-white hover:text-skill-accent font-display" 
                   href="/forum" 
                   onClick={closeMobileMenu}
                 >
@@ -174,7 +174,7 @@ export default function Header() {
               </li>
               <li className="mt-3">
                 <a 
-                  className="no-underline text-white hover:text-skill-accent font-['Lobster']" 
+                  className="no-underline text-white hover:text-skill-accent font-display" 
                   href="/board" 
                   onClick={closeMobileMenu}
                 >
@@ -184,7 +184,7 @@ export default function Header() {
               <li className="mt-3">
                 <button 
                   onClick={handleLogoutClick}
-                  className="no-underline text-white bg-transparent border-none p-0 cursor-pointer font-['Lobster'] outline-none hover:text-skill-accent"
+                  className="no-underline text-white bg-transparent border-none p-0 cursor-pointer font-display outline-none hover:text-skill-accent"
                 >
                   Déconnexion
                 </button>
@@ -196,7 +196,7 @@ export default function Header() {
           ) : (
             <li className="mt-3">
               <a 
-                className="no-underline text-white hover:text-skill-accent font-['Lobster']" 
+                className="no-underline text-white hover:text-skill-accent font-display" 
                 href="/login" 
                 onClick={closeMobileMenu}
               >

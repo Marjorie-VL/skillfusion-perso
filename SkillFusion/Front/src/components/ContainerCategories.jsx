@@ -144,7 +144,7 @@ export default function ContainerCategories({ categories }) {
             className="h-full w-[75vw] bg-skill-tertiary border border-skill-success/50 rounded mx-4 px-4 flex flex-row justify-between items-center hover:bg-skill-tertiary/70 hover:border-skill-success transition-colors cursor-pointer no-underline text-inherit"
           >
             <p className="m-0"> </p>
-            <h3 className="font-['Lobster'] text-xl md:text-2xl mb-0">{category.name.replace(/^./, (match) => match.toUpperCase())}</h3>
+            <h3 className="font-display text-xl md:text-2xl mb-0">{category.name.replace(/^./, (match) => match.toUpperCase())}</h3>
             {/* Affiche les boutons de CRUD si l'utilisateur a les droits d'admin ou s'il est propriétaire de la catégorie*/}
             {user ? (
               <div className="w-14 flex flex-row justify-between" onClick={(e) => e.stopPropagation()}>
@@ -153,14 +153,14 @@ export default function ContainerCategories({ categories }) {
                   e.stopPropagation();
                   handleClickUpdate(category.id);
                 }} className="cursor-pointer">
-                  <h4 className="text-xl mb-4 font-['Lobster'] font-light text-black m-0">{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\udcdd"):(" ")}</h4>
+                  <h4 className="text-xl mb-4 font-display font-light text-black m-0">{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\udcdd"):(" ")}</h4>
                 </a>
                 <a onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   handleClickDelete(category.id);
                 }} className="cursor-pointer">
-                    <h4 className="text-xl mb-4 font-['Lobster'] font-light text-black m-0">{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\uddd1"):(" ")}</h4>
+                    <h4 className="text-xl mb-4 font-display font-light text-black m-0">{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\uddd1"):(" ")}</h4>
                 </a>
               </div>
               ):(
@@ -179,7 +179,7 @@ export default function ContainerCategories({ categories }) {
         (
         <button 
           type="button" 
-          className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
+          className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
           onClick={handleCreateCategory}
         >
           Nouvelle catégorie
@@ -193,7 +193,7 @@ export default function ContainerCategories({ categories }) {
       {showCategoryModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
           <div className="bg-skill-primary p-8 rounded-lg shadow-lg border-2 border-skill-secondary max-w-[500px] w-[90%] max-h-[80vh] overflow-auto">
-            <h3 className="mt-0 mb-6 text-skill-text-primary font-['Lobster'] text-xl md:text-2xl">
+            <h3 className="mt-0 mb-6 text-skill-text-primary font-display text-xl md:text-2xl">
               {editingCategory ? '✏️ Modifier la catégorie' : '+ Créer une nouvelle catégorie'}
             </h3>
             
@@ -232,7 +232,7 @@ export default function ContainerCategories({ categories }) {
                 type="button"
                 onClick={handleCloseModal}
                 disabled={categoryLoading}
-                className="py-3 px-6 bg-skill-secondary text-white border border-skill-secondary rounded cursor-pointer text-base font-['Lobster'] hover:bg-skill-accent hover:border-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="py-3 px-6 bg-skill-secondary text-white border border-skill-secondary rounded cursor-pointer text-base font-display hover:bg-skill-accent hover:border-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 Annuler
               </button>
@@ -240,7 +240,7 @@ export default function ContainerCategories({ categories }) {
                 type="button"
                 onClick={handleSaveCategory}
                 disabled={categoryLoading || !categoryName.trim()}
-                className={`py-3 px-6 text-white border border-skill-success rounded cursor-pointer text-base font-['Lobster'] transition-colors ${
+                className={`py-3 px-6 text-white border border-skill-success rounded cursor-pointer text-base font-display transition-colors ${
                   categoryLoading || !categoryName.trim() 
                     ? 'bg-gray-400 border-gray-400 cursor-not-allowed' 
                     : 'bg-skill-success hover:bg-skill-success/90 hover:border-skill-success/90'

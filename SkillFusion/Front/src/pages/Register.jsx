@@ -119,15 +119,15 @@ export default function Register() {
       <Header />
       <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
         <section className="flex flex-col justify-center items-center">
-          <h2 className="my-8 font-['Lobster'] text-center text-2xl md:text-4xl">Créer un compte</h2>
+          <h2 className="my-8 font-display text-center text-2xl md:text-4xl">Créer un compte</h2>
         </section>
 
         <section className="w-screen flex flex-col md:flex-row md:flex-wrap justify-center items-center">
-          <form method="post" onSubmit={handleSubmit} className="w-full max-w-[850px] flex flex-col items-center">
+          <form method="post" onSubmit={handleSubmit} className="w-full max-w-[850px] flex flex-col items-center bg-skill-tertiary/30 border-2 border-skill-success/30 rounded-lg p-6 md:p-8 shadow-lg">
             <div className="flex flex-col mb-2 w-3/4">
-              <label htmlFor="user_name" className="text-xl md:text-2xl mb-1">Nom d'utilisateur :</label>
+              <label htmlFor="user_name" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Nom d'utilisateur :</label>
               <input
-                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 type="text"
                 placeholder="Votre nom d'utilisateur (3-30 caractères)"
                 name="user_name"
@@ -137,13 +137,13 @@ export default function Register() {
                 required
                 disabled={loading}
               />
-              {errors.user_name && <p className="text-red-600 text-sm mt-2">{errors.user_name}</p>}
+              {errors.user_name && <p className="text-skill-danger text-sm mt-2">{errors.user_name}</p>}
             </div>
             
             <div className="flex flex-col mb-2 w-3/4">
-              <label htmlFor="mail" className="text-xl md:text-2xl mb-1">E-mail :</label>
+              <label htmlFor="mail" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">E-mail :</label>
               <input
-                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 type="email"
                 placeholder="votre.email@exemple.com"
                 name="mail"
@@ -153,14 +153,14 @@ export default function Register() {
                 required
                 disabled={loading}
               />
-              {errors.mail && <p className="text-red-600 text-sm mt-2">{errors.mail}</p>}
+              {errors.mail && <p className="text-skill-danger text-sm mt-2">{errors.mail}</p>}
             </div>
             
             <div className="flex flex-col mb-2 w-3/4">
-              <label htmlFor="password" className="text-xl md:text-2xl mb-1">Mot de passe :</label>
+              <label htmlFor="password" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Mot de passe :</label>
               <div className="relative">
                 <input
-                  className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                  className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                   type={showPassword ? "text" : "password"}
                   placeholder="Minimum 12 caractères avec majuscule, minuscule, chiffre et symbole"
                   name="password"
@@ -173,7 +173,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-skill-text-secondary hover:text-skill-secondary focus:outline-none cursor-pointer"
                   aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                   disabled={loading}
                 >
@@ -189,14 +189,14 @@ export default function Register() {
                   )}
                 </button>
               </div>
-              {errors.password && <p className="text-red-600 text-sm mt-2">{errors.password}</p>}
+              {errors.password && <p className="text-skill-danger text-sm mt-2">{errors.password}</p>}
             </div>
 
             <div className="flex flex-col mb-2 w-3/4">
-              <label htmlFor="confirmPassword" className="text-xl md:text-2xl mb-1">Confirmer le mot de passe :</label>
+              <label htmlFor="confirmPassword" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Confirmer le mot de passe :</label>
               <div className="relative">
                 <input
-                  className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                  className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Répétez votre mot de passe"
                   name="confirmPassword"
@@ -209,7 +209,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-skill-text-secondary hover:text-skill-secondary focus:outline-none cursor-pointer"
                   aria-label={showConfirmPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
                   disabled={loading}
                 >
@@ -225,14 +225,14 @@ export default function Register() {
                   )}
                 </button>
               </div>
-              {errors.confirmPassword && <p className="text-red-600 text-sm mt-2">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="text-skill-danger text-sm mt-2">{errors.confirmPassword}</p>}
             </div>
 
             {/* Affichage des erreurs globales */}
             {Object.keys(errors).length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 w-3/4">
-                <h4 className="text-red-700 mb-2 font-semibold">Veuillez corriger les erreurs suivantes :</h4>
-                <ul className="text-red-700 list-disc pl-6 m-0">
+              <div className="bg-skill-danger/10 border border-skill-danger/30 rounded-lg p-4 mb-4 w-3/4">
+                <h4 className="text-skill-danger mb-2 font-semibold">Veuillez corriger les erreurs suivantes :</h4>
+                <ul className="text-skill-danger list-disc pl-6 m-0">
                   {Object.entries(errors).map(([field, message]) => (
                     <li key={field}>{message}</li>
                   ))}
@@ -244,15 +244,15 @@ export default function Register() {
               <div>
                 <button 
                   type="submit" 
-                  className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   disabled={loading}
                 >
                   {loading ? "Inscription en cours..." : "S'inscrire"}
                 </button>
               </div>
               <div className="text-center mt-4 w-full">
-                <p className="text-gray-600 text-sm">
-                  Déjà un compte ? <a href="/login" className="text-blue-600 no-underline hover:text-skill-accent">Se connecter</a>
+                <p className="text-skill-text-secondary text-sm">
+                  Déjà un compte ? <a href="/login" className="text-skill-secondary no-underline hover:text-skill-accent">Se connecter</a>
                 </p>
               </div>
             </section>

@@ -91,7 +91,7 @@ export default function EditTopic() {
       <Header />
       <main className="flex flex-col justify-between items-center mb-4">
         <section className="flex flex-col justify-center items-center">
-          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Modifier le sujet</h2>
+          <h2 className="font-display text-center text-2xl md:text-4xl my-8">Modifier le sujet</h2>
         </section>
 
         <section className="w-screen flex flex-col md:flex-row md:flex-wrap justify-center items-center">
@@ -126,13 +126,13 @@ export default function EditTopic() {
             <section className="flex flex-row justify-center items-center gap-4">
               <button 
                 type="submit" 
-                className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
+                className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
               >
                 Modifier le sujet
               </button>
               <button 
                 type="button" 
-                className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-gray-600 text-white w-[20vw] m-4 rounded hover:bg-gray-700 transition-colors" 
+                className="font-display text-xl md:text-2xl py-2 px-4 bg-gray-600 text-white w-[20vw] m-4 rounded hover:bg-gray-700 transition-colors" 
                 onClick={() => navigate(`/forum/${topicId}`)}
               >
                 Annuler

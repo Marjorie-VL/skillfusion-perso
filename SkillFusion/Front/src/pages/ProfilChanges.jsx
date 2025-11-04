@@ -87,7 +87,7 @@ export default function ProfilChange() {
       <Header />
       <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
         <section className="flex flex-col justify-center items-center">
-          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Modifier mon profil</h2>
+          <h2 className="font-display text-center text-2xl md:text-4xl my-8">Modifier mon profil</h2>
         </section>
 
         <section className="w-full max-w-[900px] mx-auto px-4">
@@ -136,7 +136,7 @@ export default function ProfilChange() {
               <div>
                 <button 
                   type="submit" 
-                  className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
+                  className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
                 >
                   Enregistrer
                 </button>

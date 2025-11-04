@@ -51,19 +51,19 @@ export default function Home() {
               backgroundPosition: 'center top'
             }}
           ></div>
-          <p className="text-justify indent-12 md:indent-12 px-4 max-w-[95vw]">
+          <p className="text-justify indent-12 md:indent-12 px-4 max-w-[95vw] text-skill-text-primary">
             <strong>Bienvenue sur SkillFusion !</strong> Nous sommes une plateforme éducative dédiée à l'apprentissage du bricolage et au Do It Yourself (DIY). Elle a pour objectif de rendre le bricolage accessible à toutes et tous et à distance.
           </p>
-          <p className="text-justify indent-12 md:indent-12 px-4 max-w-[95vw]">
+          <p className="text-justify indent-12 md:indent-12 px-4 max-w-[95vw] text-skill-text-primary">
             Nous nous adressons aux amateurs de bricolage, aux professionnels du bâtiment, aux propriétaires de biens immobiliers, aux locataires, aux apprentis bricoleurs, etc... <strong>Tout le monde est le bienvenu ! </strong>
           </p>
-          <p className="text-justify indent-12 md:indent-12 px-4 max-w-[95vw]">
+          <p className="text-justify indent-12 md:indent-12 px-4 max-w-[95vw] text-skill-text-primary">
             En tant que visiteur, vous aurez accès à des cours de qualité, écrit par nos instructeurs qualifiés et expérimentés. Cependant, si vous vous inscrivez, vous aurez accès à des <strong>fonctionnalités exclusives </strong> telles que notre forum pour poser vos questions, la possibilité de gérer votre progression à l'aide de votre tableau de bord... <strong>A tout de suite !</strong>
           </p>
         </section>
 
         <section className="max-w-[95%] flex flex-col justify-center items-center">
-          <h2 className="my-8 font-['Lobster'] text-center px-0 md:px-40 text-2xl md:text-4xl">Cours à la une</h2>
+          <h2 className="my-8 font-display text-center px-0 md:px-40 text-2xl md:text-4xl">Cours à la une</h2>
           <article className="w-screen flex flex-col md:flex-row md:flex-wrap justify-center items-center">
               <LessonContainer lessons={latestLessons} />
           </article>

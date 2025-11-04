@@ -19,7 +19,7 @@ export default function Lessons() {
       <Header />
       <main className="flex flex-col justify-between items-center mb-4 flex-grow">
         <section className="w-full max-w-[95%] flex flex-col justify-center items-center px-4">
-          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8 px-0 md:px-40">Nos cours</h2>
+          <h2 className="font-display text-center text-2xl md:text-4xl my-8 px-0 md:px-40">Nos cours</h2>
 
           <article className="w-full">
               <LessonContainer lessons={lessons} />

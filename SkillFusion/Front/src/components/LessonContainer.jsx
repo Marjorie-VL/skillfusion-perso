@@ -155,13 +155,13 @@ export default function LessonContainer({ lessons, categoryName}) {
                       onClick={() => navigate(`/edit-lesson/${lesson.id}`)} 
                       className="cursor-pointer"
                     >
-                      <h4 className="text-xl mb-4 font-['Lobster'] font-light text-black">{"\ud83d\udcdd"}</h4>
+                      <h4 className="text-xl mb-4 font-display font-light text-black">{"\ud83d\udcdd"}</h4>
                     </a>
                     <a 
                       onClick={() => handleClickDeleteLesson(lesson.id)} 
                       className="cursor-pointer"
                     >
-                      <h4 className="text-xl mb-4 font-['Lobster'] font-light text-black">{"\ud83d\uddd1"}</h4>
+                      <h4 className="text-xl mb-4 font-display font-light text-black">{"\ud83d\uddd1"}</h4>
                     </a>
                   </>
                 )}
@@ -170,7 +170,7 @@ export default function LessonContainer({ lessons, categoryName}) {
           </div>
           
           <div className="flex flex-col justify-center items-start font-light w-full flex-grow">
-            <h4 className="text-lg md:text-xl mb-3 font-['Lobster'] font-light text-black text-center w-full line-clamp-2">{lesson.title}</h4>
+            <h4 className="text-lg md:text-xl mb-3 font-display font-bold text-black text-center w-full line-clamp-2">{lesson.title}</h4>
           </div>
           <Link to={`/lesson/${lesson.id}`} className="no-underline text-inherit w-full flex-shrink-0">
             <div className="w-full h-[150px] overflow-hidden border border-black my-3 shadow-[2px_2px_rgb(122,122,122)] rounded">

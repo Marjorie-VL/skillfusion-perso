@@ -195,7 +195,7 @@ export default function EditLesson() {
       <Header />
       <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
         <section className="flex flex-col justify-center items-center">
-          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Modifier la leçon</h2>
+          <h2 className="font-display text-center text-2xl md:text-4xl my-8">Modifier la leçon</h2>
         </section>
         <section className="w-full max-w-[900px] mx-auto px-4">
           <div className="bg-skill-tertiary border-2 border-skill-success/50 rounded-lg p-6 md:p-8 shadow-lg">
@@ -504,7 +504,7 @@ export default function EditLesson() {
                   type="button" 
                   onClick={(e) => handleSubmit(e, false)}
                   disabled={submitLoading}
-                  className={`font-['Lobster'] text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                  className={`font-display text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
                     submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-gray-600 hover:bg-gray-700'
                   }`}
                 >
@@ -515,7 +515,7 @@ export default function EditLesson() {
                   type="button" 
                   onClick={(e) => handleSubmit(e, true)}
                   disabled={submitLoading}
-                  className={`font-['Lobster'] text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                  className={`font-display text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
                     submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-green-600 hover:bg-green-700'
                   }`}
                 >

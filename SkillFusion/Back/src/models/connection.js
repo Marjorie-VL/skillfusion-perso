@@ -26,6 +26,9 @@ const buildPostgresUrl = () => {
 const pgUrl = PG_URL || DATABASE_URL || buildPostgresUrl();
 
 if (pgUrl) {
+  // Détecter si on est en local (pas de SSL requis) ou sur Render (SSL requis)
+  const isLocal = PGHOST === 'localhost' || PGHOST === '127.0.0.1' || !PGHOST || pgUrl.includes('localhost');
+  
   sequelize = new Sequelize(pgUrl, {
     dialect: 'postgres',
     logging: NODE_ENV === 'test' ? false : console.log,
@@ -35,8 +38,8 @@ if (pgUrl) {
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     },
-    dialectOptions: {
-      // Configuration SSL pour Render PostgreSQL
+    dialectOptions: isLocal ? {} : {
+      // Configuration SSL pour Render PostgreSQL (distant)
       ssl: {
         require: true,
         rejectUnauthorized: false

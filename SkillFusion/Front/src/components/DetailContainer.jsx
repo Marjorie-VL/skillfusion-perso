@@ -6,11 +6,11 @@ export default function DetailContainer({ lesson }) {
   return (
     <>
       <section className="flex flex-col w-4/5 mx-auto">
-        <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl mb-4"> {lesson.title}</h2>
-        <p className="text-base text-gray-600 my-2 italic">
+        <h2 className="font-display text-center text-2xl md:text-4xl mb-4"> {lesson.title}</h2>
+        <p className="text-base text-skill-text-secondary my-2 italic">
           Créé par {lesson.user?.user_name?.replace(/^./, (match) => match.toUpperCase()) || 'Instructeur inconnu'}
         </p>
-        <div className="max-w-full max-h-80 overflow-hidden border border-black my-4 shadow-[2px_2px_rgb(122,122,122)] rounded-lg">
+        <div className="max-w-full max-h-80 overflow-hidden border border-skill-secondary my-4 shadow-lg rounded-lg">
           {lesson.media_url ? (
             lesson.media_url.startsWith('/uploads/') ? (
               <img
@@ -52,29 +52,29 @@ export default function DetailContainer({ lesson }) {
             <p>Image non disponible</p>
           </div>
         </div>
-        <p className="px-4 text-justify text-lg md:text-2xl">{lesson.description}</p>
+        <p className="px-4 text-justify text-lg md:text-2xl text-skill-text-primary">{lesson.description}</p>
       </section>
       <section className="flex flex-col w-4/5 mx-auto">
-        <h3 className="font-['Lobster'] text-center text-xl md:text-3xl my-4">Matériaux nécessaires :</h3>
+        <h3 className="font-display text-center text-xl md:text-3xl my-4">Matériaux nécessaires :</h3>
         <div className="bg-skill-primary/50 border border-skill-secondary/50 rounded-lg p-6">
-          <ul className="list-disc ml-8">
+            <ul className="list-disc ml-8">
             {lesson.materials.map((material, index) => (
-              <li key={index} className="text-base md:text-xl mt-4">{material.name}</li>
+              <li key={index} className="text-base md:text-xl mt-4 text-skill-text-primary">{material.name}</li>
             ))}
           </ul>
         </div>
       </section>
 
       <section className="flex flex-col w-4/5 mx-auto">
-        <h3 className="font-['Lobster'] text-center text-xl md:text-3xl my-4">Etapes à suivre:</h3>
+        <h3 className="font-display text-center text-xl md:text-3xl my-4">Etapes à suivre:</h3>
         {lesson.steps.map((step, index) => (
           <div className="w-full mb-8" key={step.id}>
             <div className="bg-skill-primary/20 border border-skill-secondary/50 rounded-lg flex flex-row items-start justify-between break-words box-border overflow-hidden">
               <div className="flex flex-col justify-start flex-1 p-6" key={step.id}>
-                <h4 className="font-['Lobster'] text-lg md:text-2xl p-0 m-0 mb-4 break-words max-w-full" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', hyphens: 'auto' }}>
+                <h4 className="font-display text-lg md:text-2xl p-0 m-0 mb-4 break-words max-w-full" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', hyphens: 'auto' }}>
                   Etape {index + 1}: {step.title}
                 </h4>
-                <p className="p-0 m-0 break-words max-w-full" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', hyphens: 'auto' }}>{step.description}</p>
+                <p className="p-0 m-0 break-words max-w-full text-skill-text-primary" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', hyphens: 'auto' }}>{step.description}</p>
               </div>
               {step.media_url && (
                 <div className="w-[350px] h-[250px] flex-shrink-0 overflow-hidden rounded-r-lg">

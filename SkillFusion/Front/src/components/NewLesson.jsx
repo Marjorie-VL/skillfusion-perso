@@ -220,7 +220,7 @@ export default function NewLesson() {
       <Header />
       <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
         <section className="flex flex-col justify-center items-center">
-          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Créer un cours</h2>
+          <h2 className="font-display text-center text-2xl md:text-4xl my-8">Créer un cours</h2>
         </section>
         <section className="w-full max-w-[900px] mx-auto px-4">
           <div className="bg-skill-tertiary border-2 border-skill-success/50 rounded-lg p-6 md:p-8 shadow-lg">
@@ -563,7 +563,7 @@ export default function NewLesson() {
                   type="button" 
                   onClick={(e) => handleSubmit(e, false)}
                   disabled={submitLoading}
-                  className={`font-['Lobster'] text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                  className={`font-display text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
                     submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-gray-600 hover:bg-gray-700'
                   }`}
                 >
@@ -574,7 +574,7 @@ export default function NewLesson() {
                   type="button" 
                   onClick={(e) => handleSubmit(e, true)}
                   disabled={submitLoading}
-                  className={`font-['Lobster'] text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                  className={`font-display text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
                     submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-green-600 hover:bg-green-700'
                   }`}
                 >
@@ -598,7 +598,7 @@ export default function NewLesson() {
       {showCategoryModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-[500px] w-[90%] max-h-[80vh] overflow-auto">
-            <h3 className="mt-0 mb-6 text-green-600 font-['Lobster'] text-xl md:text-2xl">
+            <h3 className="mt-0 mb-6 text-green-600 font-display text-xl md:text-2xl">
               + Créer une nouvelle catégorie
             </h3>
             

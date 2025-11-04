@@ -64,7 +64,7 @@ export default function LessonDetail() {
   }, [id]);
 
     if (!lesson) {
-    return <div className="text-center p-8"><p>Chargement...</p></div>;
+    return <div className="text-center p-8"><p className="text-skill-text-primary">Chargement...</p></div>;
   }
 
   const suggestions = lessons
@@ -96,7 +96,7 @@ export default function LessonDetail() {
         {userData?.role?.description === "Administrateur" && (
         <div className="flex justify-center my-4">
         <button
-          className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
+          className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
           onClick={() => navigate(`/lessons`)}
         >
           Retour au catalogue
@@ -110,7 +110,7 @@ export default function LessonDetail() {
           lessonTitle={lesson.name}
         />
         <section className="w-full flex flex-col items-center my-8">
-        <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-4">Suggestion de cours :</h2>
+        <h2 className="font-display text-center text-2xl md:text-4xl my-4">Suggestion de cours :</h2>
           <article className="w-screen flex flex-col md:flex-row md:flex-wrap justify-center items-center">
             <LessonContainer lessons={suggestions} />
           </article>

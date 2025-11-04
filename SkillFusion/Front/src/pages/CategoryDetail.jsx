@@ -66,13 +66,13 @@ export default function CategoryPage() {
       <Header />
       <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
         <section className="max-w-[95%] flex flex-col justify-center items-center">
-          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">{loading ? "Chargement..." : categoryName}</h2>
+          <h2 className="font-display text-center text-2xl md:text-4xl my-8">{loading ? "Chargement..." : categoryName}</h2>
           <article className="w-full">
-            {loading && <p className="text-center p-8">Chargement des cours...</p>}
+            {loading && <p className="text-center p-8 text-skill-text-primary">Chargement des cours...</p>}
             {lessons.length > 0 ? (
               <LessonContainer lessons={lessons} categoryName={categoryName}/>
             ) : (
-              <p className="text-center p-8">Aucun cours disponible pour cette catégorie.</p>
+              <p className="text-center p-8 text-skill-text-primary">Aucun cours disponible pour cette catégorie.</p>
             )}
           </article>
         </section>

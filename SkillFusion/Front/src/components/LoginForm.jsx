@@ -45,11 +45,11 @@ export default function LoginForm() {
   return (
     <>
       <section className="w-screen flex flex-col md:flex-row md:flex-wrap justify-center items-center">
-        <form onSubmit={handleSubmit} action="#" method="post" className="w-full max-w-[850px] flex flex-col items-center">
+        <form onSubmit={handleSubmit} action="#" method="post" className="w-full max-w-[850px] flex flex-col items-center bg-skill-tertiary/30 border-2 border-skill-success/30 rounded-lg p-6 md:p-8 shadow-lg">
           <div className="flex flex-col mb-2 w-3/4">
-            <label htmlFor="email" className="text-xl md:text-2xl mb-1">E-mail :</label>
+            <label htmlFor="email" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">E-mail :</label>
             <input
-              className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+              className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
               placeholder="E-mail"
               type="email"
               value={email}
@@ -58,10 +58,10 @@ export default function LoginForm() {
             />
           </div>
           <div className="flex flex-col mb-2 w-3/4">
-            <label htmlFor="password" className="text-xl md:text-2xl mb-1">Mot de passe :</label>
+            <label htmlFor="password" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Mot de passe :</label>
             <div className="relative">
               <input
-                className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+                className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                 placeholder="Mot de passe"
                 type={showPassword ? "text" : "password"}
                 value={password}
@@ -71,7 +71,7 @@ export default function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-skill-text-secondary hover:text-skill-secondary focus:outline-none cursor-pointer"
                 aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
               >
                 {showPassword ? (
@@ -90,7 +90,7 @@ export default function LoginForm() {
           <section className="flex flex-row justify-center items-center">
             <button 
               type="submit" 
-              className="font-['Lobster'] text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               disabled={loading}
             >
               {loading ? "Connexion en cours..." : "Connexion"}

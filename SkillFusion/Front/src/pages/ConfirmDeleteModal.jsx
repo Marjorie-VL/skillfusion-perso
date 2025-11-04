@@ -54,7 +54,7 @@ export default function ConfirmDeleteModal({
               />
             </svg>
           </div>
-          <h3 className="font-['Lobster'] text-2xl md:text-3xl mb-4 text-gray-900">{title}</h3>
+          <h3 className="font-display text-2xl md:text-3xl mb-4 text-gray-900">{title}</h3>
           <p className="mb-6 text-gray-700 text-lg">{message}</p>
           <div className="flex justify-center gap-4">
             <button 

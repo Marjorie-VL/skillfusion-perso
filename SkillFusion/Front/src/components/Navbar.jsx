@@ -40,7 +40,7 @@ export default function MobileNavbar({ user, logout }) {
                 }}
               />
             </a>
-            <h1 className="font-['Lobster'] text-2xl text-skill-text-primary">SkillFusion</h1>
+            <h1 className="font-display text-2xl text-skill-text-primary">SkillFusion</h1>
           </div>
           
           {/* Bouton menu burger à droite */}

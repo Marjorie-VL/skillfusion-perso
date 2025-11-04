@@ -21,6 +21,9 @@
     "db:seed:favorites": "node src/seeders/seed-favorites.js",
     "db:seed": "npm run db:seed:roles && npm run db:seed:users && npm run db:seed:categories && npm run db:seed:lessons && npm run db:seed:steps && npm run db:seed:materials && npm run db:seed:topics && npm run db:seed:replies && npm run db:seed:favorites",
     "db:reset": "npm run db:create && npm run db:seed",
+    "db:sync": "node scripts/sync-db.js",
+    "db:switch:local": "node scripts/switch-db.js local",
+    "db:switch:render": "node scripts/switch-db.js render",
     "render-postbuild": "npm run db:create && npm run db:seed"
   },
   "type": "module",

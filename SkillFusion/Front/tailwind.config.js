@@ -9,6 +9,11 @@ export default {
       screens: {
         'md': '1100px', // Breakpoint desktop correspondant au CSS original
       },
+      fontFamily: {
+        'display': ['Merriweather', 'serif'], // Pour les titres et éléments importants
+        'body': ['Inter', 'sans-serif'], // Pour le corps de texte
+        'sans': ['Inter', 'sans-serif'], // Police par défaut
+      },
       colors: {
         // Palette principale SkillFusion - Terroir & Artisanat (Option 3)
         'skill': {

@@ -32,10 +32,10 @@ export default function Categories() {
       <Header />
       <main className="flex flex-col justify-center items-center mb-4 flex-grow">
         <section className="flex flex-col justify-center items-center w-full">
-          <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl my-8">Nos catégories</h2>
+          <h2 className="font-display text-center text-2xl md:text-4xl my-8">Nos catégories</h2>
           
-          {loading && <div className="text-center p-8">Chargement des catégories...</div>}
-          {error && <div className="text-center p-8 text-red-600">Erreur : {error}</div>}
+          {loading && <div className="text-center p-8 text-skill-text-primary">Chargement des catégories...</div>}
+          {error && <div className="text-center p-8 text-skill-danger">Erreur : {error}</div>}
           {!loading && !error && (
             <ContainerCategories categories={categories} />
           )}
