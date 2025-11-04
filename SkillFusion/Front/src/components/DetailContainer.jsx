@@ -8,7 +8,7 @@ export default function DetailContainer({ lesson }) {
       <section className="flex flex-col w-4/5 mx-auto">
         <h2 className="font-['Lobster'] text-center text-2xl md:text-4xl mb-4"> {lesson.title}</h2>
         <p className="text-base text-gray-600 my-2 italic">
-          Créé par {lesson.user?.user_name || 'Instructeur inconnu'}
+          Créé par {lesson.user?.user_name?.replace(/^./, (match) => match.toUpperCase()) || 'Instructeur inconnu'}
         </p>
         <div className="max-w-full max-h-80 overflow-hidden border border-black my-4 shadow-[2px_2px_rgb(122,122,122)] rounded-lg">
           {lesson.media_url ? (

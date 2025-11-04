@@ -131,9 +131,9 @@ export default function MobileNavbar({ user, logout }) {
                   Déconnexion
                 </button>
               </li>
-              <li className="mt-3">
-                <span>{user.user_name}</span>
-              </li>
+                     <li className="mt-3">
+                       <span>{user.user_name?.replace(/^./, (match) => match.toUpperCase()) || user.user_name}</span>
+                     </li>
             </>
           ) : (
             <li className="mt-3">

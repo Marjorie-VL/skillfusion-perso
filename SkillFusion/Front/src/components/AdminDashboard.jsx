@@ -417,7 +417,7 @@ export default function AdminDashboard({ usersData }) {
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <h1 className="font-['Lobster'] text-center text-4xl mb-4">Tableau de Bord Administrateur</h1>
-      <p className="text-center text-xl mb-8">Bienvenue, {user.user_name} ! 👑</p>
+      <p className="text-center text-xl mb-8">Bienvenue, {user.user_name?.replace(/^./, (match) => match.toUpperCase()) || user.user_name} !</p>
 
       {/* Barre d'onglets */}
       <div className="flex flex-wrap justify-center gap-2 mb-8 border-b border-skill-secondary/30">
@@ -717,7 +717,7 @@ export default function AdminDashboard({ usersData }) {
                   </span>
                 </div>
                 <p className="text-skill-text-primary text-sm mb-2">
-                  <strong>Créateur:</strong> {lesson.user?.user_name || "Inconnu"}
+                  <strong>Créateur:</strong> {lesson.user?.user_name?.replace(/^./, (match) => match.toUpperCase()) || "Inconnu"}
                 </p>
                 <p className="text-skill-text-secondary text-sm mb-4 line-clamp-2">
                   {lesson.description}

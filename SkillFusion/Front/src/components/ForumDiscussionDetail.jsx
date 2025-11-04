@@ -186,7 +186,7 @@ export default function ForumDiscussionDetail() {
           <section className="h-32 my-4 flex flex-row justify-center items-center w-full">
             <div className="w-40 h-full bg-skill-primary border-2 border-skill-secondary rounded-lg m-4 flex flex-col justify-center items-center p-2">
               <p className="text-sm text-skill-text-primary text-center mb-1">
-                Créé par : {topic.user?.user_name || "Utilisateur inconnu"}
+                Créé par : {topic.user?.user_name?.replace(/^./, (match) => match.toUpperCase()) || "Utilisateur inconnu"}
               </p>
               <p className="text-sm text-skill-text-primary text-center mb-1">
                 Le : {new Date(topic.created_at).toLocaleDateString()}
@@ -225,7 +225,7 @@ export default function ForumDiscussionDetail() {
             <section className="h-32 my-4 flex flex-row justify-center items-center w-full" key={reply.id}>
               <div className="w-40 h-full bg-skill-primary border-2 border-skill-secondary rounded-lg m-4 flex flex-col justify-center items-center p-2">
                 <p className="text-sm text-skill-text-primary text-center mb-1">
-                  Posté par : {reply.user?.user_name || "Utilisateur inconnu"}
+                  Posté par : {reply.user?.user_name?.replace(/^./, (match) => match.toUpperCase()) || "Utilisateur inconnu"}
                 </p>
                 <p className="text-sm text-skill-text-primary text-center mb-1">
                   Le : {new Date(reply.created_at).toLocaleDateString()}
