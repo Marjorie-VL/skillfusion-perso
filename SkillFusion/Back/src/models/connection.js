@@ -26,6 +26,14 @@ const buildPostgresUrl = () => {
 const pgUrl = PG_URL || DATABASE_URL || buildPostgresUrl();
 
 if (pgUrl) {
+  // Extraire le nom de la base de données pour déboguer
+  const dbNameMatch = pgUrl.match(/\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(.+?)(\?|$)/);
+  const dbName = dbNameMatch ? dbNameMatch[5] : 'non détecté';
+  const dbHost = dbNameMatch ? dbNameMatch[3] : 'non détecté';
+  
+  // Log pour déboguer (toujours afficher en production pour diagnostiquer)
+  console.log(`🔍 Connexion DB - Host: ${dbHost} - Database: ${dbName}`);
+  
   // Détecter si on est en local (pas de SSL requis) ou sur Render/production (SSL requis)
   // SSL requis si l'URL ne contient PAS "localhost" ni "127.0.0.1"
   // Cela couvre tous les cas : Render, autres hébergeurs cloud, production
@@ -33,7 +41,6 @@ if (pgUrl) {
   
   const needsSSL = !isLocal;
   
-  // Log pour déboguer (seulement en développement)
   if (NODE_ENV !== 'production') {
     console.log(`🔍 Connexion DB: ${isLocal ? 'LOCAL' : 'DISTANTE'} - SSL: ${needsSSL ? 'ACTIVÉ' : 'DÉSACTIVÉ'}`);
   }
