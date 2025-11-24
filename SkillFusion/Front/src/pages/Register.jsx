@@ -122,12 +122,12 @@ export default function Register() {
           <h2 className="my-8 font-display text-center text-2xl md:text-4xl">Créer un compte</h2>
         </section>
 
-        <section className="w-screen flex flex-col md:flex-row md:flex-wrap justify-center items-center">
-          <form method="post" onSubmit={handleSubmit} className="w-full max-w-[850px] flex flex-col items-center bg-skill-tertiary/30 border-2 border-skill-success/30 rounded-lg p-6 md:p-8 shadow-lg">
-            <div className="flex flex-col mb-2 w-3/4">
-              <label htmlFor="user_name" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Nom d'utilisateur :</label>
+        <section className="w-full max-w-full px-4 sm:px-6 flex flex-col md:flex-row md:flex-wrap justify-center items-center">
+          <form method="post" onSubmit={handleSubmit} className="w-full max-w-[850px] flex flex-col items-center bg-skill-tertiary/30 border-2 border-skill-success/30 rounded-lg p-4 sm:p-6 md:p-8 shadow-lg">
+            <div className="flex flex-col mb-4 w-full sm:w-4/5 md:w-3/4">
+              <label htmlFor="user_name" className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">Nom d'utilisateur :</label>
               <input
-                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 type="text"
                 placeholder="Votre nom d'utilisateur (3-30 caractères)"
                 name="user_name"
@@ -140,10 +140,10 @@ export default function Register() {
               {errors.user_name && <p className="text-skill-danger text-sm mt-2">{errors.user_name}</p>}
             </div>
             
-            <div className="flex flex-col mb-2 w-3/4">
-              <label htmlFor="mail" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">E-mail :</label>
+            <div className="flex flex-col mb-4 w-full sm:w-4/5 md:w-3/4">
+              <label htmlFor="mail" className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">E-mail :</label>
               <input
-                className="h-8 md:h-10 text-base md:text-xl p-1 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 type="email"
                 placeholder="votre.email@exemple.com"
                 name="mail"
@@ -156,11 +156,11 @@ export default function Register() {
               {errors.mail && <p className="text-skill-danger text-sm mt-2">{errors.mail}</p>}
             </div>
             
-            <div className="flex flex-col mb-2 w-3/4">
-              <label htmlFor="password" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Mot de passe :</label>
+            <div className="flex flex-col mb-4 w-full sm:w-4/5 md:w-3/4">
+              <label htmlFor="password" className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">Mot de passe :</label>
               <div className="relative">
                 <input
-                  className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                  className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 pr-12 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                   type={showPassword ? "text" : "password"}
                   placeholder="Minimum 12 caractères avec majuscule, minuscule, chiffre et symbole"
                   name="password"
@@ -192,11 +192,11 @@ export default function Register() {
               {errors.password && <p className="text-skill-danger text-sm mt-2">{errors.password}</p>}
             </div>
 
-            <div className="flex flex-col mb-2 w-3/4">
-              <label htmlFor="confirmPassword" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Confirmer le mot de passe :</label>
+            <div className="flex flex-col mb-4 w-full sm:w-4/5 md:w-3/4">
+              <label htmlFor="confirmPassword" className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">Confirmer le mot de passe :</label>
               <div className="relative">
                 <input
-                  className="h-8 md:h-10 text-base md:text-xl p-1 pr-10 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                  className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 pr-12 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Répétez votre mot de passe"
                   name="confirmPassword"
@@ -240,11 +240,11 @@ export default function Register() {
               </div>
             )}
 
-            <section className="flex flex-row justify-center items-center">
-              <div>
+            <section className="flex flex-col sm:flex-row justify-center items-center w-full mt-4">
+              <div className="w-full sm:w-auto">
                 <button 
                   type="submit" 
-                  className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="font-display text-lg sm:text-xl md:text-2xl py-3 sm:py-2 px-6 sm:px-8 bg-skill-secondary text-white w-full sm:w-auto min-w-[200px] sm:min-w-[250px] m-4 rounded hover:bg-skill-accent transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                   disabled={loading}
                 >
                   {loading ? "Inscription en cours..." : "S'inscrire"}

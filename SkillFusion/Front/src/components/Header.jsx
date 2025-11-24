@@ -115,36 +115,48 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Menu mobile latéral */}
-      <div className={`absolute right-0 w-[13rem] flex-col items-end bg-skill-secondary z-[100] md:hidden ${isMobileMenuOpen ? "flex" : "hidden"}`}>
-        <button 
-          className="w-6 m-1.5 text-white bg-transparent border-none cursor-pointer hover:text-skill-accent" 
+      {/* Overlay pour fermer le menu en cliquant à l'extérieur */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-[90] md:hidden"
           onClick={closeMobileMenu}
-        >
-          X
-        </button>
-        <ul className="flex flex-col justify-between items-center p-4">
-          <li className="mt-3">
+        />
+      )}
+
+      {/* Menu mobile latéral */}
+      <div className={`fixed top-0 right-0 h-full w-[280px] sm:w-[320px] flex-col items-start bg-skill-secondary z-[100] md:hidden shadow-2xl transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? "flex translate-x-0" : "hidden translate-x-full"}`}>
+        <div className="flex justify-between items-center w-full p-4 border-b border-white/20">
+          <h2 className="text-white font-display text-xl font-semibold">Menu</h2>
+          <button 
+            className="w-8 h-8 flex items-center justify-center text-white bg-transparent border-none cursor-pointer hover:text-skill-accent hover:bg-white/10 rounded transition-colors text-xl font-bold" 
+            onClick={closeMobileMenu}
+            aria-label="Fermer le menu"
+          >
+            ×
+          </button>
+        </div>
+        <ul className="flex flex-col w-full p-4 overflow-y-auto">
+          <li className="mb-3">
             <a 
-              className="no-underline text-white hover:text-skill-accent font-display" 
+              className="block no-underline text-white hover:text-skill-accent hover:bg-white/10 font-display text-lg py-3 px-4 rounded transition-colors" 
               href="/" 
               onClick={closeMobileMenu}
             >
               Accueil
             </a>
           </li>
-          <li className="mt-3">
+          <li className="mb-3">
             <a 
-              className="no-underline text-white hover:text-skill-accent font-display" 
+              className="block no-underline text-white hover:text-skill-accent hover:bg-white/10 font-display text-lg py-3 px-4 rounded transition-colors" 
               href="/lessons" 
               onClick={closeMobileMenu}
             >
               Catalogue
             </a>
           </li>
-          <li className="mt-3">
+          <li className="mb-3">
             <a 
-              className="no-underline text-white hover:text-skill-accent font-display" 
+              className="block no-underline text-white hover:text-skill-accent hover:bg-white/10 font-display text-lg py-3 px-4 rounded transition-colors" 
               href="/categories" 
               onClick={closeMobileMenu}
             >
@@ -153,40 +165,42 @@ export default function Header() {
           </li>
           {user ? (
             <>
-              <li className="mt-3">
+              <li className="mb-3">
                 <a 
-                  className="no-underline text-white hover:text-skill-accent font-display" 
+                  className="block no-underline text-white hover:text-skill-accent hover:bg-white/10 font-display text-lg py-3 px-4 rounded transition-colors" 
                   href="/forum" 
                   onClick={closeMobileMenu}
                 >
                   Forum
                 </a>
               </li>
-              <li className="mt-3">
+              <li className="mb-3">
                 <a 
-                  className="no-underline text-white hover:text-skill-accent font-display" 
+                  className="block no-underline text-white hover:text-skill-accent hover:bg-white/10 font-display text-lg py-3 px-4 rounded transition-colors" 
                   href="/board" 
                   onClick={closeMobileMenu}
                 >
                   Tableau de bord
                 </a>
               </li>
-              <li className="mt-3">
+              <li className="mb-3 border-t border-white/20 pt-3 mt-2">
+                <span className="block text-white font-display text-base py-2 px-4 text-skill-accent font-semibold">
+                  {user.user_name?.replace(/^./, (match) => match.toUpperCase()) || user.user_name}
+                </span>
+              </li>
+              <li className="mb-3">
                 <button 
                   onClick={handleLogoutClick}
-                  className="no-underline text-white bg-transparent border-none p-0 cursor-pointer font-display outline-none hover:text-skill-accent"
+                  className="w-full text-left no-underline text-white bg-transparent border-none p-0 cursor-pointer font-display outline-none hover:text-skill-accent hover:bg-white/10 text-lg py-3 px-4 rounded transition-colors"
                 >
                   Déconnexion
                 </button>
               </li>
-                     <li className="mt-3">
-                       <span className="text-white">{user.user_name?.replace(/^./, (match) => match.toUpperCase()) || user.user_name}</span>
-                     </li>
             </>
           ) : (
-            <li className="mt-3">
+            <li className="mb-3">
               <a 
-                className="no-underline text-white hover:text-skill-accent font-display" 
+                className="block no-underline text-white hover:text-skill-accent hover:bg-white/10 font-display text-lg py-3 px-4 rounded transition-colors" 
                 href="/login" 
                 onClick={closeMobileMenu}
               >
