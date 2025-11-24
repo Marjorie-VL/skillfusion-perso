@@ -202,14 +202,14 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
       <section className="mb-8">
         <h2 className="font-display text-center text-2xl md:text-3xl my-8">Créer un nouveau cours</h2>
         
-        <div className="w-full max-w-[900px] mx-auto px-4">
-          <div className="bg-skill-tertiary/30 border-2 border-skill-success/30 rounded-lg p-6 md:p-8 shadow-lg">
+        <div className="w-full max-w-[900px] mx-auto px-4 sm:px-6">
+          <div className="bg-skill-tertiary/30 border-2 border-skill-success/30 rounded-lg p-4 sm:p-6 md:p-8 shadow-lg">
             <form onSubmit={handleLessonSubmit} className="w-full flex flex-col items-center">
               {/* Catégorie */}
-              <div className="flex flex-col mb-4 w-3/4">
-                <label htmlFor="category" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Catégorie :</label>
+              <div className="flex flex-col mb-4 w-full sm:w-4/5 md:w-3/4">
+                <label htmlFor="category" className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">Catégorie :</label>
                 <select
-                  className="h-8 md:h-10 text-base md:text-xl p-2 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                  className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                   id="category"
                   value={selectedCategory}
                   onChange={e => {
@@ -236,10 +236,10 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
               </div>
 
               {/* Titre */}
-              <div className="flex flex-col mb-4 w-3/4">
-                <label htmlFor="title" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Titre :</label>
+              <div className="flex flex-col mb-4 w-full sm:w-4/5 md:w-3/4">
+                <label htmlFor="title" className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">Titre :</label>
                 <input
-                  className="h-8 md:h-10 text-base md:text-xl p-2 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+                  className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                   type="text"
                   id="title"
                   placeholder="Titre du cours"
@@ -250,8 +250,8 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
               </div>
 
               {/* Image résultat */}
-              <div className="flex flex-col mb-4 w-3/4">
-                <label htmlFor="resul_img" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Image du résultat :</label>
+              <div className="flex flex-col mb-4 w-full sm:w-4/5 md:w-3/4">
+                <label htmlFor="resul_img" className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">Image du résultat :</label>
                 
                 {mediaUrl && (
                   <div className="mb-2 p-2 border border-skill-secondary rounded">
@@ -259,7 +259,7 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                     <img 
                       src={mediaUrl.startsWith('http') ? mediaUrl : `${import.meta.env.VITE_API_URL}${mediaUrl}`}
                       alt="Aperçu"
-                      className="max-w-[200px] max-h-[150px] object-cover"
+                      className="max-w-full sm:max-w-[200px] max-h-[150px] object-cover"
                       onError={(e) => {
                         e.target.style.display = 'none';
                         if (e.target.nextSibling) e.target.nextSibling.style.display = 'block';
@@ -269,16 +269,16 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                   </div>
                 )}
                 
-                <div className="flex gap-2 items-center mb-2">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center mb-2">
                   <input
-                    className="h-8 md:h-10 text-base md:text-xl p-2 my-2 flex-1 border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+                    className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 flex-1 border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                     type="text"
                     id="resul_img"
                     placeholder="URL de l'image (ex: https://example.com/image.jpg)"
                     value={mediaUrl}
                     onChange={e => setMediaUrl(e.target.value)}
                   />
-                  <span className="text-gray-600 text-sm">OU</span>
+                  <span className="text-gray-600 text-sm text-center sm:text-left">OU</span>
                   <div className="flex-1 relative">
                     <input
                       type="file"
@@ -301,7 +301,7 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                           }
                         }
                       }}
-                      className="w-full"
+                      className="w-full text-sm sm:text-base"
                     />
                     <div className="text-xs text-gray-600 mt-1">
                       Formats acceptés: JPG, PNG, GIF (max 10MB)
@@ -310,7 +310,7 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                 </div>
                 
                 <input
-                  className="h-8 md:h-10 text-base md:text-xl p-2 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+                  className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                   type="text"
                   placeholder="Description de l'image (optionnel)"
                   value={mediaAlt}
@@ -333,32 +333,32 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
               </div>
 
               {/* Description */}
-              <div className="flex flex-col mb-4 w-3/4">
-                <label htmlFor="lesson-desc" className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Description :</label>
+              <div className="flex flex-col mb-4 w-full sm:w-4/5 md:w-3/4">
+                <label htmlFor="lesson-desc" className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">Description :</label>
                 <textarea
                   id="lesson-desc"
                   placeholder="Description du cours"
                   value={lessonContent}
                   onChange={e => setLessonContent(e.target.value)}
                   required
-                  className="h-20 text-base md:text-xl p-2 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent resize-y"
+                  className="h-24 sm:h-28 md:h-32 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent resize-y"
                 />
               </div>
 
               {/* Matériel */}
-              <div className="flex flex-col mb-4 w-3/4">
-                <label className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Matériel :</label>
+              <div className="flex flex-col mb-4 w-full sm:w-4/5 md:w-3/4">
+                <label className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">Matériel :</label>
                 {materials.map((mat, i) => (
-                  <div key={i} className="flex gap-2 items-center mb-2">
+                  <div key={i} className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center mb-3">
                     <input
-                      className="h-8 md:h-10 text-base md:text-xl p-2 my-2 flex-[2] border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+                      className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 flex-[2] border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                       type="text"
                       placeholder="Nom du matériel"
                       value={mat.name}
                       onChange={e => updateMaterial(i, 'name', e.target.value)}
                     />
                     <input
-                      className="h-8 md:h-10 text-base md:text-xl p-2 my-2 flex-1 max-w-[100px] border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+                      className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 flex-1 sm:max-w-[120px] border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                       type="number"
                       placeholder="Quantité"
                       min="1"
@@ -369,16 +369,16 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                       <button
                         type="button"
                         onClick={() => removeMaterial(i)}
-                        className="bg-red-600 text-white border-none py-2 px-3 rounded cursor-pointer hover:bg-red-700 transition-colors font-display"
+                        className="bg-red-600 text-white border-none py-2 sm:py-2.5 px-4 sm:px-5 rounded cursor-pointer hover:bg-red-700 transition-colors font-display text-sm sm:text-base min-h-[44px]"
                       >
                         Supprimer
                       </button>
                     )}
                   </div>
                 ))}
-                <div className="flex justify-end w-full">
+                <div className="flex justify-end w-full mt-2">
                   <button 
-                    className="h-6 text-sm font-bold py-2 px-3 bg-skill-secondary rounded flex flex-col justify-center items-center hover:bg-skill-accent transition-colors font-display" 
+                    className="text-sm sm:text-base font-bold py-2 sm:py-2.5 px-4 sm:px-5 bg-skill-secondary text-white rounded flex flex-col justify-center items-center hover:bg-skill-accent transition-colors font-display min-h-[44px]" 
                     type="button" 
                     onClick={addMaterial}
                   >
@@ -389,25 +389,25 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
 
               {/* Étapes */}
               {steps.map((step, i) => (
-                <div className="flex flex-col mb-4 w-3/4" key={i}>
-                  <label htmlFor={`step-title-${i}`} className="text-xl md:text-2xl mb-1 text-skill-text-primary font-display font-semibold">Etape {i + 1} :</label>
+                <div className="flex flex-col mb-6 sm:mb-8 w-full sm:w-4/5 md:w-3/4 border-b border-skill-secondary/30 pb-6 sm:pb-8 last:border-b-0" key={i}>
+                  <label htmlFor={`step-title-${i}`} className="text-lg sm:text-xl md:text-2xl mb-2 text-skill-text-primary font-display font-semibold">Etape {i + 1} :</label>
                   <input
-                    className="h-8 md:h-10 text-base md:text-xl p-2 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+                    className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                     type="text"
                     id={`step-title-${i}`}
                     placeholder="Titre de l'étape"
                     value={step.title}
                     onChange={e => updateStep(i, "title", e.target.value)}
                   />
-                  <label htmlFor={`step-desc-${i}`} className="text-xl md:text-2xl mb-1 mt-2 text-skill-text-primary font-display font-semibold">Description :</label>
+                  <label htmlFor={`step-desc-${i}`} className="text-lg sm:text-xl md:text-2xl mb-2 mt-4 text-skill-text-primary font-display font-semibold">Description :</label>
                   <textarea
                     id={`step-desc-${i}`}
                     placeholder="Description de l'étape"
                     value={step.description}
                     onChange={e => updateStep(i, "description", e.target.value)}
-                    className="h-20 text-base md:text-xl p-2 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent resize-y"
+                    className="h-24 sm:h-28 md:h-32 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent resize-y"
                   />
-                  <label htmlFor={`step-media-${i}`} className="text-xl md:text-2xl mb-1 mt-2 text-skill-text-primary font-display font-semibold">Média de l'étape :</label>
+                  <label htmlFor={`step-media-${i}`} className="text-lg sm:text-xl md:text-2xl mb-2 mt-4 text-skill-text-primary font-display font-semibold">Média de l'étape :</label>
                   
                   {step.mediaUrl && (
                     <div className="mb-2 p-2 border border-skill-secondary rounded">
@@ -416,28 +416,28 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                         <video 
                           src={step.mediaUrl.startsWith('http') ? step.mediaUrl : `${import.meta.env.VITE_API_URL}${step.mediaUrl}`}
                           controls
-                          className="max-w-[200px] max-h-[150px]"
+                          className="max-w-full sm:max-w-[200px] max-h-[150px]"
                         />
                       ) : (
                         <img 
                           src={step.mediaUrl.startsWith('http') ? step.mediaUrl : `${import.meta.env.VITE_API_URL}${step.mediaUrl}`}
                           alt="Aperçu"
-                          className="max-w-[200px] max-h-[150px] object-cover"
+                          className="max-w-full sm:max-w-[200px] max-h-[150px] object-cover"
                         />
                       )}
                     </div>
                   )}
                   
-                  <div className="flex gap-2 items-center mb-2">
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center mb-2">
                     <input
-                      className="h-8 md:h-10 text-base md:text-xl p-2 my-2 flex-1 border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+                      className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 flex-1 border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                       type="text"
                       id={`step-media-${i}`}
                       placeholder="URL de l'image ou vidéo"
                       value={step.mediaUrl}
                       onChange={e => updateStep(i, "mediaUrl", e.target.value)}
                     />
-                    <span className="text-gray-600 text-sm">OU</span>
+                    <span className="text-gray-600 text-sm text-center sm:text-left">OU</span>
                     <div className="flex-1 relative">
                       <input
                         type="file"
@@ -460,7 +460,7 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                             }
                           }
                         }}
-                        className="w-full"
+                        className="w-full text-sm sm:text-base"
                       />
                       <div className="text-xs text-gray-600 mt-1">
                         Images: JPG, PNG, GIF | Vidéos: MP4, MOV, AVI (max 10MB)
@@ -476,14 +476,14 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                         updateStep(i, "mediaAlt", "");
                         toast.info("Média supprimé");
                       }}
-                      className="mb-2 py-1 px-2 bg-red-600 text-white border-none rounded cursor-pointer text-xs hover:bg-red-700 transition-colors font-display"
+                      className="mb-2 py-2 px-3 sm:px-4 bg-red-600 text-white border-none rounded cursor-pointer text-xs sm:text-sm hover:bg-red-700 transition-colors font-display min-h-[44px]"
                     >
                       Supprimer le média
                     </button>
                   )}
-                  <label htmlFor={`step-media-alt-${i}`} className="text-xl md:text-2xl mb-1 mt-2 text-skill-text-primary font-display font-semibold">Description du média :</label>
+                  <label htmlFor={`step-media-alt-${i}`} className="text-lg sm:text-xl md:text-2xl mb-2 mt-4 text-skill-text-primary font-display font-semibold">Description du média :</label>
                   <input
-                    className="h-8 md:h-10 text-base md:text-xl p-2 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
+                    className="h-10 sm:h-11 md:h-12 text-base sm:text-lg md:text-xl p-2 sm:p-3 my-2 w-full border border-skill-secondary rounded focus:outline-none focus:ring-2 focus:ring-skill-accent"
                     type="text"
                     id={`step-media-alt-${i}`}
                     placeholder="Description de l'image ou vidéo"
@@ -491,9 +491,9 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                     onChange={e => updateStep(i, "mediaAlt", e.target.value)}
                   />
                   {i === steps.length - 1 && (
-                    <div className="flex justify-end w-full">
+                    <div className="flex justify-end w-full mt-4">
                       <button 
-                        className="h-6 text-sm font-bold py-2 px-3 bg-skill-secondary rounded flex flex-col justify-center items-center hover:bg-skill-accent transition-colors font-display" 
+                        className="text-sm sm:text-base font-bold py-2 sm:py-2.5 px-4 sm:px-5 bg-skill-secondary text-white rounded flex flex-col justify-center items-center hover:bg-skill-accent transition-colors font-display min-h-[44px]" 
                         type="button" 
                         onClick={addStep}
                       >
@@ -506,22 +506,22 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
 
               {/* Erreurs de validation */}
               {Object.keys(lessonErrors).length > 0 && (
-                <div className="text-red-600 mb-5 w-3/4">
-                  <h4 className="font-semibold mb-2">Erreurs de validation :</h4>
+                <div className="text-red-600 mb-5 w-full sm:w-4/5 md:w-3/4">
+                  <h4 className="font-semibold mb-2 text-sm sm:text-base">Erreurs de validation :</h4>
                   {Object.entries(lessonErrors).map(([field, message]) => (
-                    <p key={field}>• {message}</p>
+                    <p key={field} className="text-sm sm:text-base">• {message}</p>
                   ))}
                 </div>
               )}
 
               {/* Boutons d'envoi */}
-              <section className="flex flex-row justify-center items-center mt-4">
-                <div className="flex gap-4 justify-center flex-wrap">
+              <section className="flex flex-row justify-center items-center mt-6 w-full">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center w-full sm:w-auto">
                   <button 
                     type="button" 
                     onClick={(e) => handleLessonSubmit(e, false)}
                     disabled={submitLoading}
-                    className={`font-display text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                    className={`font-display text-lg sm:text-xl md:text-2xl py-3 sm:py-2.5 px-6 sm:px-8 rounded text-white border-none cursor-pointer transition-colors w-full sm:w-auto min-w-[200px] sm:min-w-[250px] ${
                       submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-gray-600 hover:bg-gray-700'
                     }`}
                   >
@@ -532,7 +532,7 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                     type="button" 
                     onClick={(e) => handleLessonSubmit(e, true)}
                     disabled={submitLoading}
-                    className={`font-display text-xl md:text-2xl py-3 px-6 rounded text-white border-none cursor-pointer transition-colors ${
+                    className={`font-display text-lg sm:text-xl md:text-2xl py-3 sm:py-2.5 px-6 sm:px-8 rounded text-white border-none cursor-pointer transition-colors w-full sm:w-auto min-w-[200px] sm:min-w-[250px] ${
                       submitLoading ? 'bg-gray-500 cursor-not-allowed opacity-60' : 'bg-green-600 hover:bg-green-700'
                     }`}
                   >
@@ -547,14 +547,14 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
 
       {/* Modale pour créer une nouvelle catégorie */}
       {showCategoryModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000]">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-[500px] w-[90%] max-h-[80vh] overflow-auto">
-            <h3 className="mt-0 mb-6 text-green-600 font-display text-xl md:text-2xl">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[1000] p-4">
+          <div className="bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg max-w-[500px] w-full max-h-[90vh] overflow-auto">
+            <h3 className="mt-0 mb-4 sm:mb-6 text-green-600 font-display text-lg sm:text-xl md:text-2xl">
               + Créer une nouvelle catégorie
             </h3>
             
             <div className="mb-4">
-              <label htmlFor="new-category-name" className="block mb-2 font-bold text-lg">
+              <label htmlFor="new-category-name" className="block mb-2 font-bold text-base sm:text-lg">
                 Nom de la catégorie : *
               </label>
               <input
@@ -563,13 +563,13 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 placeholder="Ex: Cuisine, Bricolage, Informatique..."
-                className="w-full p-3 border border-gray-300 rounded text-base focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                className="w-full p-2 sm:p-3 border border-gray-300 rounded text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 disabled={categoryLoading}
               />
             </div>
 
             <div className="mb-6">
-              <label htmlFor="new-category-description" className="block mb-2 font-bold text-lg">
+              <label htmlFor="new-category-description" className="block mb-2 font-bold text-base sm:text-lg">
                 Description (optionnel) :
               </label>
               <textarea
@@ -578,12 +578,12 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                 onChange={(e) => setNewCategoryDescription(e.target.value)}
                 placeholder="Décrivez brièvement cette catégorie..."
                 rows={3}
-                className="w-full p-3 border border-gray-300 rounded text-base resize-y focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
+                className="w-full p-2 sm:p-3 border border-gray-300 rounded text-sm sm:text-base resize-y focus:outline-none focus:ring-2 focus:ring-skill-accent disabled:opacity-50"
                 disabled={categoryLoading}
               />
             </div>
 
-            <div className="flex gap-4 justify-end">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end">
               <button
                 type="button"
                 onClick={() => {
@@ -592,7 +592,7 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                   setNewCategoryDescription("");
                 }}
                 disabled={categoryLoading}
-                className="py-3 px-6 bg-gray-600 text-white border-none rounded cursor-pointer text-base hover:bg-gray-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed font-display"
+                className="py-2.5 sm:py-3 px-5 sm:px-6 bg-gray-600 text-white border-none rounded cursor-pointer text-sm sm:text-base hover:bg-gray-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed font-display min-h-[44px] w-full sm:w-auto"
               >
                 Annuler
               </button>
@@ -600,7 +600,7 @@ export default function CourseCreationForm({ user, onSuccess, onCancel }) {
                 type="button"
                 onClick={handleCreateCategory}
                 disabled={categoryLoading || !newCategoryName.trim()}
-                className={`py-3 px-6 text-white border-none rounded cursor-pointer text-base transition-colors font-display ${
+                className={`py-2.5 sm:py-3 px-5 sm:px-6 text-white border-none rounded cursor-pointer text-sm sm:text-base transition-colors font-display min-h-[44px] w-full sm:w-auto ${
                   categoryLoading || !newCategoryName.trim() 
                     ? 'bg-gray-400 cursor-not-allowed' 
                     : 'bg-blue-600 hover:bg-blue-700'
