@@ -66,14 +66,20 @@ const authentication = {
           attributes: ['name']  // On veut le nom du rôle
         }
       });
+      
+      // Pour des raisons de sécurité, on ne révèle pas si l'utilisateur existe ou non
+      // On vérifie toujours le mot de passe même si l'utilisateur n'existe pas
+      // Cela évite de révéler quels emails sont enregistrés dans la base de données
       if (!user) {
-        return res.status(401).json({ error: "L'email et le mot de passe fournis ne correspondent pas." });
+        // On fait quand même une vérification de mot de passe avec un hash fictif pour éviter les attaques par timing
+        await argon2.verify("$argon2id$v=19$m=65536,t=3,p=4$dummy$dummy", password);
+        return res.status(401).json({ error: "L'email ou le mot de passe n'est pas reconnu." });
       }
 
       // Vérifier si le mot de passe est valide, si les mots de passe ne match pas --> 401
       const passwordValid = await argon2.verify(user.password, password);
       if (! passwordValid) {
-        return res.status(401).json({ error: "L'email et le mot de passe fournis ne correspondent pas." });
+        return res.status(401).json({ error: "L'email ou le mot de passe n'est pas reconnu." });
       }
 
       // Générer un token JWT pour l'utilisateur

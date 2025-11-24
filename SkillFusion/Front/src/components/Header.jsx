@@ -75,7 +75,6 @@ export default function Header() {
               <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/">Accueil</a></li>
               <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/lessons">Catalogue</a></li>
               <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/categories">Catégories</a></li>
-              <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/contact">Contact</a></li>
               {user && (
                 <>
                   <li><a className="no-underline text-skill-text-primary px-3 py-1 rounded-lg transition-colors hover:bg-skill-secondary hover:text-white font-display text-lg md:text-xl" href="/forum">Forum</a></li>
@@ -150,15 +149,6 @@ export default function Header() {
               onClick={closeMobileMenu}
             >
               Catégories
-            </a>
-          </li>
-          <li className="mt-3">
-            <a 
-              className="no-underline text-white hover:text-skill-accent font-display" 
-              href="/contact" 
-              onClick={closeMobileMenu}
-            >
-              Contact
             </a>
           </li>
           {user ? (

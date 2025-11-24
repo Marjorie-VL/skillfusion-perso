@@ -93,15 +93,6 @@ export default function MobileNavbar({ user, logout }) {
               Catégories
             </a>
           </li>
-          <li className="mt-3">
-            <a 
-              className="no-underline text-white hover:text-skill-accent" 
-              href="/contact" 
-              onClick={closeMenu}
-            >
-              Contact
-            </a>
-          </li>
 
           {user ? (
             <>

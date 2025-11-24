@@ -11,12 +11,13 @@ SkillFusion est une plateforme web éducative dédiée à l'apprentissage du bri
 4. [Installation et démarrage](#installation-et-démarrage)
 5. [Structure de la base de données](#structure-de-la-base-de-données)
 6. [Utilisation](#utilisation)
-7. [Exemples d'utilisation](#exemples-dutilisation)
-8. [Tutoriels pas à pas](#tutoriels-pas-à-pas)
-9. [Navigation sur la plateforme](#navigation-sur-la-plateforme)
-10. [Conseils de sécurité](#conseils-de-sécurité)
-11. [Technologies utilisées](#technologies-utilisées)
-12. [Auteurs](#auteurs)
+7. [Documentation technique](#documentation-technique)
+8. [Exemples d'utilisation](#exemples-dutilisation)
+9. [Tutoriels pas à pas](#tutoriels-pas-à-pas)
+10. [Navigation sur la plateforme](#navigation-sur-la-plateforme)
+11. [Conseils de sécurité](#conseils-de-sécurité)
+12. [Technologies utilisées](#technologies-utilisées)
+13. [Auteurs](#auteurs)
 
 ---
 
@@ -42,14 +43,22 @@ SkillFusion vise à rendre le bricolage accessible à tous, à distance. Elle s'
 
 - **Backend** : Node.js, Express, Sequelize, PostgreSQL
 - **Frontend** : React, React Router, React Toastify, Vite
-- **Authentification** : JWT
-- **Sécurité** : Validation (Joi), XSS sanitizer, gestion des rôles
+- **Authentification** : JWT (JSON Web Tokens)
+- **Sécurité** : 
+  - Validation des données avec Joi
+  - Protection XSS avec express-xss-sanitizer
+  - Hachage des mots de passe avec Argon2
+  - Gestion des rôles et autorisations granulaire
+  - Protection contre les vulnérabilités OWASP Top 10
+- **Tests** : Jest pour les tests unitaires et d'intégration
+- **Architecture** : MVC (Model-View-Controller)
 
 ## Installation et démarrage
 
 ### Prérequis
 - Node.js (>= 18)
-- PostgreSQL
+- PostgreSQL (>= 12)
+- npm ou yarn
 
 ### Backend
 
@@ -57,43 +66,63 @@ SkillFusion vise à rendre le bricolage accessible à tous, à distance. Elle s'
 cd SkillFusion/Back
 npm install
 # Configurer le fichier .env (voir exemple ci-dessous)
-npm run db:reset
-npm run dev
+npm run db:reset  # Crée les tables et seed les données
+npm run dev       # Démarre le serveur en mode développement
 ```
 
-Exemple de `.env` :
-```
+**Exemple de `.env` :**
+```env
 PORT=3000
-PG_URL=postgres://skillfusion:mot_de_passe@localhost:5432/skillfusion
-ACCESS_TOKEN_SECRET=une_chaine_secrete
-ACCESS_TOKEN_EXPIRES_IN=1d
+PG_URL=postgresql://postgres:postgres@localhost:5432/skillfusion
+ACCESS_TOKEN_SECRET=une_chaine_secrete_tres_longue_et_aleatoire
+ACCESS_TOKEN_EXPIRES_IN=7d
+NODE_ENV=development
 ```
+
+**Commandes disponibles :**
+- `npm run dev` : Démarre le serveur en mode développement
+- `npm test` : Lance les tests Jest
+- `npm run test:watch` : Tests en mode watch
+- `npm run test:coverage` : Tests avec rapport de couverture
+- `npm run db:reset` : Réinitialise la base de données
 
 ### Frontend
 
 ```bash
 cd SkillFusion/Front
 npm install
-npm run dev
+npm run dev       # Démarre le serveur de développement Vite
 ```
+
+Le frontend sera accessible sur `http://localhost:5173` (port par défaut de Vite)
 
 ## Structure de la base de données
 
-- **role** : id, description
-- **users** : id, pseudo, password, mail, role_id
-- **category** : id, name
-- **lesson** : id, name, text, media, category_id, users_id
-- **step** : id, step_order, title, description, media, lesson_id
-- **material** : id, name, lesson_id
-- **users_has_favorites** : id, users_id, lesson_id, created_at
-- **question** : id, text, users_id
-- **response** : id, text, question_id, users_id
+- **role** : id, name
+- **user** : id, user_name, email, password, role_id, created_at, updated_at
+- **category** : id, name, description, user_id, created_at, updated_at
+- **lesson** : id, title, description, is_published, media_url, media_alt, category_id, user_id, created_at, updated_at
+- **step** : id, step_order, title, description, media_url, media_alt, lesson_id, created_at, updated_at
+- **material** : id, name, quantity, lesson_id, created_at, updated_at
+- **favorite** : user_id, lesson_id, created_at (table de liaison N:N)
+- **topic** : id, title, content, user_id, created_at, updated_at
+- **reply** : id, content, topic_id, user_id, created_at, updated_at
 
 ## Utilisation
 
 - Accès public : consultation des cours, catégories, contact
 - Accès connecté : forum, tableau de bord, ajout de leçons/catégories (selon rôle)
-- API RESTful documentée dans le code (`SkillFusion/Back/src/router.js`)
+- **API RESTful** : Documentée dans le code (`SkillFusion/Back/src/router.js`) et dans `DOCUMENTATION TECHNIQUE/GUIDE_ROUTES_API.md`
+
+## Documentation technique
+
+Le projet contient une documentation complète dans le dossier `DOCUMENTATION TECHNIQUE/` :
+
+
+- **GUIDE_ROUTES_API.md** : Documentation détaillée de toutes les routes API
+- **GUIDE_TESTS.md** : Guide complet pour les tests (Jest, Postman, ThunderClient)
+- **GUIDE_DEPLOIEMENT_RENDER.md** : Guide de déploiement sur Render
+
 
 ## Exemples d'utilisation
 
@@ -151,23 +180,24 @@ npm run dev
 ## Technologies utilisées
 
 ### Backend
-- express
-- sequelize
-- pg
-- dotenv
-- cors
-- argon2
-- joi
-- jsonwebtoken
-- express-xss-sanitizer
-- password-validator
+- **express** : Framework web pour Node.js
+- **sequelize** : ORM pour PostgreSQL
+- **pg** : Driver PostgreSQL
+- **dotenv** : Gestion des variables d'environnement
+- **cors** : Gestion CORS
+- **argon2** : Hachage sécurisé des mots de passe
+- **joi** : Validation des schémas
+- **jsonwebtoken** : Authentification JWT
+- **express-xss-sanitizer** : Protection contre les attaques XSS
+- **jest** : Framework de tests
+- **supertest** : Tests d'API HTTP
 
 ### Frontend
-- react
-- react-dom
-- react-router-dom
-- react-toastify
-- vite
+- **react** : Bibliothèque UI
+- **react-dom** : Rendu React
+- **react-router-dom** : Routage
+- **react-toastify** : Notifications toast
+- **vite** : Build tool et dev server
 
 ## Auteurs
 Projet réalisé par :  

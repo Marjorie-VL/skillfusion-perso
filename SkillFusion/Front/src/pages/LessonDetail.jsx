@@ -70,7 +70,7 @@ export default function LessonDetail() {
   const suggestions = lessons
     .filter(
       (l) =>
-        l.category?.name === lesson.category?.name && l.name !== lesson.title
+        l.category?.name === lesson.category?.name && l.id !== lesson.id
     )
     .slice(0, 2);
 

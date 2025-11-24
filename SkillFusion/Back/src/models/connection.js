@@ -26,8 +26,17 @@ const buildPostgresUrl = () => {
 const pgUrl = PG_URL || DATABASE_URL || buildPostgresUrl();
 
 if (pgUrl) {
-  // Détecter si on est en local (pas de SSL requis) ou sur Render (SSL requis)
-  const isLocal = PGHOST === 'localhost' || PGHOST === '127.0.0.1' || !PGHOST || pgUrl.includes('localhost');
+  // Détecter si on est en local (pas de SSL requis) ou sur Render/production (SSL requis)
+  // SSL requis si l'URL ne contient PAS "localhost" ni "127.0.0.1"
+  // Cela couvre tous les cas : Render, autres hébergeurs cloud, production
+  const isLocal = pgUrl.includes('localhost') || pgUrl.includes('127.0.0.1');
+  
+  const needsSSL = !isLocal;
+  
+  // Log pour déboguer (seulement en développement)
+  if (NODE_ENV !== 'production') {
+    console.log(`🔍 Connexion DB: ${isLocal ? 'LOCAL' : 'DISTANTE'} - SSL: ${needsSSL ? 'ACTIVÉ' : 'DÉSACTIVÉ'}`);
+  }
   
   sequelize = new Sequelize(pgUrl, {
     dialect: 'postgres',
@@ -38,12 +47,18 @@ if (pgUrl) {
       createdAt: 'created_at',
       updatedAt: 'updated_at',
     },
-    dialectOptions: isLocal ? {} : {
-      // Configuration SSL pour Render PostgreSQL (distant)
+    dialectOptions: needsSSL ? {
+      // Configuration SSL pour Render PostgreSQL (distant) ou production
       ssl: {
         require: true,
         rejectUnauthorized: false
       },
+    } : {},
+    pool: {
+      max: 5,              // Nombre maximum de connexions dans le pool
+      min: 0,              // Nombre minimum de connexions dans le pool
+      acquire: 30000,      // Temps max (ms) pour obtenir une connexion avant timeout
+      idle: 10000          // Temps max (ms) qu'une connexion peut être inactive avant d'être libérée
     },
   });
 } else {

@@ -31,8 +31,17 @@ export default function LoginForm() {
     } catch (error) {
       console.error("Erreur connexion:", error);
       
-      if (error.response && error.response.status === 401) {
-        toast.error("Email ou mot de passe incorrect");
+      if (error.response) {
+        const { status, data } = error.response;
+        
+        // Erreur d'authentification (email ou mot de passe non reconnu)
+        if (status === 401) {
+          toast.error("L'email ou le mot de passe n'est pas reconnu. Veuillez vous inscrire si ce n'est pas encore le cas.");
+        }
+        // Autres erreurs serveur
+        else {
+          toast.error(data?.error || "Une erreur s'est produite lors de la connexion.");
+        }
       } else if (error.request) {
         toast.error("Erreur de connexion. Vérifiez votre connexion internet.");
       } else {

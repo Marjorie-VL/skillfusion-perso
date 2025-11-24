@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../services/api.jsx";
 import { toast } from "react-toastify";
+import { authService } from "../services/authService.js";
 import ImageDisplay from "./ImageDisplay";
 import ConfirmDeleteModal from "../pages/ConfirmDeleteModal";
 
 export default function LessonContainer({ lessons, categoryName}) {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [lessonList, setLessonList] =  useState(lessons || []);
 
     useEffect(() => { setLessonList(lessons || []);
@@ -33,13 +34,31 @@ export default function LessonContainer({ lessons, categoryName}) {
   // Gère l'ajout ou le retrait d'une leçon des favoris (uniquement pour les utilisateurs simples)
   const handleClickFav = async (lessonId) => {
     if (!favoriteIds.includes(lessonId)) {
-      await addFavorite(lessonId);
-      setFavoriteIds((prev) => [...prev, lessonId]);
-      toast.success("Ajouté aux favoris !");
+      const success = await addFavorite(lessonId);
+      if (success) {
+        setFavoriteIds((prev) => [...prev, lessonId]);
+        toast.success("Ajouté aux favoris !");
+        // Recharger les données utilisateur pour synchroniser les favoris
+        await refreshUserData();
+      }
     } else {
-      await deleteFavorite(lessonId);
-      setFavoriteIds((prev) => prev.filter((id) => id !== lessonId));
-      toast.success("Retiré des favoris !");
+      const success = await deleteFavorite(lessonId);
+      if (success) {
+        setFavoriteIds((prev) => prev.filter((id) => id !== lessonId));
+        toast.success("Retiré des favoris !");
+        // Recharger les données utilisateur pour synchroniser les favoris
+        await refreshUserData();
+      }
+    }
+  };
+
+  // Recharge les données utilisateur depuis le serveur
+  const refreshUserData = async () => {
+    try {
+      const userData = await authService.getCurrentUser();
+      setUser(userData);
+    } catch (err) {
+      console.error("Erreur lors du rechargement des données utilisateur:", err);
     }
   };
 
@@ -57,8 +76,10 @@ export default function LessonContainer({ lessons, categoryName}) {
       if (!response.ok) {
         throw new Error("Erreur lors de l'ajout aux favoris");
       }
+      return true;
     } catch (err) {
       toast.error(err.message);
+      return false;
     }
   };
 
@@ -76,8 +97,10 @@ export default function LessonContainer({ lessons, categoryName}) {
       if (!response.ok) {
         throw new Error("Erreur lors de la suppression des favoris");
       }
+      return true;
     } catch (err) {
       toast.error(err.message);
+      return false;
     }
   };
 
@@ -117,10 +140,11 @@ export default function LessonContainer({ lessons, categoryName}) {
           className="relative bg-skill-tertiary p-5 border border-skill-success/50 rounded-lg flex flex-col justify-between items-center flex-shrink-0 w-[350px] h-[400px] shadow-md"
         >
           {/* Étoile de favoris en haut à droite */}
-          {user && user.role_id === 3 && (
+          {user && (user.role_id === 2 || user.role_id === 3) && (
             <a 
               onClick={() => handleClickFav(lesson.id)} 
-              className="absolute top-2 right-2 cursor-pointer z-10"
+              className="absolute top-2 right-2 cursor-pointer z-10 hover:scale-110 transition-transform"
+              title={favoriteIds.includes(lesson.id) ? "Retirer des favoris" : "Ajouter aux favoris"}
             >
               <p className={`text-3xl m-0 p-0 ${
                 favoriteIds.includes(lesson.id) 
@@ -134,39 +158,38 @@ export default function LessonContainer({ lessons, categoryName}) {
             </a>
           )}
           
-          <div className="w-full flex flex-row justify-between items-center">
+          {/* Boutons de CRUD en haut à gauche si admin ou prof propriétaire */}
+          {user && (user.role_id === 1 || (user.role_id === 2 && lesson.user_id === user.id)) && (
+            <div className="absolute top-2 left-2 flex flex-row gap-2 z-10">
+              <button 
+                onClick={() => navigate(`/edit-lesson/${lesson.id}`)} 
+                className="bg-skill-secondary text-white p-1.5 rounded hover:bg-skill-accent transition-colors cursor-pointer shadow-md"
+                title="Modifier le cours"
+                aria-label="Modifier le cours"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </button>
+              <button 
+                onClick={() => handleClickDeleteLesson(lesson.id)} 
+                className="bg-red-600 text-white p-1.5 rounded hover:bg-red-700 transition-colors cursor-pointer shadow-md"
+                title="Supprimer le cours"
+                aria-label="Supprimer le cours"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          )}
+          
+          <div className="w-full flex flex-row justify-center items-center mt-2">
             <Link to={`/categories/${lesson.category?.id}/lessons`} className="no-underline text-inherit hover:opacity-80 transition-opacity">
               <h5 className="font-['Raleway'] mt-2 mb-0 p-2 bg-white border border-black rounded-md flex flex-col justify-center items-center cursor-pointer hover:bg-gray-50 transition-colors">
                 {lesson.category?.name || categoryName}
               </h5>
             </Link>
-            
-            {user && user.role_id === 3 ? (
-              <p> </p>
-            ) : (
-              <p> </p>
-            )}
-            {/* Boutons de CRUD si admin ou prof propriétaire */}
-            {user && (
-              <div className="w-14 flex flex-row justify-between">
-                {(user.role_id === 1 || (user.role_id === 2 && lesson.user_id === user.id)) && (
-                  <>
-                    <a 
-                      onClick={() => navigate(`/edit-lesson/${lesson.id}`)} 
-                      className="cursor-pointer"
-                    >
-                      <h4 className="text-xl mb-4 font-display font-light text-black">{"\ud83d\udcdd"}</h4>
-                    </a>
-                    <a 
-                      onClick={() => handleClickDeleteLesson(lesson.id)} 
-                      className="cursor-pointer"
-                    >
-                      <h4 className="text-xl mb-4 font-display font-light text-black">{"\ud83d\uddd1"}</h4>
-                    </a>
-                  </>
-                )}
-              </div>
-            )}
           </div>
           
           <div className="flex flex-col justify-center items-start font-light w-full flex-grow">

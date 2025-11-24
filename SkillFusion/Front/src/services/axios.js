@@ -33,10 +33,17 @@ api.interceptors.response.use(
     if (error.response) {
       // Le serveur a répondu avec un code d'erreur
       const { status, data } = error.response;
+      const requestUrl = error.config?.url || '';
       
       switch (status) {
         case 401:
-          // Token expiré ou invalide
+          // Ne pas rediriger automatiquement si c'est une erreur de connexion (route /login)
+          // Laisser le composant LoginForm gérer l'erreur
+          if (requestUrl.includes('/login')) {
+            // Laisser le composant gérer l'erreur de connexion
+            break;
+          }
+          // Token expiré ou invalide pour les autres routes
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           window.location.href = '/login';
@@ -45,7 +52,10 @@ api.interceptors.response.use(
           console.error('Accès interdit:', data.message || 'Vous n\'avez pas les permissions nécessaires');
           break;
         case 404:
-          console.error('Ressource non trouvée:', data.message || 'La ressource demandée n\'existe pas');
+          // Ne pas logger les erreurs 404 pour la route /login (utilisateur non trouvé)
+          if (!requestUrl.includes('/login')) {
+            console.error('Ressource non trouvée:', data.message || 'La ressource demandée n\'existe pas');
+          }
           break;
         case 500:
           console.error('Erreur serveur:', data.message || 'Une erreur interne s\'est produite');

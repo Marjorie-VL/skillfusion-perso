@@ -1,10 +1,10 @@
 services:
   # Service Backend API
   - type: web
-    name: skillfusion-backend
+    name: skillfusion-perso-backend
     env: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install && npm run db:create && npm run db:seed
     startCommand: npm start
     envVars:
       - key: NODE_ENV
@@ -17,14 +17,14 @@ services:
         value: 24h
       - key: PG_URL
         fromDatabase:
-          name: skillfusion-db
+          name: skillfusion-db-1
           property: connectionString
       - key: FRONTEND_URL
         value: https://your-frontend-domain.com
 
   # Base de données PostgreSQL
   - type: pserv
-    name: skillfusion-db
+    name: skillfusion-db-1
     env: postgresql
     plan: free
     ipAllowList: []

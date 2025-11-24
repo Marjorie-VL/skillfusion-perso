@@ -10,6 +10,8 @@ const footer = () => (
       <a href="/mentions-legales" className="no-underline text-skill-text-primary hover:text-skill-accent">Mentions légales</a>
       <span className="mx-2 text-skill-text-primary">|</span>
       <a href="/faq" className="no-underline text-skill-text-primary hover:text-skill-accent">FAQ</a>
+      <span className="mx-2 text-skill-text-primary">|</span>
+      <a href="/contact" className="no-underline text-skill-text-primary hover:text-skill-accent">Contact</a>
     </span>
   </footer>
 );
