@@ -141,53 +141,59 @@ export default function ContainerCategories({ categories }) {
         <section className="h-32 my-4 flex flex-row justify-center items-center w-full" key={category.name}>
           <Link
             to={`/categories/${category.id}/lessons`}
-            className="h-full w-[75vw] bg-skill-tertiary border border-skill-success/50 rounded mx-4 px-4 flex flex-row justify-between items-center hover:bg-skill-tertiary/70 hover:border-skill-success transition-colors cursor-pointer no-underline text-inherit"
+            className="h-full w-[75vw] bg-skill-tertiary border border-skill-success/50 rounded mx-4 px-3 sm:px-4 flex flex-row justify-center items-center hover:bg-skill-tertiary/70 hover:border-skill-success transition-colors cursor-pointer no-underline text-inherit relative overflow-hidden"
           >
-            <p className="m-0"> </p>
-            <h3 className="font-display text-xl md:text-2xl mb-0">{category.name.replace(/^./, (match) => match.toUpperCase())}</h3>
             {/* Affiche les boutons de CRUD si l'utilisateur a les droits d'admin ou s'il est propriétaire de la catégorie*/}
-            {user ? (
-              <div className="w-14 flex flex-row justify-between" onClick={(e) => e.stopPropagation()}>
-                <a onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleClickUpdate(category.id);
-                }} className="cursor-pointer">
-                  <h4 className="text-xl mb-4 font-display font-light text-black m-0">{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\udcdd"):(" ")}</h4>
-                </a>
-                <a onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleClickDelete(category.id);
-                }} className="cursor-pointer">
-                    <h4 className="text-xl mb-4 font-display font-light text-black m-0">{((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ?("\ud83d\uddd1"):(" ")}</h4>
-                </a>
+            {user && ((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) && (
+              <div className="absolute top-2 right-2 flex gap-1 sm:gap-2 z-10" onClick={(e) => e.stopPropagation()}>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleClickUpdate(category.id);
+                  }}
+                  className="bg-skill-secondary text-white p-1 sm:p-1.5 rounded-lg hover:bg-skill-accent transition-colors cursor-pointer shadow-md active:scale-95 min-w-[28px] min-h-[28px] sm:min-w-[32px] sm:min-h-[32px] flex items-center justify-center"
+                  title="Modifier la catégorie"
+                  aria-label="Modifier la catégorie"
+                >
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleClickDelete(category.id);
+                  }}
+                  className="bg-red-600 text-white p-1 sm:p-1.5 rounded-lg hover:bg-red-700 transition-colors cursor-pointer shadow-md active:scale-95 min-w-[28px] min-h-[28px] sm:min-w-[32px] sm:min-h-[32px] flex items-center justify-center"
+                  title="Supprimer la catégorie"
+                  aria-label="Supprimer la catégorie"
+                >
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
               </div>
-              ):(
-              <p className="m-0"></p>
-              )
-            }
+            )}
+            <h3 className={`font-display text-base sm:text-xl md:text-2xl mb-0 text-center ${user && ((user.role_id === 1) || (user.role_id === 2 && category.user_id === user.id)) ? 'pr-16 sm:pr-20' : ''}`}>{category.name.replace(/^./, (match) => match.toUpperCase())}</h3>
           </Link>
         </section>
           
       ))}
 
       {/* Affiche le bouton 'ajouter' si l'utilisateur a les droits d'admin ou prof*/}
-
-      <div className="flex flex-row justify-center items-center"></div>
-            {user && (user.role_id === 1 || user.role_id === 2) ?
-        (
-        <button 
-          type="button" 
-          className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
-          onClick={handleCreateCategory}
-        >
-          Nouvelle catégorie
-        </button>
-        ):(
-        <p className="m-0"></p>
-        )
-      }
+      {user && (user.role_id === 1 || user.role_id === 2) && (
+        <div className="flex flex-row justify-end items-center w-full h-20 mb-4 px-4">
+          <button 
+            type="button" 
+            className="font-display text-base sm:text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-full sm:w-auto min-w-[200px] sm:min-w-[250px] rounded hover:bg-skill-accent transition-colors"
+            onClick={handleCreateCategory}
+          >
+            Nouvelle catégorie
+          </button>
+        </div>
+      )}
 
       {/* Modale pour créer/modifier une catégorie */}
       {showCategoryModal && (

@@ -83,10 +83,10 @@ export default function ForumNewDiscussion() {
               {errors.text && <p className="text-red-600 text-sm mt-2">{errors.text}</p>}
             </div>
 
-            <section className="flex flex-row justify-center items-center">
+            <section className="flex flex-row justify-center items-center w-full">
               <button 
                 type="submit" 
-                className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors"
+                className="font-display text-base sm:text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-full sm:w-auto min-w-[200px] sm:min-w-[250px] m-4 rounded hover:bg-skill-accent transition-colors"
               >
                 Envoyer
               </button>

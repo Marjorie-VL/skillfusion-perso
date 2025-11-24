@@ -173,9 +173,9 @@ export default function ForumDiscussionDetail() {
     <>
       <Header />
       <main className="flex flex-col justify-center items-center min-h-[calc(100vh-200px)] mb-8">
-        <section className="flex flex-row justify-end items-center w-full h-20 mb-4">
-          <Link to="/forum" className="m-4">
-            <button className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors">
+        <section className="flex flex-row justify-end items-center w-full h-20 mb-4 px-4">
+          <Link to="/forum" className="m-2 sm:m-4">
+            <button className="font-display text-base sm:text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-full sm:w-auto min-w-[200px] sm:min-w-[250px] rounded hover:bg-skill-accent transition-colors">
                 Retour à la liste des sujets
             </button>
           </Link>
@@ -192,29 +192,35 @@ export default function ForumDiscussionDetail() {
                 Le : {new Date(topic.created_at).toLocaleDateString()}
               </p>
             </div>
-            <div className="h-full w-[75vw] bg-skill-tertiary border border-skill-success/50 rounded mx-4 px-4 flex flex-row justify-between items-center">
-              <div className="flex-1">
-                <h4 className="font-display text-xl md:text-2xl mb-2 text-skill-text-primary">{topic.content.replace(/^./, (match) => match.toUpperCase())}</h4>
-              </div>
+            <div className="h-full w-[75vw] bg-skill-tertiary border border-skill-success/50 rounded mx-4 px-3 sm:px-4 flex flex-col justify-center items-start relative overflow-hidden">
               {/* Affiche les boutons de modification/suppression si l'utilisateur est propriétaire ou admin */}
               {user && (user.id === topic.user_id || user.role_id === 1) && (
-                <div className="flex gap-2 ml-4">
+                <div className="absolute top-2 right-2 flex gap-1 sm:gap-2 z-10">
                   <button 
                     onClick={() => navigate(`/forum/edit/${topic.id}`)} 
-                    className="cursor-pointer bg-transparent border-none text-xl text-skill-secondary hover:text-skill-accent transition-colors"
+                    className="bg-skill-secondary text-white p-1 sm:p-1.5 rounded-lg hover:bg-skill-accent transition-colors cursor-pointer shadow-md active:scale-95 min-w-[28px] min-h-[28px] sm:min-w-[32px] sm:min-h-[32px] flex items-center justify-center"
                     title="Modifier ce sujet"
+                    aria-label="Modifier ce sujet"
                   >
-                    ✏️
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
                   </button>
                   <button 
                     onClick={() => handleClickDeleteTopic(topic.id)} 
-                    className="cursor-pointer bg-transparent border-none text-xl text-skill-danger hover:text-red-700 transition-colors"
+                    className="bg-red-600 text-white p-1 sm:p-1.5 rounded-lg hover:bg-red-700 transition-colors cursor-pointer shadow-md active:scale-95 min-w-[28px] min-h-[28px] sm:min-w-[32px] sm:min-h-[32px] flex items-center justify-center"
                     title="Supprimer ce sujet"
+                    aria-label="Supprimer ce sujet"
                   >
-                    🗑️
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
                   </button>
                 </div>
               )}
+              <div className={`flex-1 min-w-0 w-full pr-0 sm:pr-12 ${user && (user.id === topic.user_id || user.role_id === 1) ? 'pt-10 sm:pt-12' : ''}`}>
+                <h4 className="font-display text-base sm:text-xl md:text-2xl mb-2 text-skill-text-primary break-words">{topic.content.replace(/^./, (match) => match.toUpperCase())}</h4>
+              </div>
             </div>
           </section>
         </section>
@@ -231,30 +237,35 @@ export default function ForumDiscussionDetail() {
                   Le : {new Date(reply.created_at).toLocaleDateString()}
                 </p>
               </div>
-              <div className="h-full w-[75vw] bg-skill-tertiary/50 border border-skill-success/50 rounded mx-4 px-4 flex flex-row justify-between items-center">
-                <div className="flex-1">
-                  <p className="text-justify px-4 max-w-[95vw] text-skill-text-primary">{reply.content.replace(/^./, (match) => match.toUpperCase())}</p>
-                </div>
-
+              <div className="h-full w-[75vw] bg-skill-tertiary/50 border border-skill-success/50 rounded mx-4 px-3 sm:px-4 flex flex-col justify-center items-start relative overflow-hidden">
                 {/* Affiche les boutons de modification/suppression si l'utilisateur est propriétaire ou admin */}
                 {user && (user.id === reply.user_id || user.role_id === 1) && (
-                  <div className="flex gap-2 ml-4">
+                  <div className="absolute top-2 right-2 flex gap-1 sm:gap-2 z-10">
                     <button 
                       onClick={() => handleClickEditReply(topic.id, reply.id)} 
-                      className="cursor-pointer bg-transparent border-none text-xl text-skill-secondary hover:text-skill-accent transition-colors"
+                      className="bg-skill-secondary text-white p-1 sm:p-1.5 rounded-lg hover:bg-skill-accent transition-colors cursor-pointer shadow-md active:scale-95 min-w-[28px] min-h-[28px] sm:min-w-[32px] sm:min-h-[32px] flex items-center justify-center"
                       title="Modifier cette réponse"
+                      aria-label="Modifier cette réponse"
                     >
-                      ✏️
+                      <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
                     </button>
                     <button 
                       onClick={() => handleClickDelete(topic.id, reply.id)} 
-                      className="cursor-pointer bg-transparent border-none text-xl text-skill-danger hover:text-red-700 transition-colors"
+                      className="bg-red-600 text-white p-1 sm:p-1.5 rounded-lg hover:bg-red-700 transition-colors cursor-pointer shadow-md active:scale-95 min-w-[28px] min-h-[28px] sm:min-w-[32px] sm:min-h-[32px] flex items-center justify-center"
                       title="Supprimer cette réponse"
+                      aria-label="Supprimer cette réponse"
                     >
-                      🗑️
+                      <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
                     </button>
                   </div>
                 )}
+                <div className={`flex-1 min-w-0 w-full pr-0 sm:pr-12 ${user && (user.id === reply.user_id || user.role_id === 1) ? 'pt-10 sm:pt-12' : ''}`}>
+                  <p className="text-justify text-sm sm:text-base px-2 sm:px-4 text-skill-text-primary break-words">{reply.content.replace(/^./, (match) => match.toUpperCase())}</p>
+                </div>
               </div>
             </section>
             ))
@@ -280,9 +291,9 @@ export default function ForumDiscussionDetail() {
               {errors.content && (
                 <p className="text-skill-danger text-sm mt-2"> {typeof errors.content === "string" ? errors.content : JSON.stringify(errors.content)}</p>)}
               </div>
-              <div className="flex justify-center">
+              <div className="flex justify-center w-full">
                 <button 
-                  className="font-display text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-[20vw] m-4 rounded hover:bg-skill-accent transition-colors" 
+                  className="font-display text-base sm:text-xl md:text-2xl py-2 px-4 bg-skill-secondary text-white w-full sm:w-auto min-w-[200px] sm:min-w-[250px] m-4 rounded hover:bg-skill-accent transition-colors" 
                   type="submit"
                 >
                   Envoyer
