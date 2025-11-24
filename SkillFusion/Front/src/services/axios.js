@@ -1,8 +1,18 @@
 import axios from 'axios';
 
+// Configuration de l'URL de l'API
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const baseURL = `${apiUrl}/api`;
+
+// Log de débogage (seulement en développement ou si l'URL n'est pas définie)
+if (!import.meta.env.VITE_API_URL || import.meta.env.DEV) {
+  console.log(`🔍 Configuration API - URL: ${apiUrl}`);
+  console.log(`🔍 Configuration API - Base URL: ${baseURL}`);
+}
+
 // Configuration de base d'Axios
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api`,
+  baseURL,
   timeout: 10000, // 10 secondes de timeout
   headers: {
     'Content-Type': 'application/json',
@@ -54,7 +64,11 @@ api.interceptors.response.use(
         case 404:
           // Ne pas logger les erreurs 404 pour la route /login (utilisateur non trouvé)
           if (!requestUrl.includes('/login')) {
-            console.error('Ressource non trouvée:', data.message || 'La ressource demandée n\'existe pas');
+            console.error('❌ Status: 404');
+            console.error('📍 URL complète:', error.config?.baseURL + requestUrl);
+            console.error('📍 Route:', requestUrl);
+            console.error('💡 Message:', data?.message || 'La ressource demandée n\'existe pas');
+            console.error('💡 Vérifiez que VITE_API_URL est bien configuré dans Vercel');
           }
           break;
         case 500:
@@ -65,10 +79,16 @@ api.interceptors.response.use(
       }
     } else if (error.request) {
       // La requête a été faite mais aucune réponse n'a été reçue
-      console.error('Erreur réseau:', 'Impossible de contacter le serveur');
+      console.error('❌ Erreur réseau: Impossible de contacter le serveur');
+      console.error('📍 URL tentée:', error.config?.baseURL + error.config?.url);
+      console.error('💡 Vérifiez que:');
+      console.error('   1. Le backend est bien déployé et accessible');
+      console.error('   2. VITE_API_URL est bien configuré dans Vercel');
+      console.error('   3. CORS est configuré dans le backend pour accepter les requêtes depuis Vercel');
     } else {
       // Quelque chose s'est mal passé lors de la configuration de la requête
-      console.error('Erreur de configuration:', error.message);
+      console.error('❌ Erreur de configuration:', error.message);
+      console.error('📍 URL:', error.config?.baseURL + error.config?.url);
     }
     
     return Promise.reject(error);
