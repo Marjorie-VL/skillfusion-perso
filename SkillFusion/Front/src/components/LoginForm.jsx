@@ -36,7 +36,7 @@ export default function LoginForm() {
         
         // Erreur d'authentification (email ou mot de passe non reconnu)
         if (status === 401) {
-          toast.error("L'email ou le mot de passe n'est pas reconnu. Veuillez vous inscrire si ce n'est pas encore le cas.");
+          toast.error(data?.error || "L'email ou le mot de passe n'est pas reconnu.");
         }
         // Autres erreurs serveur
         else {

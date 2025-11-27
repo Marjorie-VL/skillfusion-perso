@@ -104,15 +104,34 @@ export default function ForumDiscussionDetail() {
     } catch (error) {
       console.error("❌ Erreur ajout réponse →", error);
       
-      if (error.response && error.response.data) {
-        const { data } = error.response;
+      if (error.response) {
+        const { status, data } = error.response;
         
-        if (data.errors) {
-          setErrors(data.errors);
-          toast.error("Veuillez corriger les erreurs dans le formulaire");
-        } else if (data.error) {
+        // Erreur d'authentification (token expiré ou invalide)
+        if (status === 401) {
+          toast.error("Vous devez être connecté pour envoyer une réponse.");
+        }
+        // Erreurs de validation
+        else if (data.errors) {
+          // Mapper les erreurs du backend (text) vers le format frontend (content)
+          const mappedErrors = {};
+          if (data.errors.text) {
+            mappedErrors.content = data.errors.text;
+          } else {
+            mappedErrors.content = Object.values(data.errors)[0];
+          }
+          setErrors(mappedErrors);
+          // Afficher le premier message d'erreur spécifique
+          const firstError = Object.values(data.errors)[0];
+          const errorMessage = typeof firstError === 'string' ? firstError : firstError[0];
+          toast.error(errorMessage || "Veuillez corriger les erreurs dans le formulaire");
+        }
+        // Autres erreurs serveur avec message
+        else if (data.error) {
           toast.error(data.error);
-        } else {
+        }
+        // Erreur serveur sans message
+        else {
           toast.error("Erreur lors de l'envoi de la réponse");
         }
       } else if (error.request) {
