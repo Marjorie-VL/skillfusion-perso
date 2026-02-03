@@ -329,15 +329,20 @@ FRONTEND_URL=https://your-frontend-domain.com
 
 **Format de l'URL :**
 ```
-postgresql://skillfusion_user:OawuLl3I96BjCo7VSDfZioYijq34r3b5@dpg-d3oa28c9c44c73cq8p3g-a.frankfurt-postgres.render.com/skillfusion_db
+postgresql://username:password@host:port/database
+```
+
+**Exemple générique :**
+```
+postgresql://skillfusion_user:your-secure-password@dpg-xxxxx.frankfurt-postgres.render.com/skillfusion_db
 ```
 
 **Composants :**
 - **Protocole :** `postgresql://`
-- **Utilisateur :** `skillfusion_user`
-- **Mot de passe :** `OawuLl3I96BjCo7VSDfZioYijq34r3b5`
-- **Hôte :** `dpg-d3oa28c9c44c73cq8p3g-a.frankfurt-postgres.render.com`
-- **Base de données :** `skillfusion_db`
+- **Utilisateur :** `skillfusion_user` (ou le nom que vous avez choisi)
+- **Mot de passe :** `your-secure-password` (généré par Render)
+- **Hôte :** `dpg-xxxxx.frankfurt-postgres.render.com` (fourni par Render)
+- **Base de données :** `skillfusion_db` (ou le nom que vous avez choisi)
 
 **Compétences acquises :**
 - Analyse des URLs de connexion
@@ -350,15 +355,17 @@ postgresql://skillfusion_user:OawuLl3I96BjCo7VSDfZioYijq34r3b5@dpg-d3oa28c9c44c7
 
 ### 4.1 Variables sur Render Dashboard
 
-**Configuration finale :**
+**Configuration finale (exemple générique) :**
 ```
 NODE_ENV=production
 PORT=3000
-ACCESS_TOKEN_SECRET=7dd5788881516ad9b2e0e65c29330eaf
+ACCESS_TOKEN_SECRET=your-generated-secret-key-here
 ACCESS_TOKEN_EXPIRES_IN=24h
-PG_URL=postgresql://skillfusion_user:OawuLl3I96BjCo7VSDfZioYijq34r3b5@dpg-d3oa28c9c44c73cq8p3g-a.frankfurt-postgres.render.com/skillfusion_db
-FRONTEND_URL=https://skillfusion-vercel.com
+PG_URL=postgresql://username:password@host:port/database
+FRONTEND_URL=https://your-frontend-domain.com
 ```
+
+**⚠️ Important :** Remplacez ces valeurs par vos propres credentials obtenus depuis le dashboard Render.
 
 ### 4.2 Variables locales (.env)
 
@@ -366,11 +373,13 @@ FRONTEND_URL=https://skillfusion-vercel.com
 ```env
 NODE_ENV=development
 PORT=3000
-PG_URL=postgresql://skillfusion_user:OawuLl3I96BjCo7VSDfZioYijq34r3b5@dpg-d3oa28c9c44c73cq8p3g-a.frankfurt-postgres.render.com/skillfusion_db
+PG_URL=postgresql://username:password@localhost:5432/skillfusion
 ACCESS_TOKEN_SECRET=your-local-secret-key
 ACCESS_TOKEN_EXPIRES_IN=24h
 FRONTEND_URL=http://localhost:5173
 ```
+
+**⚠️ Important :** Utilisez vos propres credentials locaux ou ceux de votre base de données Render.
 
 **Compétences acquises :**
 - Gestion des environnements (dev/prod)
@@ -544,7 +553,7 @@ git push origin master
 
 ### 7.1 Endpoints testés
 
-**URL de base :** `https://skillfusion-perso.onrender.com`
+**URL de base (exemple) :** `https://your-app-name.onrender.com`
 
 **Tests effectués :**
 - `GET /api/categories` - Liste des catégories
@@ -646,7 +655,7 @@ git push origin master
 
 ## 🎯 RÉSULTAT FINAL
 
-**API déployée avec succès :** `https://skillfusion-perso.onrender.com`
+**API déployée avec succès :** `https://your-app-name.onrender.com`
 
 **Fonctionnalités opérationnelles :**
 - ✅ Base de données PostgreSQL initialisée

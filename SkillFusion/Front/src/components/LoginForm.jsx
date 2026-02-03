@@ -38,14 +38,35 @@ export default function LoginForm() {
         if (status === 401) {
           toast.error(data?.error || "L'email ou le mot de passe n'est pas reconnu.");
         }
+        // Erreur serveur (500)
+        else if (status === 500) {
+          // Remplacer les messages d'erreur techniques par des messages utilisateur-friendly
+          const errorMessage = data?.error || "Une erreur s'est produite lors de la connexion.";
+          if (errorMessage.includes('output is too short') || errorMessage.includes('too short')) {
+            toast.error("Les informations de connexion sont invalides. Veuillez vérifier votre email et mot de passe.");
+          } else {
+            toast.error(errorMessage);
+          }
+        }
         // Autres erreurs serveur
         else {
-          toast.error(data?.error || "Une erreur s'est produite lors de la connexion.");
+          const errorMessage = data?.error || "Une erreur s'est produite lors de la connexion.";
+          if (errorMessage.includes('output is too short') || errorMessage.includes('too short')) {
+            toast.error("Les informations de connexion sont invalides. Veuillez vérifier votre email et mot de passe.");
+          } else {
+            toast.error(errorMessage);
+          }
         }
       } else if (error.request) {
         toast.error("Erreur de connexion. Vérifiez votre connexion internet.");
       } else {
-        toast.error("Une erreur inattendue s'est produite.");
+        // Gérer les erreurs de validation HTML5 native ou autres erreurs
+        const errorMessage = error.message || "Une erreur inattendue s'est produite.";
+        if (errorMessage.includes('output is too short') || errorMessage.includes('too short')) {
+          toast.error("Les informations de connexion sont invalides. Veuillez vérifier votre email et mot de passe.");
+        } else {
+          toast.error("Une erreur inattendue s'est produite.");
+        }
       }
     } finally {
       setLoading(false);

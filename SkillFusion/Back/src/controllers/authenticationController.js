@@ -94,7 +94,12 @@ const authentication = {
       return res.status(200).json({ token, message: "Connexion réussie",});
     } catch (err) {
       console.error('❌ Erreur Sequelize →', err.message);
-      return res.status(500).json({ error: err.message });
+      // Remplacer les messages d'erreur techniques par des messages utilisateur-friendly
+      let errorMessage = err.message;
+      if (errorMessage.includes('output is too short') || errorMessage.includes('too short')) {
+        errorMessage = "Les informations de connexion sont invalides.";
+      }
+      return res.status(500).json({ error: errorMessage });
     }
   },
 
