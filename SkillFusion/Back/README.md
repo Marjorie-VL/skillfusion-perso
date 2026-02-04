@@ -42,7 +42,7 @@ Créez un fichier `.env` à la racine du dossier `Back/` en vous basant sur `env
 
 ```env
 # Configuration de la base de données PostgreSQL
-PG_URL=postgresql://postgres:postgres@localhost:5432/skillfusion
+PG_URL=postgresql://username:postgres@localhost:5432/skillfusion
 
 # Configuration JWT
 ACCESS_TOKEN_SECRET=your-super-secret-jwt-key-here
